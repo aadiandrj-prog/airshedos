@@ -1,0 +1,798 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AirshedOS API",
+    "description": "Phase 1A. Fictional demo evidence; no live data or AI inference. Acknowledgment is local; sharing is simulated. State resets on restart.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Ready",
+        "operationId": "ready_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Ready Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "List Incidents",
+        "operationId": "list_incidents_api_v1_incidents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PollutionIncident"
+                  },
+                  "type": "array",
+                  "title": "Response List Incidents Api V1 Incidents Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incident_id}": {
+      "get": {
+        "tags": [
+          "Incidents"
+        ],
+        "summary": "Incident Detail",
+        "operationId": "incident_detail_api_v1_incidents__incident_id__get",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollutionIncident"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incident_id}/acknowledge": {
+      "post": {
+        "tags": [
+          "Actions"
+        ],
+        "summary": "Acknowledge",
+        "operationId": "acknowledge_api_v1_incidents__incident_id__acknowledge_post",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollutionIncident"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incident_id}/share": {
+      "post": {
+        "tags": [
+          "Actions"
+        ],
+        "summary": "Share",
+        "operationId": "share_api_v1_incidents__incident_id__share_post",
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CitizenReport": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "language": {
+            "type": "string",
+            "title": "Language"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "source_type": {
+            "type": "string",
+            "const": "citizen_report",
+            "title": "Source Type",
+            "default": "citizen_report"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "latitude",
+          "longitude",
+          "description",
+          "language",
+          "image_url",
+          "source_type"
+        ],
+        "title": "CitizenReport"
+      },
+      "EvidenceSignal": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "signal_type": {
+            "$ref": "#/components/schemas/SignalType"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvidenceStatus"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed At"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "raw_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raw Reference"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "signal_type",
+          "source",
+          "status",
+          "confidence",
+          "observed_at",
+          "summary",
+          "provenance",
+          "raw_reference"
+        ],
+        "title": "EvidenceSignal"
+      },
+      "EvidenceStatus": {
+        "type": "string",
+        "enum": [
+          "supported",
+          "partial",
+          "unavailable",
+          "conflicting"
+        ],
+        "title": "EvidenceStatus"
+      },
+      "ForecastRisk": {
+        "properties": {
+          "horizon_hours": {
+            "type": "integer",
+            "maximum": 168.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Horizon Hours"
+          },
+          "risk_level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "spike_probability": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Spike Probability"
+          },
+          "predicted_direction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Direction"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "horizon_hours",
+          "risk_level",
+          "spike_probability",
+          "predicted_direction",
+          "summary",
+          "generated_at",
+          "provenance"
+        ],
+        "title": "ForecastRisk"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IncidentAction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "acknowledge",
+              "share"
+            ],
+            "title": "Type"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "simulated"
+            ],
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "target_jurisdiction": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Jurisdiction"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "status",
+          "created_at",
+          "target_jurisdiction",
+          "description"
+        ],
+        "title": "IncidentAction"
+      },
+      "IncidentStatus": {
+        "type": "string",
+        "enum": [
+          "open",
+          "acknowledged"
+        ],
+        "title": "IncidentStatus"
+      },
+      "Jurisdiction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "authority_type": {
+            "type": "string",
+            "title": "Authority Type"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "state",
+          "authority_type"
+        ],
+        "title": "Jurisdiction"
+      },
+      "PollutionIncident": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "event_type": {
+            "type": "string",
+            "const": "probable_open_burning",
+            "title": "Event Type"
+          },
+          "status": {
+            "$ref": "#/components/schemas/IncidentStatus"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Detected At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "jurisdiction": {
+            "$ref": "#/components/schemas/Jurisdiction"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSignal"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "citizen_reports": {
+            "items": {
+              "$ref": "#/components/schemas/CitizenReport"
+            },
+            "type": "array",
+            "title": "Citizen Reports"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/ForecastRisk"
+          },
+          "recommended_action": {
+            "type": "string",
+            "title": "Recommended Action"
+          },
+          "affected_jurisdictions": {
+            "items": {
+              "$ref": "#/components/schemas/Jurisdiction"
+            },
+            "type": "array",
+            "title": "Affected Jurisdictions"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/IncidentAction"
+            },
+            "type": "array",
+            "title": "Actions"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo"
+          },
+          "field_verification_required": {
+            "type": "boolean",
+            "title": "Field Verification Required",
+            "default": true
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "event_type",
+          "status",
+          "severity",
+          "confidence",
+          "latitude",
+          "longitude",
+          "detected_at",
+          "updated_at",
+          "jurisdiction",
+          "evidence",
+          "citizen_reports",
+          "forecast",
+          "recommended_action",
+          "affected_jurisdictions",
+          "actions",
+          "model_version",
+          "is_demo",
+          "field_verification_required",
+          "provenance"
+        ],
+        "title": "PollutionIncident"
+      },
+      "Provenance": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_id",
+          "method",
+          "is_demo",
+          "note"
+        ],
+        "title": "Provenance"
+      },
+      "RiskLevel": {
+        "type": "string",
+        "enum": [
+          "low",
+          "moderate",
+          "high"
+        ],
+        "title": "RiskLevel"
+      },
+      "ShareRequest": {
+        "properties": {
+          "target_jurisdiction_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Target Jurisdiction Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "target_jurisdiction_id"
+        ],
+        "title": "ShareRequest"
+      },
+      "ShareResponse": {
+        "properties": {
+          "simulated": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulated",
+            "default": true
+          },
+          "action": {
+            "$ref": "#/components/schemas/IncidentAction"
+          },
+          "incident": {
+            "$ref": "#/components/schemas/PollutionIncident"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "simulated",
+          "action",
+          "incident"
+        ],
+        "title": "ShareResponse"
+      },
+      "SignalType": {
+        "type": "string",
+        "enum": [
+          "citizen_report",
+          "air_quality",
+          "fire",
+          "wind",
+          "satellite"
+        ],
+        "title": "SignalType"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
