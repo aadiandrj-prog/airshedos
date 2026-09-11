@@ -1,0 +1,188 @@
+{
+  "latitude": 28.4595,
+  "longitude": 77.0266,
+  "requested_at": "2026-09-11T03:02:14.620494Z",
+  "generated_at": "2026-09-11T03:02:14.628151Z",
+  "requested_reference_time": null,
+  "time_mode": "current",
+  "temporal_note": "Current conditions only; any supplied reference time is not a historical query.",
+  "air_quality": {
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "observed_at": "2026-09-10T04:00:00Z",
+    "retrieved_at": "2026-09-11T03:02:14.621533Z",
+    "status": "live",
+    "provenance": {
+      "source_id": "google_air_quality",
+      "method": "Google currentConditions lookup",
+      "is_demo": false,
+      "note": "Provider estimates; not a new regulatory monitoring station. Index scales and source units are preserved.",
+      "documentation_url": "https://developers.google.com/maps/documentation/air-quality/current-conditions"
+    },
+    "region_code": "in",
+    "indexes": [
+      {
+        "code": "uaqi",
+        "display_name": "Universal AQI",
+        "value": 68.0,
+        "category": "Moderate air quality",
+        "dominant_pollutant": "pm25"
+      },
+      {
+        "code": "ind_cpcb",
+        "display_name": "National Air Quality Index",
+        "value": 112.0,
+        "category": "Moderately polluted",
+        "dominant_pollutant": "pm25"
+      }
+    ],
+    "pollutants": [
+      {
+        "code": "pm25",
+        "name": "PM2.5",
+        "full_name": "Fine particulate matter",
+        "concentration": {
+          "value": 40.2,
+          "unit": "MICROGRAMS_PER_CUBIC_METER"
+        }
+      },
+      {
+        "code": "o3",
+        "name": "O3",
+        "full_name": null,
+        "concentration": {
+          "value": 23.1,
+          "unit": "PARTS_PER_BILLION"
+        }
+      },
+      {
+        "code": "no2",
+        "name": "NO2",
+        "full_name": null,
+        "concentration": null
+      }
+    ]
+  },
+  "weather": {
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "observed_at": "2026-09-10T04:12:00Z",
+    "retrieved_at": "2026-09-11T03:02:14.622341Z",
+    "status": "live",
+    "provenance": {
+      "source_id": "google_weather",
+      "method": "Google currentConditions lookup",
+      "is_demo": false,
+      "note": "Wind degrees indicate origin, clockwise from north; 360 is normalized to 0. QPF is provider precipitation estimate.",
+      "documentation_url": "https://developers.google.com/maps/documentation/weather/current-conditions"
+    },
+    "temperature": {
+      "value": 31.4,
+      "unit": "CELSIUS"
+    },
+    "relative_humidity_percent": 65.0,
+    "wind_speed": {
+      "value": 11.2,
+      "unit": "KILOMETERS_PER_HOUR"
+    },
+    "wind_from_degrees": 225.0,
+    "wind_cardinal": "SOUTHWEST",
+    "sea_level_pressure": {
+      "value": 1004.5,
+      "unit": "MILLIBARS"
+    },
+    "precipitation_probability_percent": 0.0,
+    "precipitation_qpf": {
+      "value": 0.0,
+      "unit": "MILLIMETERS"
+    },
+    "cloud_cover_percent": 20.0
+  },
+  "fires": [
+    {
+      "latitude": 28.4695,
+      "longitude": 77.0266,
+      "observed_at": "2026-09-10T00:05:00Z",
+      "retrieved_at": "2026-09-11T03:02:14.623675Z",
+      "status": "live",
+      "provenance": {
+        "source_id": "VIIRS_SNPP_NRT:N:2026-09-10T00:05:00+00:00:28.4695:77.0266",
+        "method": "VIIRS S-NPP NRT; bounding box then radius filter",
+        "is_demo": false,
+        "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+        "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+      },
+      "source_id": "VIIRS_SNPP_NRT:N:2026-09-10T00:05:00+00:00:28.4695:77.0266",
+      "description": "Nearby active-fire detection",
+      "confidence": "h",
+      "satellite": "N",
+      "instrument": "VIIRS",
+      "brightness": {
+        "value": 342.8,
+        "unit": "KELVIN"
+      },
+      "fire_radiative_power": {
+        "value": 12.0,
+        "unit": "MEGAWATTS"
+      },
+      "distance_from_query_km": 1.112
+    },
+    {
+      "latitude": 28.5595,
+      "longitude": 77.0266,
+      "observed_at": "2026-09-10T04:12:00Z",
+      "retrieved_at": "2026-09-11T03:02:14.623675Z",
+      "status": "live",
+      "provenance": {
+        "source_id": "VIIRS_SNPP_NRT:N:2026-09-10T04:12:00+00:00:28.5595:77.0266",
+        "method": "VIIRS S-NPP NRT; bounding box then radius filter",
+        "is_demo": false,
+        "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+        "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+      },
+      "source_id": "VIIRS_SNPP_NRT:N:2026-09-10T04:12:00+00:00:28.5595:77.0266",
+      "description": "Nearby active-fire detection",
+      "confidence": "n",
+      "satellite": "N",
+      "instrument": "VIIRS",
+      "brightness": {
+        "value": 331.2,
+        "unit": "KELVIN"
+      },
+      "fire_radiative_power": {
+        "value": 8.2,
+        "unit": "MEGAWATTS"
+      },
+      "distance_from_query_km": 11.12
+    }
+  ],
+  "fire_search_radius_km": 25.0,
+  "fire_window_days": 2,
+  "source_statuses": {
+    "air_quality": {
+      "provider": "google_air_quality",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T03:02:14.621562Z",
+      "latency_ms": 0.7
+    },
+    "weather": {
+      "provider": "google_weather",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T03:02:14.622365Z",
+      "latency_ms": 0.54
+    },
+    "fires": {
+      "provider": "nasa_firms",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T03:02:14.628009Z",
+      "latency_ms": 5.59
+    }
+  },
+  "incident_relationship": "independent_context_not_demo_corroboration"
+}

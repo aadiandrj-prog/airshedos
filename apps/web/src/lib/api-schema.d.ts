@@ -4,6 +4,46 @@
  */
 
 export interface paths {
+    "/api/v1/environment/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sources
+         * @description Configuration presence only; no network call or credential disclosure.
+         */
+        get: operations["sources_api_v1_environment_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/environment/context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Context
+         * @description Independent environmental context; never corroborates the fictional demo incident.
+         */
+        get: operations["context_api_v1_environment_context_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -110,6 +150,49 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AirQualityIndex */
+        AirQualityIndex: {
+            /** Code */
+            code: string;
+            /** Display Name */
+            display_name: string | null;
+            /** Value */
+            value: number | null;
+            /** Category */
+            category: string | null;
+            /** Dominant Pollutant */
+            dominant_pollutant: string | null;
+        };
+        /** AirQualityObservation */
+        AirQualityObservation: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /**
+             * Status
+             * @default live
+             * @enum {string}
+             */
+            status: "live" | "cached";
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            /** Region Code */
+            region_code: string | null;
+            /** Indexes */
+            indexes: components["schemas"]["AirQualityIndex"][];
+            /** Pollutants */
+            pollutants: components["schemas"]["PollutantMeasurement"][];
+        };
         /** CitizenReport */
         CitizenReport: {
             /** Id */
@@ -136,6 +219,94 @@ export interface components {
              */
             source_type: "citizen_report";
         };
+        /** EnvironmentalContext */
+        EnvironmentalContext: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Requested Reference Time */
+            requested_reference_time: string | null;
+            /**
+             * Time Mode
+             * @default current
+             * @constant
+             */
+            time_mode: "current";
+            /**
+             * Temporal Note
+             * @default Current conditions only; any supplied reference time is not a historical query.
+             */
+            temporal_note: string;
+            air_quality: components["schemas"]["AirQualityObservation"] | null;
+            weather: components["schemas"]["MeteorologicalObservation"] | null;
+            /** Fires */
+            fires: components["schemas"]["FireObservation"][] | null;
+            /** Fire Search Radius Km */
+            fire_search_radius_km: number;
+            /** Fire Window Days */
+            fire_window_days: number;
+            source_statuses: components["schemas"]["EnvironmentalSourceStatuses"];
+            /**
+             * Incident Relationship
+             * @default independent_context_not_demo_corroboration
+             * @constant
+             */
+            incident_relationship: "independent_context_not_demo_corroboration";
+        };
+        /** EnvironmentalProvenance */
+        EnvironmentalProvenance: {
+            /** Source Id */
+            source_id: string;
+            /** Method */
+            method: string;
+            /**
+             * Is Demo
+             * @default false
+             * @constant
+             */
+            is_demo: false;
+            /** Note */
+            note: string;
+            /** Documentation Url */
+            documentation_url: string;
+        };
+        /** EnvironmentalSourceStatus */
+        EnvironmentalSourceStatus: {
+            /** Provider */
+            provider: string;
+            /** Configured */
+            configured: boolean;
+            status: components["schemas"]["SourceState"];
+            /** Message */
+            message: string;
+            /** Retrieved At */
+            retrieved_at: string | null;
+            /** Latency Ms */
+            latency_ms: number;
+        };
+        /** EnvironmentalSourceStatuses */
+        EnvironmentalSourceStatuses: {
+            air_quality: components["schemas"]["EnvironmentalSourceStatus"];
+            weather: components["schemas"]["EnvironmentalSourceStatus"];
+            fires: components["schemas"]["EnvironmentalSourceStatus"];
+        };
+        /** EnvironmentalSources */
+        EnvironmentalSources: {
+            air_quality: components["schemas"]["ProviderConfiguration"];
+            weather: components["schemas"]["ProviderConfiguration"];
+            fires: components["schemas"]["ProviderConfiguration"];
+        };
         /** EvidenceSignal */
         EvidenceSignal: {
             /** Id */
@@ -159,6 +330,48 @@ export interface components {
          * @enum {string}
          */
         EvidenceStatus: "supported" | "partial" | "unavailable" | "conflicting";
+        /** FireObservation */
+        FireObservation: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /**
+             * Status
+             * @default live
+             * @enum {string}
+             */
+            status: "live" | "cached";
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            /** Source Id */
+            source_id: string;
+            /**
+             * Description
+             * @default Nearby active-fire detection
+             * @constant
+             */
+            description: "Nearby active-fire detection";
+            /** Confidence */
+            confidence: ("l" | "n" | "h") | null;
+            /** Satellite */
+            satellite: string | null;
+            /** Instrument */
+            instrument: string | null;
+            brightness: components["schemas"]["Measurement"] | null;
+            fire_radiative_power: components["schemas"]["Measurement"] | null;
+            /** Distance From Query Km */
+            distance_from_query_km: number;
+        };
         /** ForecastRisk */
         ForecastRisk: {
             /** Horizon Hours */
@@ -220,6 +433,61 @@ export interface components {
             state: string;
             /** Authority Type */
             authority_type: string;
+        };
+        /** Measurement */
+        Measurement: {
+            /** Value */
+            value: number;
+            /** Unit */
+            unit: string;
+        };
+        /** MeteorologicalObservation */
+        MeteorologicalObservation: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /**
+             * Status
+             * @default live
+             * @enum {string}
+             */
+            status: "live" | "cached";
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            temperature: components["schemas"]["Measurement"] | null;
+            /** Relative Humidity Percent */
+            relative_humidity_percent: number | null;
+            wind_speed: components["schemas"]["Measurement"] | null;
+            /** Wind From Degrees */
+            wind_from_degrees: number | null;
+            /** Wind Cardinal */
+            wind_cardinal: string | null;
+            sea_level_pressure: components["schemas"]["Measurement"] | null;
+            /** Precipitation Probability Percent */
+            precipitation_probability_percent: number | null;
+            precipitation_qpf: components["schemas"]["Measurement"] | null;
+            /** Cloud Cover Percent */
+            cloud_cover_percent: number | null;
+        };
+        /** PollutantMeasurement */
+        PollutantMeasurement: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string | null;
+            /** Full Name */
+            full_name: string | null;
+            concentration: components["schemas"]["Measurement"] | null;
         };
         /** PollutionIncident */
         PollutionIncident: {
@@ -284,6 +552,18 @@ export interface components {
             /** Note */
             note: string;
         };
+        /** ProviderConfiguration */
+        ProviderConfiguration: {
+            /** Provider */
+            provider: string;
+            /** Configured */
+            configured: boolean;
+            /**
+             * Configuration State
+             * @enum {string}
+             */
+            configuration_state: "configured" | "not_configured";
+        };
         /**
          * RiskLevel
          * @enum {string}
@@ -310,6 +590,11 @@ export interface components {
          * @enum {string}
          */
         SignalType: "citizen_report" | "air_quality" | "fire" | "wind" | "satellite";
+        /**
+         * SourceState
+         * @enum {string}
+         */
+        SourceState: "live" | "cached" | "unavailable" | "not_configured" | "error";
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -332,6 +617,60 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    sources_api_v1_environment_sources_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnvironmentalSources"];
+                };
+            };
+        };
+    };
+    context_api_v1_environment_context_get: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+                /** @description Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone. */
+                at?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnvironmentalContext"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_health_get: {
         parameters: {
             query?: never;

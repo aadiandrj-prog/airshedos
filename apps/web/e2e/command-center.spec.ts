@@ -54,7 +54,7 @@ test("backend incident, evidence, acknowledgment and simulated sharing", async (
     page.getByRole("button", { name: "Shared (demo)" }),
   ).toBeDisabled();
   await page.screenshot({
-    path: "../../docs/screenshots/command-center-desktop.png",
+    path: "../../docs/screenshots/phase-1b-desktop.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -67,7 +67,7 @@ test("backend incident, evidence, acknowledgment and simulated sharing", async (
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "../../docs/screenshots/command-center-mobile.png",
+    path: "../../docs/screenshots/phase-1b-mobile.png",
     fullPage: true,
   });
 });
@@ -84,9 +84,9 @@ test("connection failure, retry, loading and empty state", async ({ page }) => {
     await route.fulfill({ json: [] });
   });
   await page.getByRole("button", { name: "Retry connection" }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Loading incident evidence",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Loading incident evidence" }),
+  ).toContainText("Loading incident evidence");
   await expect(
     page.getByRole("heading", { name: "No active incidents" }),
   ).toBeVisible();
@@ -116,9 +116,11 @@ test("action failure leaves state unchanged and permits retry", async ({
   );
   await page.goto("/");
   await page.getByRole("button", { name: "Acknowledge", exact: true }).click();
-  await expect(page.getByRole("alert").filter({ hasText: "The action could not be saved" })).toContainText(
-    "The action could not be saved",
-  );
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "The action could not be saved" }),
+  ).toContainText("The action could not be saved");
   await expect(
     page.getByRole("button", { name: "Acknowledge", exact: true }),
   ).toBeEnabled();

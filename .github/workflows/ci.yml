@@ -1,4 +1,4 @@
-name: Phase 1A checks
+name: AirshedOS checks
 on: [push, pull_request]
 permissions:
   contents: read

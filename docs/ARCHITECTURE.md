@@ -1,9 +1,13 @@
 # AirshedOS architecture
 
-## Current: Phase 1A
+## Current: Phase 1B
 
 ```mermaid
 flowchart LR
+  Providers[Google AQ / Weather / NASA FIRMS] --> Normalize[Async adapters + normalization]
+  Normalize --> Cache[Per-provider TTL cache]
+  Cache --> Context[Environmental context API]
+  Context --> Probe[Independent probe panel]
   Fixture[Demo fixture] --> Repository[In-memory repository]
   Repository --> API[FastAPI REST API]
   API --> Web[Next.js command center]
@@ -44,23 +48,26 @@ In-memory state is deliberately ephemeral and unsuitable for multi-worker or pub
 
 The page provides loading, unavailable, empty, success, and failed-action states. It sorts incidents by severity then confidence, exposes a selected incident, and keeps actions disabled while requests are in flight. Refresh retrieves fresh state. Display times are explicitly in IST.
 
-## Planned only: future target
+## Environmental data boundary
 
-```mermaid
-flowchart LR
-  Signals[Citizen / environmental signals] --> Gemini[Gemini multimodal]
-  Gemini --> Adapters[Environmental data adapters]
-  Adapters --> BigQuery[BigQuery]
-  BigQuery --> Vertex[Vertex AI prediction]
-  Vertex --> Fusion[Evidence fusion engine]
-  Fusion --> Command[AirshedOS command center]
-  Command --> Sharing[Jurisdiction sharing]
-```
+`app/environment/models.py` extends the existing strict Pydantic conventions: finite coordinates and measurements, timezone-aware timestamps, explicit nullable fields, and provenance. `EnvironmentalContext` holds `AirQualityObservation`, `MeteorologicalObservation`, `FireObservation`, `EnvironmentalSourceStatuses`, and query metadata. Supporting `Measurement`, `PollutantMeasurement`, and `AirQualityIndex` retain source units and index identities. Environmental provenance cannot be marked demo.
 
-This diagram is a target, not a deployed architecture. No Gemini, Vertex AI, Google Air Quality/Weather, Earth Engine, FIRMS, OpenAQ, Maps, BigQuery, Firebase, PostgreSQL, real messaging, authentication, training, or federated learning exists in Phase 1A.
+`AirQualityProvider`, `WeatherProvider`, and `FireProvider` are small async protocols. Concrete Google and NASA adapters translate provider payloads, while `EnvironmentService` gathers independent results and returns partial success. FastAPI lifespan owns a shared HTTPX client; the test factory accepts an injected service. The incident repository and its behavior are unchanged.
 
-Future integrations should populate these domain concepts through explicit adapters, retain source identity and provenance, and communicate missing/conflicting observations. An AI inference remains evidence to evaluate; it must not silently turn a hypothesis into a confirmed event.
+Each outbound attempt has a total/read timeout (default 8 seconds, connect 3 seconds), two attempts maximum, a 0.2 second retry delay, and a 2 MB body limit. Only transport errors, rate limits, and selected transient 5xx responses retry. A provider deadline of `2 × timeout + 1` seconds also bounds time waiting for its lock. Errors become safe source messages. Structured logs contain provider, success, status, and latency; neither raw bodies nor credential-bearing URLs are logged.
 
-## Suggested Phase 1B (not started)
+The process-local LRU cache has at most 256 entries shared across providers. Google results default to 600 seconds; FIRMS to 900 seconds. Keys preserve exact validated coordinates and FIRMS radius. There is no geographic rounding/reuse across distinct points. Three provider locks coalesce identical concurrent requests and limit outbound quota pressure. Timers purge expired entries even if the point is never queried again; lookups also enforce expiry. Only successful observations (including empty FIRMS lists) are cached, and copied responses retain their original observation/retrieval times with a `cached` status. Nothing is persisted. TTL configuration is capped at one hour; zero disables caching.
 
-Agree on a narrow intake and evidence contract: validate a submitted citizen report, attach it to a local incident, and exercise supported/partial/conflicting evidence cases with fixtures. Define acceptance criteria and failure semantics before choosing any live integration. Keep prediction, maps, persistence, and notifications out unless the next phase explicitly authorizes them.
+`GET /api/v1/environment/context` validates latitude/longitude and accepts optional timezone-aware `at`. `at` is recorded as `requested_reference_time`, not silently used as a historical query; `requested_at` is the actual request time. `GET /api/v1/environment/sources` reports configuration only, not credential validity or provider health. Missing optional credentials are normal. Invalid user parameters return 422; upstream failures still return a valid context with independent source states.
+
+`EnvironmentPanel` calls only the backend. It shows source-specific units, statuses, times and provenance separately from the fictional incident. There is no path from live readings to demo evidence, confidence, or forecast. Fire `null` means no valid response; `[]` means a successful zero-detection query. The browser imports generated OpenAPI types, not a second handwritten schema.
+
+## Creative direction
+
+The user-supplied Stitch ZIP contains multiple landing-page directions. The dark atmospheric learning-page reference informed charcoal-green surfaces, pale green controls, restrained borders and serif section headings. These were adapted into an operational workspace with a coordinate probe and compact data cards. No reference assets, external fonts, decorative hero, or marketing flows were added. Desktop uses three source columns; smaller screens stack them. Statuses are written in text as well as color, controls have visible focus, and reduced motion is respected.
+
+This intentionally refines the Phase 1A appearance under the user's direct request while preserving its workflows, overriding the attached brief's narrower “Do NOT redesign” direction.
+
+## Planned only
+
+Earth Engine / Sentinel-5P, Gemini, citizen intake, translation, Vertex AI, BigQuery, prediction, live evidence scoring, Google Maps, persistence, authentication and real notification delivery are not implemented. Phase 1C should first establish a bounded satellite data-availability probe with explicit spatial resolution, time windows, provenance and partial-failure semantics; it must not imply causal attribution. No Phase 1C work was started.

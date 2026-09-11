@@ -44,6 +44,8 @@ pygments==2.21.0
     # via pytest
 pytest==9.1.1
     # via airshedos-api (pyproject.toml)
+python-dotenv==1.2.3
+    # via airshedos-api (pyproject.toml)
 ruff==0.16.6
     # via airshedos-api (pyproject.toml)
 starlette==1.6.0

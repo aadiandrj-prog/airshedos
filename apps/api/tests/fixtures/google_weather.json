@@ -1,0 +1,9 @@
+{
+  "currentTime":"2026-09-10T04:12:00Z",
+  "temperature":{"degrees":31.4,"unit":"CELSIUS"},
+  "relativeHumidity":65,
+  "wind":{"direction":{"degrees":225,"cardinal":"SOUTHWEST"},"speed":{"value":11.2,"unit":"KILOMETERS_PER_HOUR"}},
+  "airPressure":{"meanSeaLevelMillibars":1004.5},
+  "precipitation":{"probability":{"percent":0,"type":"RAIN"},"qpf":{"quantity":0,"unit":"MILLIMETERS"}},
+  "cloudCover":20
+}
