@@ -600,6 +600,10 @@
             ],
             "title": "Fires"
           },
+          "fire_dataset": {
+            "type": "string",
+            "title": "Fire Dataset"
+          },
           "fire_search_radius_km": {
             "type": "number",
             "title": "Fire Search Radius Km"
@@ -631,6 +635,7 @@
           "air_quality",
           "weather",
           "fires",
+          "fire_dataset",
           "fire_search_radius_km",
           "fire_window_days",
           "source_statuses",

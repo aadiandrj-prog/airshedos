@@ -1,12 +1,42 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import fixture from "./fixtures/environment.test.json";
 
 // Synthetic normalized fixture, intercepted only in tests. Never used by the app.
 const endpoint = "**/api/v1/environment/context?*";
 
+async function mockUnconfigured(page: Page) {
+  await page.route(endpoint, (route) => {
+    const query = new URL(route.request().url()).searchParams;
+    return route.fulfill({
+      json: {
+        ...fixture,
+        latitude: Number(query.get("lat")),
+        longitude: Number(query.get("lng")),
+        air_quality: null,
+        weather: null,
+        fires: null,
+        source_statuses: Object.fromEntries(
+          Object.entries(fixture.source_statuses).map(([key, source]) => [
+            key,
+            {
+              ...source,
+              configured: false,
+              status: "not_configured",
+              retrieved_at: null,
+              message:
+                "Synthetic test: backend credentials are not configured.",
+            },
+          ]),
+        ),
+      },
+    });
+  });
+}
+
 test("unconfigured providers remain separate from the functional demo", async ({
   page,
 }) => {
+  await mockUnconfigured(page);
   const external: string[] = [];
   page.on("request", (request) => {
     if (/googleapis|modaps\.eosdis/.test(request.url()))
@@ -55,6 +85,7 @@ test("provider readings, source times, units, and cached states render", async (
   await expect(panel.getByText("ppb", { exact: false })).toBeVisible();
   await expect(panel.getByText("Closest detection: 1.11 km")).toBeVisible();
   await expect(panel.getByText("Google Maps", { exact: true })).toHaveCount(2);
+  await expect(panel.getByText("VIIRS SNPP NRT", { exact: false })).toBeVisible();
   await panel.locator("summary").first().click();
   await expect(
     panel.getByText("Observed", { exact: true }).first(),
@@ -65,7 +96,7 @@ test("provider readings, source times, units, and cached states render", async (
   await panel.getByRole("button", { name: "Check conditions" }).click();
   await expect(panel.getByText("Cached data", { exact: true })).toHaveCount(3);
   await page.screenshot({
-    path: "../../docs/screenshots/phase-1b-mocked-readings.png",
+    path: "test-results/mocked-readings.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -75,7 +106,7 @@ test("provider readings, source times, units, and cached states render", async (
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "../../docs/screenshots/phase-1b-mocked-mobile.png",
+    path: "test-results/mocked-mobile.png",
     fullPage: true,
   });
 });
@@ -159,6 +190,7 @@ test("environment connection failure can retry without breaking the incident", a
     page.getByRole("heading", { name: "Evidence fusion" }),
   ).toBeVisible();
   await page.unroute(endpoint);
+  await mockUnconfigured(page);
   await panel.getByRole("button", { name: "Check conditions" }).click();
   await expect(panel.getByText("Not configured", { exact: true })).toHaveCount(
     3,

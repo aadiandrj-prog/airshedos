@@ -159,7 +159,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-These checks cover real API connectivity/actions, reload behavior, evidence, desktop/mobile screenshots, connection failure, loading, empty state, and failed actions. Screenshots are saved under `docs/screenshots`. Environmental display tests also intercept explicitly synthetic provider fixtures to verify readings, units, cached states, partial responses, and zero detections; these are not live integration evidence. Browser checks are local and are not part of the lightweight CI workflow.
+These checks cover real API connectivity/actions, reload behavior, evidence, desktop/mobile screenshots, connection failure, loading, empty state, and failed actions. Browser regression screenshots are saved under ignored `apps/web/test-results`; curated verification captures are under `docs/screenshots`. Environmental display tests also intercept explicitly synthetic provider fixtures to verify readings, units, cached states, partial responses, and zero detections; these are not live integration evidence. Browser checks are local and are not part of the lightweight CI workflow.
 
 ## Data and limitations
 
@@ -189,4 +189,4 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
 # Add --json for complete normalized values, timestamps, and provenance.
 ```
 
-This developer-only command is never run in CI. Credentials were deferred for this delivery; all three genuine provider states are `NOT_CONFIGURED`.
+This developer-only command is never run in CI. The live verification gate passed on 11 September 2026: all three providers returned HTTP 200 for the fixed NCR probe, followed by verified cache reuse and a controlled partial failure. Run the command with `--gate --json` to repeat the developer-only gate. See the verification report for timestamped results, which are not ongoing monitoring.

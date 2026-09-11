@@ -40,7 +40,12 @@ def service(client, settings=None, clock=None):
     return EnvironmentService(
         GoogleAirQualityProvider(http, settings.google_key.get_secret_value()),
         GoogleWeatherProvider(http, settings.google_key.get_secret_value()),
-        NasaFirmsProvider(http, settings.firms_key.get_secret_value(), settings.firms_radius_km),
+        NasaFirmsProvider(
+            http,
+            settings.firms_key.get_secret_value(),
+            settings.firms_radius_km,
+            settings.firms_dataset,
+        ),
         settings,
         **({"clock": clock} if clock else {}),
     )
@@ -411,3 +416,37 @@ def test_configured_context_endpoint_with_mock_transport():
         assert body.air_quality and body.weather and body.fires
         assert TEST_KEY not in result.text
     asyncio.run(client.aclose())
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize("dataset", ["VIIRS_NOAA20_NRT", "VIIRS_NOAA21_NRT", "VIIRS_SNPP_NRT"])
+async def test_firms_configured_dataset_in_request_and_provenance(dataset):
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        return provider_response(request)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        env = service(client, EnvironmentSettings(firms_key=TEST_KEY, firms_dataset=dataset))
+        first = await env.context(LAT, LNG)
+        second = await env.context(LAT, LNG)
+    assert len(requests) == 1
+    assert f"/{dataset}/" in requests[0].url.path
+    assert first.fire_dataset == second.fire_dataset == dataset
+    assert first.fires[0].source_id.startswith(dataset + ":")
+    assert dataset in first.fires[0].provenance.method
+    assert second.fires[0].provenance == first.fires[0].provenance
+    assert second.source_statuses.fires.status == "cached"
+
+
+def test_firms_dataset_configuration(monkeypatch):
+    from pydantic import ValidationError
+
+    monkeypatch.delenv("FIRMS_DATASET", raising=False)
+    assert EnvironmentSettings.from_env().firms_dataset == "VIIRS_NOAA20_NRT"
+    monkeypatch.setenv("FIRMS_DATASET", "VIIRS_NOAA21_NRT")
+    assert EnvironmentSettings.from_env().firms_dataset == "VIIRS_NOAA21_NRT"
+    monkeypatch.setenv("FIRMS_DATASET", "unsupported")
+    with pytest.raises(ValidationError):
+        EnvironmentSettings.from_env()

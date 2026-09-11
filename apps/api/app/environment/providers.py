@@ -185,11 +185,13 @@ class GoogleWeatherProvider:
 
 class NasaFirmsProvider:
     name = "nasa_firms"
-    dataset = "VIIRS_SNPP_NRT"
     window_days = 2
 
-    def __init__(self, http: ProviderHTTP, key: str, radius_km: float):
+    def __init__(
+        self, http: ProviderHTTP, key: str, radius_km: float, dataset: str = "VIIRS_NOAA20_NRT"
+    ):
         self.http, self._key, self.configured, self.radius_km = http, key, bool(key), radius_km
+        self.dataset = dataset
 
     async def fetch(self, lat: float, lng: float) -> list[FireObservation]:
         async def get_box(box):
@@ -249,7 +251,7 @@ class NasaFirmsProvider:
                     distance_from_query_km=round(distance, 3),
                     provenance=provenance(
                         source_id,
-                        "VIIRS S-NPP NRT; bounding box then radius filter",
+                        f"{self.dataset}; bounding box then radius filter",
                         FIRMS_DOC,
                         "Thermal detection, not proof of burning type or pollution causation. "
                         "Confidence l/n/h is categorical, not a probability.",

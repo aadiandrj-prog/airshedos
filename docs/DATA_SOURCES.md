@@ -1,6 +1,6 @@
 # Environmental data sources — Phase 1B
 
-Current implementations use backend-only HTTP requests. Test fixtures are synthetic and never imported into production. At delivery, the user chose to proceed without keys: **no provider was genuinely live-verified**. Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
+Current implementations use backend-only HTTP requests. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
 
 ## Configuration
 
@@ -14,6 +14,7 @@ Copy root `.env.example` to root `.env` (ignored by Git). For local Uvicorn, use
 | `ENVIRONMENT_CACHE_TTL_SECONDS` | 600 seconds for Google AQ and Weather, 0–3600 |
 | `FIRMS_CACHE_TTL_SECONDS` | 900 seconds, 0–3600 |
 | `FIRMS_SEARCH_RADIUS_KM` | 25 km, configurable from 1–100 |
+| `FIRMS_DATASET` | `VIIRS_NOAA20_NRT`; also accepts `VIIRS_NOAA21_NRT` and legacy `VIIRS_SNPP_NRT` |
 
 ## Google Air Quality
 
@@ -35,11 +36,11 @@ Unavailable variables remain null. Provider coverage, outages and cadence can di
 
 ## NASA FIRMS
 
-Role: nearby active-fire detections, **not confirmed pollution sources**. The [official area CSV API](https://firms.modaps.eosdis.nasa.gov/api/area/) is queried for `VIIRS_SNPP_NRT`, today and the previous UTC day (day range 2). Other FIRMS sensor streams and historical ingestion are outside this implementation. NASA currently announces that Suomi NPP product delivery will cease on 1 November 2026; this single-stream adapter will need a verified NOAA-20/21 transition before then. See the [official product notice](https://www.earthdata.nasa.gov/data/instruments/viirs/viirs-i-band-375-m-active-fire-data).
+Role: nearby active-fire detections, **not confirmed pollution sources**. The [official area CSV API](https://firms.modaps.eosdis.nasa.gov/api/area/) is queried for a single configured VIIRS product, defaulting to `VIIRS_NOAA20_NRT`, today and the previous UTC day (day range 2). NOAA-21 and legacy S-NPP are selectable; multi-sensor fusion and historical ingestion are outside this implementation. NASA announces that Suomi NPP product delivery will cease on 1 November 2026, so S-NPP is no longer the default or sole supported product. See the [official product notice](https://www.earthdata.nasa.gov/data/instruments/viirs/viirs-i-band-375-m-active-fire-data).
 
 A spherical bounding box covers the configured radius; antimeridian queries split into two boxes. Haversine distance filters each candidate to the actual circle. Results are deduplicated by source identifier and sorted nearest first. The small geometry utility handles poles and date-line crossings without heavyweight GIS dependencies.
 
-Fields retained: detection coordinates; acquisition date plus zero-padded acquisition time interpreted as UTC; satellite/instrument; categorical VIIRS confidence (`l`, `n`, `h`); I4 brightness temperature in kelvin; fire radiative power in megawatts; distance in km; dataset-derived identifier; retrieval time and provenance. Confidence categories are not probabilities. See [VIIRS product attributes](https://www.earthdata.nasa.gov/data/instruments/viirs/viirs-i-band-375-m-active-fire-data).
+The normalized context exposes `fire_dataset` even when no detections are returned, and the frontend labels that product dynamically. Fields retained: detection coordinates; acquisition date plus zero-padded acquisition time interpreted as UTC; satellite/instrument; categorical VIIRS confidence (`l`, `n`, `h`); I4 brightness temperature in kelvin; fire radiative power in megawatts; distance in km; dataset-derived identifier; retrieval time and provenance. Confidence categories are not probabilities. See [VIIRS product attributes](https://www.earthdata.nasa.gov/data/instruments/viirs/viirs-i-band-375-m-active-fire-data).
 
 An HTTP 200 CSV containing only valid headers is a successful zero-detection result (`fires: []`). Invalid headers, including an HTTP 200 key-error message, produce `error` and `fires: null`. No location is changed to force a detection. Thermal detections can reflect different heat sources; clouds, overpass timing and coverage affect availability. Detections do not establish burning type, emissions, transport or causation.
 
@@ -57,9 +58,9 @@ From `apps/api` with the virtual environment activated:
 
 ```sh
 python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
-python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --json
+python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gate --json
 ```
 
-The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](PHASE_1B_VERIFICATION.md) for the actual delivery result.
+The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. The optional `--gate` makes a second identical request, verifies no additional outbound responses and unchanged observation/provenance data, then disables Weather only in that local service instance to check partial success. It prints a PASS/FAIL result (nonzero exit on gate failure) without altering `.env` or provider services. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](PHASE_1B_VERIFICATION.md) for the actual delivery result.
 
 Earth Engine, satellite atmospheric products, Gemini, Vertex AI, historical storage, custom AQI conversion, evidence fusion scoring and pollution-source attribution remain future work.

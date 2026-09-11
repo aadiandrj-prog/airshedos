@@ -120,6 +120,7 @@ class EnvironmentalContext(DomainModel):
     weather: MeteorologicalObservation | None
     # null = no valid response; [] = successful query with no nearby detections.
     fires: list[FireObservation] | None
+    fire_dataset: str
     fire_search_radius_km: float
     fire_window_days: int
     source_statuses: EnvironmentalSourceStatuses

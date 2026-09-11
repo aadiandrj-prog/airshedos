@@ -54,7 +54,7 @@ test("backend incident, evidence, acknowledgment and simulated sharing", async (
     page.getByRole("button", { name: "Shared (demo)" }),
   ).toBeDisabled();
   await page.screenshot({
-    path: "../../docs/screenshots/phase-1b-desktop.png",
+    path: "test-results/command-center-desktop.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -67,7 +67,7 @@ test("backend incident, evidence, acknowledgment and simulated sharing", async (
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "../../docs/screenshots/phase-1b-mobile.png",
+    path: "test-results/command-center-mobile.png",
     fullPage: true,
   });
 });

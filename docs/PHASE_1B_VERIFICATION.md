@@ -1,89 +1,96 @@
-# Phase 1B delivery and verification
+# Phase 1B delivery and live verification
 
-Verified locally on 11 September 2026. This delivery implements the environmental data foundation and the requested frontend refinement. **Credentialed live integration remains unverified because the user explicitly chose to proceed without keys.** No provider result was fabricated. Phase 1C and deployment were not started.
+**Overall gate: PASS. Implementation verified and live providers verified.**
 
-## Delivered
+All three real providers authenticated and normalized successfully at the same fixed Gurugram coordinate. Cache reuse, a controlled partial failure, and real frontend display passed. This is a timestamped integration check, not a promise of continuous availability. No Phase 1C work or deployment was started; PR #1 has not been merged.
 
-- `apps/api/app/environment/`: strict environmental models, provider protocols and Google AQ/Weather + NASA FIRMS implementations, bounded async HTTP, Haversine/bounding-box utilities, independent result aggregation, TTL cache, configuration and routes.
-- `apps/api/app/main.py`: lifespan-owned HTTP client and injectable environmental service; incident repository and actions preserved.
-- `apps/api/scripts/verify_environment_sources.py`: manual coordinate probe with concise or full normalized output, excluded from CI.
-- `apps/api/tests/`: synthetic provider fixtures, network-blocking setup, normalization, failure, geo, cache, security and endpoint coverage.
-- `apps/web/src/components/environment-panel.tsx`: independent coordinate probe, readings, units, source states, source timing, fire distances and clear attribution limits.
-- `apps/web/src/app/`, `operations-pane.tsx`: charcoal-green visual refinement, editorial headings, responsive source cards, preserved command workflows.
-- Generated `apps/api/openapi.json` and `apps/web/src/lib/api-schema.d.ts`, dependency locks, backend/frontend environment examples, Docker configuration, CI name, documentation and browser tests updated.
+## Genuine live probe
 
-Models introduced: `EnvironmentalContext`, `EnvironmentalObservation`, `EnvironmentalProvenance`, `AirQualityObservation`, `AirQualityIndex`, `PollutantMeasurement`, `Measurement`, `MeteorologicalObservation`, `FireObservation`, `EnvironmentalSourceStatus`, `EnvironmentalSourceStatuses`, `EnvironmentalSources`, `ProviderConfiguration`, and `SourceState`.
+Coordinate: **28.4595, 77.0266**, search radius **25 km**. Initial successful adapter probe: **2026-09-11T09:57:39.349323Z**. The repeatable cache/degraded-state gate below started at **2026-09-11T09:59:23.114308Z** (15:29:23 IST). Every value below belongs to that gate request, not a synthetic fixture.
 
-Small async interfaces `AirQualityProvider`, `WeatherProvider`, and `FireProvider` are implemented by `GoogleAirQualityProvider`, `GoogleWeatherProvider`, and `NasaFirmsProvider`. No plugin framework was added.
+| Provider | Configured | Live result | Fetch latency (ms) | Observation time (UTC) | Observation retrieved (UTC) | Second request |
+| --- | --- | --- | --- | --- | --- | --- |
+| Google Air Quality | YES | HTTP 200 / LIVE | 1773.21 | 2026-09-11T09:00:00Z | 2026-09-11T09:59:24.887471Z | CACHED / 0.38 ms |
+| Google Weather | YES | HTTP 200 / LIVE | 1567.08 | 2026-09-11T09:59:24.539256Z | 2026-09-11T09:59:24.696652Z | CACHED / 0.34 ms |
+| NASA FIRMS / NOAA-20 | YES | HTTP 200 / LIVE | 1612.7 | None: zero detections | 2026-09-11T09:59:24.744814Z | CACHED / 0.16 ms |
 
-New routes:
+Successful authenticated HTTP 200 responses establish that Google Air Quality and Weather access was enabled and usable for this project/key at the probe time. No disabled-API, billing, key restriction, invalid-credential or quota error occurred. Credentials are present only in the ignored backend environment; no key or key fragment is recorded here.
 
-- `GET /api/v1/environment/context?lat=28.4595&lng=77.0266` with optional timezone-aware `at` reference metadata.
-- `GET /api/v1/environment/sources` for configuration presence only.
+### Representative normalized fields
 
-The service returns partial context even if one/all providers fail. Google cache TTL is 600 seconds; FIRMS 900 seconds; exact coordinate keys; 256-entry process-local LRU; expiry timers; two HTTP attempts maximum; a deadline also bounds provider-lock waiting. No errors are cached, no secrets/raw bodies are logged, and no environment readings affect the fictional incident's scores or forecast.
+Google AQ retained two independent scales:
 
-## Automated checks
+- Universal AQI (`uaqi`): **30**, category **Low air quality**, dominant pollutant **pm10**.
+- Indian NAQI (`ind_cpcb`, provider label `NAQI (IN)`): **175**, category **Moderate air quality**, dominant pollutant **pm25**.
+- PM2.5 **38.63 µg/m³**, PM10 **139.95 µg/m³**, CO **1493.6 ppb**, NO2 **10.07 ppb**, O3 **27.69 ppb**, SO2 **5.33 ppb**, NH3 **65.45 ppb**.
+
+Google Weather: **28.7 °C**, relative humidity **76%**, wind **10 km/h from 72° / EAST_NORTHEAST**, sea-level pressure **1007.25 mbar**, precipitation probability **44%**, QPF **0.55 mm**, cloud cover **94%**. Zero/nullable values and source units continue to be preserved. Wind is the origin direction, not a plume destination.
+
+NASA FIRMS used the official global Area API with **VIIRS_NOAA20_NRT**, day range **2** (11 and 10 September UTC), bounding box **76.770865,28.234670,77.282335,28.684330** in west/south/east/north order. Its valid CSV normalized to **`fires: []`, status LIVE, count 0** within 25 km. The location was not changed to force a detection. With no returned detections, there is no observation time, satellite row, confidence, FRP or brightness value to invent. Positive-detection parsing, categorical confidence, UTC time parsing, distances and radius filtering remain covered by synthetic regression fixtures; no positive detection was live-verified at this probe.
+
+AQ and Weather retain provider source IDs, lookup method, documentation URLs, explanatory notes and `is_demo: false`. FIRMS retains source identity, selected product, radius, window and retrieval time even for an empty response. No provenance is inferred for nonexistent observations. Modelled Google AQ is not a new regulatory station; thermal detections cannot establish pollution causation.
+
+## Cache and controlled failure
+
+Run from `apps/api` with the virtual environment active:
+
+```sh
+python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gate --json
+```
+
+The first context made **3 external requests**, one per provider, each HTTP 200. The second identical request at **2026-09-11T09:59:24.888548+00:00** returned **CACHED for all three**. The HTTP response counter stayed at **3**, with no new provider call. Observation values, original observation/retrieval times, and provenance matched; the selected FIRMS product was unchanged. Cache latencies are in the provider table above.
+
+At **2026-09-11T09:59:24.890489+00:00**, Weather was disabled only through the local service's injected provider object. The context remained valid: **AQ CACHED + Weather NOT_CONFIGURED/null + FIRMS CACHED/[]**. Other results matched the prior context and the outbound response count stayed **3**. The original provider was restored; neither `.env` nor a real service was changed. No upstream failure was intentionally induced. The manual tool returns a nonzero exit status if its provider/cache/partial checks fail.
+
+## Frontend and Docker
+
+The existing Docker project was rebuilt and restarted with the root backend `.env`. Both API and frontend reported **healthy**, bound to loopback ports 8000 and 3000. No credentials were added to the frontend container or build arguments.
+
+A separate real browser probe at **2026-09-11T10:02:46.101684Z** returned API HTTP 200 and **LIVE for all three**; Check conditions then returned **CACHED for all three**. Rendered values were compared with the actual backend response, units and source timing were visible, provenance was accessible, and the fictional incident retained its explicit DEMO label and separation. The browser made **zero direct Google/NASA requests**, had **zero uncaught errors**, and the 390px mobile layout had no horizontal overflow.
+
+The browser probe crossed the hourly AQ update boundary after the manual gate: it displayed Universal AQI **48** and PM2.5 **36.37 µg/m³** at observation time **2026-09-11T10:00:00Z**. This is a later provider observation, not a substituted index or inconsistent normalization.
+
+- [Live context, desktop with source timing expanded](screenshots/phase-1b-live-context.png)
+- [Full command center, live desktop](screenshots/phase-1b-live-desktop.png)
+- [Full command center, cached mobile refresh](screenshots/phase-1b-live-mobile.png)
+
+These new captures contain real timestamped observations. Earlier `mocked` screenshots remain explicitly synthetic, and earlier unconfigured screenshots remain historical. Regression screenshots now go to ignored `apps/web/test-results` so automated tests do not overwrite curated evidence.
+
+## Narrow implementation changes
+
+No Google AQ or Weather response compatibility change was required: real payload structures matched the adapters. Additional returned pollutants such as NH3 were already handled without a fixed pollutant list. No raw live response fixture was needed.
+
+FIRMS now accepts `FIRMS_DATASET`, defaults to **VIIRS_NOAA20_NRT**, and allows NOAA-21 or legacy S-NPP. This addresses NASA's announced S-NPP product retirement without adding multi-sensor fusion. The selected product is included in cache identity, normalized `fire_dataset`, observation IDs/provenance and the frontend label, including zero-detection results. OpenAPI and frontend types were regenerated together.
+
+The developer-only verification script gained `--gate`, allowlisted HTTP status/count diagnostics, cache/provenance comparisons and a controlled local degraded-state check. Tests gained configurable-product and invalid-product coverage. The missing-credential browser scenarios now explicitly mock absence so they remain deterministic when local keys are present. Synthetic FIRMS fixture satellite identity matches the NOAA-20 default; no secrets or real raw provider responses were added to fixtures.
+
+## Regression and security
 
 | Check | Result |
 | --- | --- |
-| Backend `ruff check .` | Pass |
-| Backend `ruff format --check .` | Pass |
-| Backend `pytest -q` | **72 passed**: all 24 Phase 1A tests plus 48 new cases |
-| `python scripts/export_openapi.py` and frontend `npm run generate:api` | Regenerated; contract consistency verified |
-| Compare all original routes and schemas to Phase 1A | No existing route or schema changed |
-| Frontend `npm run lint` | Pass |
-| Frontend `npm run typecheck` | Pass |
-| Frontend `npm run build` | Pass, Next.js production output |
-| `npm run test:e2e` against Docker app | **8 passed**, including all 3 Phase 1A scenarios |
-| `docker compose -p airshedos-phase1a up --build -d --wait` | Both images built; API and web healthy |
-| Secret-pattern scan of tracked/unignored source and docs | No findings; Google/GitHub/AWS/private-key patterns, credential-bearing FIRMS URLs and nonempty provider environment assignments checked |
-| `.env`, `apps/web/.env.local`, `apps/api/.env` ignore checks | All ignored |
-| `git diff --check` | Pass |
+| Backend `ruff check .` and `ruff format --check .` | PASS |
+| Backend `pytest -q` | **76 passed**, including all 72 previous cases |
+| OpenAPI export and `npm run generate:api` | PASS; generated schema/types updated together |
+| Frontend `npm run lint` | PASS |
+| Frontend `npm run typecheck` | PASS |
+| Frontend `npm run build` | PASS |
+| `npm run test:e2e` | **8 passed**; all existing incident workflows retained |
+| Additional real-provider browser verification | PASS: LIVE → CACHED, values/units/provenance/demo separation |
+| `docker compose -p airshedos-phase1a up --build -d --wait` | PASS, both services healthy |
+| `git diff --check` | PASS |
+| Secret-pattern scan before/after verification | PASS; actual credential values additionally checked against source, compiled frontend, normalized gate outputs and API logs |
+| GitHub CI | Results for the pushed commit are linked in the delivery response / PR #1 |
 
-The backend retains two existing third-party deprecation warnings concerning Starlette/HTTPX and an AnyIO alias. No test failed. Browser tests initially exposed two overly broad test selectors; these were corrected before the passing run.
+Two existing third-party Starlette/HTTPX and AnyIO deprecation warnings remain. CI continues to use mocked provider responses and blocks real HTTP transport; no provider credentials were added to GitHub Actions. The root `.env` is ignored and excluded from Git. Docker build contexts exclude environment files, and the frontend container has no provider-key variables. Logs/verification artifacts were checked without printing secrets or credential-bearing URLs.
 
-Tests explicitly block real HTTP transport and clear provider credentials. All successful provider payloads in automated tests are synthetic. Tests cover all-success, partial failure, missing Google credentials with FIRMS configured, all-unavailable, malformed payloads, 4xx/5xx, retries, timeout, coordinates/timezones, source units, empty detections, cache expiry/coalescing/capacity and secret-safe serialization/logging.
+## Disposition and next phase
 
-Browser checks exercise unconfigured providers against the real local backend; synthetic route interceptions exercise readings, cached states, partial availability, zero detections and errors. They also verify the browser makes no direct Google/NASA provider requests, and that incident acknowledgment/sharing, evidence expansion, retry/loading/empty states and reload persistence remain functional. Screenshots and additional layout inspection cover desktop/mobile and narrow-screen reflow. No horizontal overflow was found at 1280, 768, 640, 390 or 320 CSS pixels, and no uncaught browser errors occurred. The 640px check approximates 200% zoom reflow on a 1280px desktop; this is not a full accessibility audit.
+**No remaining Phase 1B gate blocker. Safe to merge within the local Phase 1B scope once the new commit's CI is green; merging remains a human decision.** Changes stay on `feat/phase-1b-environment`, PR #1, with commit message `fix: verify live environmental providers`. Exact commit and CI links are in the delivery response.
 
-## Actual NCR provider verification
+Limits remain: a single supported FIRMS product is queried at a time; zero detections cannot verify positive-row behavior against a live payload; provider coverage/cadence/outages and quotas can change; caches and incident actions remain process-local; no historical queries, causal attribution, maps, Gemini, satellite atmospheric evidence or Vertex AI predictions exist.
 
-Manual command from `apps/api`:
+Recommended Phase 1C: define a narrow satellite atmospheric data-availability gate with explicit product resolution, acquisition times, quality masks, provenance and missing-data behavior. It must remain separate from the fictional incident. **Phase 1C was not started.**
 
-```sh
-.venv/bin/python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
-```
+## Initial implementation record
 
-Actual request: **2026-09-11T03:03:45.796507+00:00** (08:33:45 IST), coordinate **28.4595, 77.0266**.
-
-| Source | Actual state | Local processing latency | Normalized readings |
-| --- | --- | --- | --- |
-| Google Air Quality | NOT_CONFIGURED | 0.04 ms | null |
-| Google Weather | NOT_CONFIGURED | 0.01 ms | null |
-| NASA FIRMS | NOT_CONFIGURED | 0.00 ms | null; no claim of zero fires |
-
-**Genuinely live sources: none.** No keys were supplied, no external provider request was made, and no observation/provenance was invented. The tiny latencies above measure local configuration handling, not network performance. Credentialed access, enabled APIs, geographic coverage and billing/quota remain to be checked using this same NCR probe when keys are supplied.
-
-## Visual review
-
-The design follows the supplied ZIP's dark atmospheric direction with pale green actions and serif headings. The live-context area and fictional incident area have distinct headings and clear labels. Existing workflows remain intact. No marketing hero, external images/fonts, map SDK or additional UI dependencies were introduced.
-
-- [Desktop, actual unconfigured providers](screenshots/phase-1b-desktop.png)
-- [Mobile, actual unconfigured providers](screenshots/phase-1b-mobile.png)
-- [Desktop, synthetic renderer test](screenshots/phase-1b-mocked-readings.png)
-- [Mobile, synthetic renderer test](screenshots/phase-1b-mocked-mobile.png)
-
-**Screenshots with `mocked` in their names contain synthetic test values, not live observations.** The original Phase 1A screenshots and verification record remain preserved.
-
-## Documentation and boundaries
-
-README explains current setup, both environment-file locations, routes and manual checks. ARCHITECTURE describes provider isolation, models, cache, failure semantics and the creative direction. DATA_SOURCES links official Google/NASA references, configuration, normalization, attribution and limitations.
-
-The direct user request to refine the frontend superseded the attached brief's “Do NOT redesign” restriction. This was a visual refinement; Phase 1A routes, schemas and actions were preserved. The optional `at` parameter is explicitly metadata-only because this phase permits current conditions. A single FIRMS stream (`VIIRS_SNPP_NRT`) is used; NASA announces S-NPP product delivery ends 1 November 2026, so a verified NOAA-20/21 transition is needed before then. See DATA_SOURCES for the primary reference.
-
-Remaining limitations: no credentialed live verification; provider coverage/cadence/outages; process-local cache and incident state; spherical approximate distances; FIRMS thermal detections do not prove emissions or causation; Google AQ estimates are not a new regulatory station; no historical queries, live fusion scores, AI, maps, predictions, persistence, authentication or notifications.
-
-Git delivery uses the focused branch `feat/phase-1b-environment` from the verified Phase 1A baseline, with commit message `feat: add live environmental data foundation`. Commit/PR links and hosted CI results are reported in the delivery response.
-
-Recommended Phase 1C: after enabling and probing these providers, validate a narrowly scoped satellite atmospheric data adapter with explicit acquisition times, resolution, provenance and missing-data behavior. Do not turn that context into causal attribution. **No Phase 1C work was performed.**
+Commit `aaa32d4` initially passed 72 backend tests, 8 browser tests, builds, Docker, scans and CI while keys were absent. Its NCR probe at 2026-09-11T03:03:45.796507Z correctly returned NOT_CONFIGURED for all three. This historical implementation-only result is now superseded by the genuine live gate above; it was never presented as live integration evidence. Phase 1A's historical verification remains in [VERIFICATION.md](VERIFICATION.md).

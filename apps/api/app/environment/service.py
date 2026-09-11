@@ -109,7 +109,13 @@ class EnvironmentService:
         if provider.configured:
             async with self.locks[name]:
                 # Exact validated float coordinates: no reuse across distinct geographic points.
-                key = (name, lat, lng, self.settings.firms_radius_km if name == "fires" else None)
+                key = (
+                    name,
+                    lat,
+                    lng,
+                    self.settings.firms_radius_km if name == "fires" else None,
+                    self.settings.firms_dataset if name == "fires" else None,
+                )
                 cached = self.cache.get(key)
                 if cached and cached[0] > self.clock():
                     self.cache.move_to_end(key)
@@ -196,6 +202,7 @@ class EnvironmentService:
             fires=fires.data,
             fire_search_radius_km=self.settings.firms_radius_km,
             fire_window_days=2,
+            fire_dataset=self.settings.firms_dataset,
             source_statuses=EnvironmentalSourceStatuses(
                 air_quality=aq.source, weather=weather.source, fires=fires.source
             ),

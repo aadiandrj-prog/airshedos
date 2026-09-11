@@ -453,8 +453,9 @@ export function EnvironmentPanel() {
                     </p>
                   )}
                   <p className="source-caveat">
-                    VIIRS S-NPP · today and previous UTC day. Thermal detections
-                    do not establish a pollution source.
+                    {context.fire_dataset.replaceAll("_", " ")} · today and
+                    previous UTC day. Thermal detections do not establish a
+                    pollution source.
                   </p>
                 </>
               ) : (

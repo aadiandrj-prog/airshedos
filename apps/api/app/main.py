@@ -40,7 +40,10 @@ def create_app(environment: EnvironmentService | None = None) -> FastAPI:
                     GoogleAirQualityProvider(http, settings.google_key.get_secret_value()),
                     GoogleWeatherProvider(http, settings.google_key.get_secret_value()),
                     NasaFirmsProvider(
-                        http, settings.firms_key.get_secret_value(), settings.firms_radius_km
+                        http,
+                        settings.firms_key.get_secret_value(),
+                        settings.firms_radius_km,
+                        settings.firms_dataset,
                     ),
                     settings,
                 )

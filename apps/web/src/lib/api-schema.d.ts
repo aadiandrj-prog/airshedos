@@ -252,6 +252,8 @@ export interface components {
             weather: components["schemas"]["MeteorologicalObservation"] | null;
             /** Fires */
             fires: components["schemas"]["FireObservation"][] | null;
+            /** Fire Dataset */
+            fire_dataset: string;
             /** Fire Search Radius Km */
             fire_search_radius_km: number;
             /** Fire Window Days */

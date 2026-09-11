@@ -184,5 +184,6 @@
       "latency_ms": 5.59
     }
   },
-  "incident_relationship": "independent_context_not_demo_corroboration"
+  "incident_relationship": "independent_context_not_demo_corroboration",
+  "fire_dataset": "VIIRS_SNPP_NRT"
 }
