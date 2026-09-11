@@ -1,9 +1,11 @@
 # AirshedOS architecture
 
-## Current: Phase 1B
+## Current: Phase 1C
 
 ```mermaid
 flowchart LR
+  Satellite[Earth Engine / Sentinel-5P] --> Bounded[Bounded synchronous SDK adapter]
+  Bounded --> Cache
   Providers[Google AQ / Weather / NASA FIRMS] --> Normalize[Async adapters + normalization]
   Normalize --> Cache[Per-provider TTL cache]
   Cache --> Context[Environmental context API]
@@ -46,7 +48,7 @@ Two local processes or two Docker containers; no database, queue, authentication
 
 In-memory state is deliberately ephemeral and unsuitable for multi-worker or public production use. Future durability and authorization need an explicit later-phase decision. The current API serves complete incident objects in the list because the fixture is tiny; a separate summary schema can be introduced when payload size warrants it.
 
-The page provides loading, unavailable, empty, success, and failed-action states. It sorts incidents by severity then confidence, exposes a selected incident, and keeps actions disabled while requests are in flight. Refresh retrieves fresh state. Display times are explicitly in IST.
+The page provides loading, unavailable, empty, success, and failed-action states. It sorts incidents by severity then confidence, exposes a selected incident, and keeps actions disabled while requests are in flight. Refresh retrieves fresh state. Incident and ground times use IST; satellite times are explicitly labelled UTC.
 
 ## Environmental data boundary
 
@@ -56,9 +58,9 @@ The page provides loading, unavailable, empty, success, and failed-action states
 
 Each outbound attempt has a total/read timeout (default 8 seconds, connect 3 seconds), two attempts maximum, a 0.2 second retry delay, and a 2 MB body limit. Only transport errors, rate limits, and selected transient 5xx responses retry. A provider deadline of `2 × timeout + 1` seconds also bounds time waiting for its lock. Errors become safe source messages. Structured logs contain provider, success, status, and latency; neither raw bodies nor credential-bearing URLs are logged.
 
-The process-local LRU cache has at most 256 entries shared across providers. Google results default to 600 seconds; FIRMS to 900 seconds. Keys preserve exact validated coordinates and FIRMS radius/product. There is no geographic rounding/reuse across distinct points. Three provider locks coalesce identical concurrent requests and limit outbound quota pressure. Timers purge expired entries even if the point is never queried again; lookups also enforce expiry. Only successful observations (including empty FIRMS lists) are cached, and copied responses retain their original observation/retrieval times with a `cached` status. Nothing is persisted. TTL configuration is capped at one hour; zero disables caching.
+The process-local LRU cache has at most 256 entries shared across providers. Google results default to 600 seconds; FIRMS to 900 seconds. Keys preserve exact validated coordinates and FIRMS radius/product. Ground-provider queries retain exact coordinates; satellite uses its documented rounded neighborhood separately. Three provider locks coalesce identical concurrent requests and limit outbound quota pressure. Timers purge expired entries even if the point is never queried again; lookups also enforce expiry. Only successful observations (including empty FIRMS lists) are cached, and copied responses retain their original observation/retrieval times with a `cached` status. Nothing is persisted. Ground-provider TTL configuration is capped at one hour; zero disables caching.
 
-`GET /api/v1/environment/context` validates latitude/longitude and accepts optional timezone-aware `at`. `at` is recorded as `requested_reference_time`, not silently used as a historical query; `requested_at` is the actual request time. `GET /api/v1/environment/sources` reports configuration only, not credential validity or provider health. Missing optional credentials are normal. Invalid user parameters return 422; upstream failures still return a valid context with independent source states.
+`GET /api/v1/environment/context` validates latitude/longitude and accepts optional timezone-aware `at`. For ground providers, `at` is recorded as `requested_reference_time`, not silently used as a historical query; `requested_at` is the actual request time. `GET /api/v1/environment/sources` reports configuration only, not credential validity or provider health. Missing optional credentials are normal. Invalid user parameters return 422; upstream failures still return a valid context with independent source states.
 
 `EnvironmentPanel` calls only the backend. It shows source-specific units, statuses, times and provenance separately from the fictional incident. There is no path from live readings to demo evidence, confidence, or forecast. Fire `null` means no valid response; `[]` means a successful zero-detection query. `FIRMS_DATASET` selects one supported VIIRS product, default NOAA-20, with NOAA-21 and legacy S-NPP options. The API carries `fire_dataset` and the UI displays it even for zero detections. The browser imports generated OpenAPI types, not a second handwritten schema.
 
@@ -70,4 +72,18 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Earth Engine / Sentinel-5P, Gemini, citizen intake, translation, Vertex AI, BigQuery, prediction, live evidence scoring, Google Maps, persistence, authentication and real notification delivery are not implemented. Phase 1C should first establish a bounded satellite data-availability probe with explicit spatial resolution, time windows, provenance and partial-failure semantics; it must not imply causal attribution. No Phase 1C work was started.
+Gemini, citizen intake, translation, Vertex AI prediction, BigQuery, evidence fusion, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 1C.
+
+## Satellite evidence boundary
+
+`SatelliteProvider` is a small protocol with one concrete `EarthEngineSentinel5PProvider`. The official Python SDK authenticates with backend ADC and an explicit project on first use. Credentials and raw EE objects never enter API models. The fixed product set is NO₂, CO and UV Aerosol Index; this is not a generic remote-sensing framework.
+
+`SatelliteAtmosphericContext` includes original and rounded query coordinates, geometry radius, actual request/generation times, explicit start/end/lookback, product results, aggregate availability and provenance. Each `SatelliteObservation` keeps acquisition time, retrieval time, age, collection/band/image identity, upstream product ID, native units, source footprint metadata where supplied, grid scale, reducer and product-specific QA. `SatelliteProductResult` separates provider status from scientific availability (`no_scene`, `quality_filtered`, `no_usable_pixels`) and operational failures. No fabricated confidence percentages or values are generated.
+
+The full environmental endpoint gathers the satellite task alongside the original three providers. `include_satellite=false` skips it completely; the UI uses that option and the dedicated satellite endpoint concurrently. The original three-key `source_statuses` contract is preserved. Satellite lives in the additive nullable `satellite` field. Dedicated and full endpoints share all satellite service/cache logic.
+
+The SDK is synchronous: one thread-backed batch is allowed per provider instance. A 25-second batch deadline and 10-second SDK/socket timeout bound work; SDK compute retries are disabled. Products are queried sequentially within the batch, while ground providers run concurrently. A timeout retains completed products. Python cannot kill an in-flight RPC: the provider stays reserved until it exits and returns `busy` rather than launching additional work. Lock wait plus lookup has a 26-second service deadline by default. There are no queues, background workers, or persistent jobs.
+
+Satellite reuses the existing 256-entry LRU with a separate lock. Keys include coordinates rounded to four decimals, exact window boundaries, radius and the fixed product set. The default window ends at the beginning of the current UTC hour (up to 59m59s intentionally excluded), making reuse deterministic within the hour. Explicit `at` retains its exact timezone-aware instant. TTL is 3,600 seconds (configurable 0–7,200); cached observations retain original retrieval/acquisition times and update age at response time. Genuine empty/QA-filtered searches are cached; a batch with any provider error is not cached. Absence never means zero pollution.
+
+QA and native units follow [the dataset contract](DATA_SOURCES.md#earth-engine--sentinel-5p). Latest observations are selected independently and may have different timestamps within the stated window; they are not synchronized or fused. Non-nominal scene metadata is conservatively excluded. L3 missing coverage and upstream pixel masking cannot always be separated.

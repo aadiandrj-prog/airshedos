@@ -1,0 +1,44 @@
+{
+  "no2": {
+    "scene_count": 3,
+    "quality_scene_count": 2,
+    "observation": {
+      "value": 3.2e-05,
+      "valid_count": 120,
+      "observed_ms": 1789027200000,
+      "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/SYNTHETIC_TEST_SCENE",
+      "product_id": "SYNTHETIC_TEST_ONLY",
+      "product_quality": "Nominal",
+      "processing_status": "Nominal",
+      "native_footprint": "7x7 km2"
+    }
+  },
+  "co": {
+    "scene_count": 3,
+    "quality_scene_count": 2,
+    "observation": {
+      "value": 0.033,
+      "valid_count": 120,
+      "observed_ms": 1789027200000,
+      "image_id": "COPERNICUS/S5P/NRTI/L3_CO/SYNTHETIC_TEST_SCENE",
+      "product_id": "SYNTHETIC_TEST_ONLY",
+      "product_quality": "Nominal",
+      "processing_status": "Nominal",
+      "native_footprint": "7x7 km2"
+    }
+  },
+  "aerosol_index": {
+    "scene_count": 3,
+    "quality_scene_count": 2,
+    "observation": {
+      "value": -0.7,
+      "valid_count": 120,
+      "observed_ms": 1789027200000,
+      "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/SYNTHETIC_TEST_SCENE",
+      "product_id": "SYNTHETIC_TEST_ONLY",
+      "product_quality": "Nominal",
+      "processing_status": "Nominal",
+      "native_footprint": "7x7 km2"
+    }
+  }
+}

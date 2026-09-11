@@ -346,7 +346,8 @@ async def test_no_secrets_in_structured_logs(caplog):
         records = [
             json.loads(r.message) for r in caplog.records if r.name == "airshedos.environment"
         ]
-        assert len(records) == 3
+        assert len(records) == 4
+        assert sum(r["provider"] != "earth_engine_sentinel5p" for r in records) == 3
         assert all(
             set(r) == {"event", "provider", "success", "status", "latency_ms"} for r in records
         )

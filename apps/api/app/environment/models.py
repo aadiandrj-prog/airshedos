@@ -106,6 +106,97 @@ class EnvironmentalSources(DomainModel):
     fires: ProviderConfiguration
 
 
+SatelliteProduct = Literal["no2", "co", "aerosol_index"]
+SatelliteAvailability = Literal[
+    "available",
+    "no_scene",
+    "quality_filtered",
+    "no_usable_pixels",
+    "not_configured",
+    "authentication_error",
+    "configuration_error",
+    "provider_error",
+    "timeout",
+    "busy",
+]
+
+
+class SatelliteSearchWindow(DomainModel):
+    start: AwareDatetime
+    end: AwareDatetime
+    lookback_hours: Annotated[int, Field(ge=1, le=168)]
+    end_mode: Literal["explicit", "current_hour"]
+
+
+class SatelliteQuality(DomainModel):
+    status: Literal["usable"] = "usable"
+    catalog_qa_rule: str
+    scene_quality: Literal["Nominal"]
+    processing_status: Literal["Nominal"]
+    valid_grid_cells: Annotated[int, Field(gt=0)]
+    applied_filters: list[str]
+    note: str = (
+        "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+    )
+
+
+class SatelliteObservation(DomainModel):
+    product: SatelliteProduct
+    value: FiniteFloat
+    unit: Literal["mol/m²", "dimensionless"]
+    observed_at: AwareDatetime
+    retrieved_at: AwareDatetime
+    age_seconds: Annotated[float, Field(ge=0)]
+    collection: str
+    band: str
+    image_id: str
+    source_product_id: str | None = None
+    grid_scale_m: float
+    native_footprint: str | None = None
+    retrieval_radius_km: float
+    statistic: Literal["mean"] = "mean"
+    quality: SatelliteQuality
+    provenance: EnvironmentalProvenance
+
+
+class SatelliteProductResult(DomainModel):
+    product: SatelliteProduct
+    status: SourceState
+    availability: SatelliteAvailability
+    message: str
+    collection: str
+    band: str
+    unit: Literal["mol/m²", "dimensionless"]
+    observation: SatelliteObservation | None = None
+    scene_count: Annotated[int, Field(ge=0)] | None = None
+    quality_scene_count: Annotated[int, Field(ge=0)] | None = None
+    latency_ms: Annotated[float, Field(ge=0)] = 0
+    cache_hit: bool = False
+
+
+class SatelliteAtmosphericContext(DomainModel):
+    latitude: Latitude
+    longitude: Longitude
+    query_latitude: Latitude
+    query_longitude: Longitude
+    requested_at: AwareDatetime
+    generated_at: AwareDatetime
+    search_window: SatelliteSearchWindow
+    retrieval_radius_km: float
+    grid_scale_m: float
+    products: list[SatelliteProductResult]
+    provider_status: EnvironmentalSourceStatus
+    availability: Literal["complete", "partial", "none"]
+    provenance: EnvironmentalProvenance
+    temporal_note: str = (
+        "Latest usable observation per product; acquisition times may differ. Not real-time."
+    )
+    measurement_note: str = (
+        "Satellite atmospheric columns are regional context and are not equivalent to "
+        "ground-level pollutant concentrations."
+    )
+
+
 class EnvironmentalContext(DomainModel):
     latitude: Latitude
     longitude: Longitude
@@ -114,8 +205,9 @@ class EnvironmentalContext(DomainModel):
     requested_reference_time: AwareDatetime | None = None
     time_mode: Literal["current"] = "current"
     temporal_note: str = (
-        "Current conditions only; any supplied reference time is not a historical query."
+        "AQ, weather and FIRMS query current conditions. Satellite uses its explicit search window."
     )
+    satellite: SatelliteAtmosphericContext | None = None
     air_quality: AirQualityObservation | None
     weather: MeteorologicalObservation | None
     # null = no valid response; [] = successful query with no nearby detections.

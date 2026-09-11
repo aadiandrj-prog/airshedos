@@ -1154,3 +1154,65 @@ footer {
   white-space: nowrap;
   margin: 16px 0 4px;
 }
+
+.satellite-panel {
+  margin-top: 30px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.satellite-panel h3 {
+  font-family: Georgia, serif;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 400;
+  margin: 12px 0 8px;
+}
+.satellite-disclaimer {
+  border-left: 2px solid var(--teal);
+  padding-left: 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 20px 0;
+}
+.satellite-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line);
+}
+.satellite-product {
+  padding: 24px;
+  min-width: 0;
+}
+.satellite-product + .satellite-product {
+  border-left: 1px solid var(--line);
+}
+.satellite-product h4 {
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0;
+}
+.satellite-product .section-label {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.satellite-value {
+  font-size: clamp(24px, 3vw, 32px);
+  margin: 26px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+.satellite-value span {
+  color: var(--muted);
+  font-size: 14px;
+}
+.satellite-product dd {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 800px) {
+  .satellite-grid {
+    grid-template-columns: 1fr;
+  }
+  .satellite-product + .satellite-product {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}

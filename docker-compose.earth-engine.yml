@@ -1,0 +1,10 @@
+# Optional local ADC mount. Use with -f docker-compose.yml -f docker-compose.earth-engine.yml.
+services:
+  api:
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/google-adc.json
+    volumes:
+      - type: bind
+        source: ${EARTH_ENGINE_ADC_FILE:?Set EARTH_ENGINE_ADC_FILE to the absolute ADC file path}
+        target: /run/secrets/google-adc.json
+        read_only: true

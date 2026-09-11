@@ -3,7 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Request
 from pydantic import AwareDatetime
 
-from app.environment.models import EnvironmentalContext, EnvironmentalSources
+from app.environment.models import (
+    EnvironmentalContext,
+    EnvironmentalSources,
+    SatelliteAtmosphericContext,
+)
 from app.environment.service import EnvironmentService
 
 router = APIRouter(prefix="/api/v1/environment", tags=["Environmental context"])
@@ -27,16 +31,30 @@ async def context(
     environment: Environment,
     lat: Annotated[float, Query(ge=-90, le=90, allow_inf_nan=False)],
     lng: Annotated[float, Query(ge=-180, le=180, allow_inf_nan=False)],
+    include_satellite: bool = True,
+    lookback_hours: Annotated[int | None, Query(ge=1, le=168)] = None,
     at: Annotated[
         AwareDatetime | None,
         Query(
             description=(
-                "Optional reference time, preserved as metadata only. "
-                "This phase always queries current "
-                "conditions; no historical retrieval is performed. Include a timezone."
+                "Optional reference time. "
+                "Ground providers still query current conditions. "
+                "Satellite uses this as its window end. Include a timezone."
             )
         ),
     ] = None,
 ):
     """Independent environmental context; never corroborates the fictional demo incident."""
-    return await environment.context(lat, lng, at)
+    return await environment.context(lat, lng, at, include_satellite, lookback_hours)
+
+
+@router.get("/satellite", response_model=SatelliteAtmosphericContext)
+async def satellite_context(
+    environment: Environment,
+    lat: Annotated[float, Query(ge=-90, le=90, allow_inf_nan=False)],
+    lng: Annotated[float, Query(ge=-180, le=180, allow_inf_nan=False)],
+    at: AwareDatetime | None = None,
+    lookback_hours: Annotated[int | None, Query(ge=1, le=168)] = None,
+):
+    """Independent bounded satellite lookup; lets the UI show ground data without waiting."""
+    return await environment.satellite_context(lat, lng, at, lookback_hours)

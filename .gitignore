@@ -13,3 +13,10 @@ next-env.d.ts
 .DS_Store
 test-results/
 playwright-report/
+
+# Backend authentication: never commit ADC or service-account credentials.
+.secrets/
+application_default_credentials.json
+*service-account*.json
+*service_account*.json
+credentials.json

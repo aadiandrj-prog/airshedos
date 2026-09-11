@@ -1,0 +1,88 @@
+{
+  "satellite": {
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "query_latitude": 28.4595,
+    "query_longitude": 77.0266,
+    "requested_at": "2026-09-11T16:27:42.605338Z",
+    "generated_at": "2026-09-11T16:27:42.606621Z",
+    "search_window": {
+      "start": "2026-09-08T16:00:00Z",
+      "end": "2026-09-11T16:00:00Z",
+      "lookback_hours": 72,
+      "end_mode": "current_hour"
+    },
+    "retrieval_radius_km": 10.0,
+    "grid_scale_m": 1113.2,
+    "products": [
+      {
+        "product": "no2",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+        "band": "tropospheric_NO2_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      },
+      {
+        "product": "co",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+        "band": "CO_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      },
+      {
+        "product": "aerosol_index",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+        "band": "absorbing_aerosol_index",
+        "unit": "dimensionless",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      }
+    ],
+    "provider_status": {
+      "provider": "earth_engine_sentinel5p",
+      "configured": false,
+      "status": "not_configured",
+      "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+      "retrieved_at": null,
+      "latency_ms": 0.12
+    },
+    "availability": "none",
+    "provenance": {
+      "source_id": "earth_engine_sentinel5p",
+      "method": "Sentinel-5P NRTI L3; independent latest usable scene per product",
+      "is_demo": false,
+      "note": "Copernicus Sentinel-5P / TROPOMI via Google Earth Engine. Regional atmospheric context, not surface concentration or causal attribution.",
+      "documentation_url": "https://developers.google.com/earth-engine/datasets/tags/s5p"
+    },
+    "temporal_note": "Latest usable observation per product; acquisition times may differ. Not real-time.",
+    "measurement_note": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+  },
+  "satellite_verification": {
+    "query_pass": false,
+    "cache_pass": false,
+    "product_queries_after_first": 0,
+    "product_queries_after_cache": 0,
+    "cache_status": null,
+    "gate_pass": false
+  }
+}
