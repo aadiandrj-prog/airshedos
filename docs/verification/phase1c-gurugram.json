@@ -1,0 +1,189 @@
+{
+  "recorded_at": "2026-09-11T16:07:35.501786Z",
+  "satellite": {
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "query_latitude": 28.4595,
+    "query_longitude": 77.0266,
+    "requested_at": "2026-09-11T16:07:35.500242Z",
+    "generated_at": "2026-09-11T16:07:35.500916Z",
+    "search_window": {
+      "start": "2026-09-08T16:00:00Z",
+      "end": "2026-09-11T16:00:00Z",
+      "lookback_hours": 72,
+      "end_mode": "current_hour"
+    },
+    "retrieval_radius_km": 10.0,
+    "grid_scale_m": 1113.2,
+    "products": [
+      {
+        "product": "no2",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+        "band": "tropospheric_NO2_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      },
+      {
+        "product": "co",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+        "band": "CO_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      },
+      {
+        "product": "aerosol_index",
+        "status": "not_configured",
+        "availability": "not_configured",
+        "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+        "band": "absorbing_aerosol_index",
+        "unit": "dimensionless",
+        "observation": null,
+        "scene_count": null,
+        "quality_scene_count": null,
+        "latency_ms": 0.0,
+        "cache_hit": false
+      }
+    ],
+    "provider_status": {
+      "provider": "earth_engine_sentinel5p",
+      "configured": false,
+      "status": "not_configured",
+      "message": "Set EARTH_ENGINE_PROJECT (or GOOGLE_CLOUD_PROJECT) and configure backend ADC.",
+      "retrieved_at": null,
+      "latency_ms": 0.08
+    },
+    "availability": "none",
+    "provenance": {
+      "source_id": "earth_engine_sentinel5p",
+      "method": "Sentinel-5P NRTI L3; independent latest usable scene per product",
+      "is_demo": false,
+      "note": "Copernicus Sentinel-5P / TROPOMI via Google Earth Engine. Regional atmospheric context, not surface concentration or causal attribution.",
+      "documentation_url": "https://developers.google.com/earth-engine/datasets/tags/s5p"
+    },
+    "temporal_note": "Latest usable observation per product; acquisition times may differ. Not real-time.",
+    "measurement_note": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+  },
+  "satellite_verification": {
+    "query_pass": false,
+    "cache_pass": false,
+    "cache_status": null,
+    "gate_pass": false
+  },
+  "ground_source_statuses": {
+    "air_quality": {
+      "provider": "google_air_quality",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T16:07:38.208375Z",
+      "latency_ms": 2706.97
+    },
+    "weather": {
+      "provider": "google_weather",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T16:07:37.518888Z",
+      "latency_ms": 1997.75
+    },
+    "fires": {
+      "provider": "nasa_firms",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-11T16:07:37.888703Z",
+      "latency_ms": 2367.39
+    }
+  },
+  "ground_verification": {
+    "provider_http_responses": [
+      {
+        "provider": "google_weather",
+        "http_status": 200
+      },
+      {
+        "provider": "nasa_firms",
+        "http_status": 200
+      },
+      {
+        "provider": "google_air_quality",
+        "http_status": 200
+      }
+    ],
+    "outbound_responses_after_first": 3,
+    "outbound_responses_after_cache_and_degraded": 3,
+    "cache_pass": true,
+    "cache_source_statuses": {
+      "air_quality": {
+        "provider": "google_air_quality",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-11T16:07:38.208375Z",
+        "latency_ms": 0.35
+      },
+      "weather": {
+        "provider": "google_weather",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-11T16:07:37.518888Z",
+        "latency_ms": 0.2
+      },
+      "fires": {
+        "provider": "nasa_firms",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-11T16:07:37.888703Z",
+        "latency_ms": 0.09
+      }
+    },
+    "cache_requested_at": "2026-09-11T16:07:38.209347+00:00",
+    "provenance_and_observation_times_unchanged": true,
+    "partial_failure_pass": true,
+    "degraded_source_statuses": {
+      "air_quality": {
+        "provider": "google_air_quality",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-11T16:07:38.208375Z",
+        "latency_ms": 0.28
+      },
+      "weather": {
+        "provider": "google_weather",
+        "configured": false,
+        "status": "not_configured",
+        "message": "Backend provider credentials are not configured.",
+        "retrieved_at": null,
+        "latency_ms": 0.01
+      },
+      "fires": {
+        "provider": "nasa_firms",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-11T16:07:37.888703Z",
+        "latency_ms": 0.08
+      }
+    },
+    "degraded_requested_at": "2026-09-11T16:07:38.210803+00:00",
+    "gate_pass": true
+  }
+}

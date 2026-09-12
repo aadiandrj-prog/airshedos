@@ -1,0 +1,298 @@
+{
+  "recorded_at": "2026-09-12T17:01:04.448984Z",
+  "satellite": {
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "query_latitude": 28.4595,
+    "query_longitude": 77.0266,
+    "requested_at": "2026-09-12T17:00:53.687425Z",
+    "generated_at": "2026-09-12T17:01:04.445839Z",
+    "search_window": {
+      "start": "2026-09-09T16:00:00Z",
+      "end": "2026-09-12T16:00:00Z",
+      "lookback_hours": 72,
+      "end_mode": "explicit"
+    },
+    "retrieval_radius_km": 10.0,
+    "grid_scale_m": 1113.2,
+    "products": [
+      {
+        "product": "no2",
+        "status": "live",
+        "availability": "available",
+        "message": "Latest usable satellite observation in the requested window.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+        "band": "tropospheric_NO2_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": {
+          "product": "no2",
+          "value": 5.351062752739593e-05,
+          "unit": "mol/m\u00b2",
+          "observed_at": "2026-09-12T07:51:10Z",
+          "retrieved_at": "2026-09-12T17:01:02.351802Z",
+          "age_seconds": 32992.351802,
+          "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+          "band": "tropospheric_NO2_column_number_density",
+          "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+          "source_product_id": "S5P_NRTI_L2__NO2____20260912T075116_20260912T075616_46193_03_020901_20260912T083033",
+          "grid_scale_m": 1113.2,
+          "native_footprint": "5.5x3.5 km2",
+          "retrieval_radius_km": 10.0,
+          "statistic": "mean",
+          "quality": {
+            "status": "usable",
+            "catalog_qa_rule": "Catalog L3 ingestion: tropospheric NO2 QA >= 0.75",
+            "scene_quality": "NOMINAL",
+            "processing_status": "NRTI-processing product",
+            "valid_grid_cells": 241,
+            "applied_filters": [
+              "Upstream L3 valid-pixel mask",
+              "PRODUCT_QUALITY = NOMINAL",
+              "PROCESSING_STATUS = NRTI-processing product",
+              "Column >= -0.001 mol/m\u00b2; retain non-outlier negative values"
+            ],
+            "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+          },
+          "provenance": {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+            "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+            "is_demo": false,
+            "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+            "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_NO2"
+          }
+        },
+        "scene_count": 4,
+        "quality_scene_count": 4,
+        "latency_ms": 8664.09,
+        "cache_hit": false
+      },
+      {
+        "product": "co",
+        "status": "live",
+        "availability": "available",
+        "message": "Latest usable satellite observation in the requested window.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+        "band": "CO_column_number_density",
+        "unit": "mol/m\u00b2",
+        "observation": {
+          "product": "co",
+          "value": 0.04325115046353522,
+          "unit": "mol/m\u00b2",
+          "observed_at": "2026-09-12T07:51:10Z",
+          "retrieved_at": "2026-09-12T17:01:03.752730Z",
+          "age_seconds": 32993.75273,
+          "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+          "band": "CO_column_number_density",
+          "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+          "source_product_id": "S5P_NRTI_L2__CO_____20260912T075116_20260912T075616_46193_03_020901_20260912T081853",
+          "grid_scale_m": 1113.2,
+          "native_footprint": "5.5x7.0 km2",
+          "retrieval_radius_km": 10.0,
+          "statistic": "mean",
+          "quality": {
+            "status": "usable",
+            "catalog_qa_rule": "Catalog L3 ingestion: CO QA >= 0.50",
+            "scene_quality": "NOMINAL",
+            "processing_status": "Nominal",
+            "valid_grid_cells": 320,
+            "applied_filters": [
+              "Upstream L3 valid-pixel mask",
+              "PRODUCT_QUALITY = NOMINAL",
+              "PROCESSING_STATUS = Nominal",
+              "Column >= -0.001 mol/m\u00b2; retain non-outlier negative values"
+            ],
+            "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+          },
+          "provenance": {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+            "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+            "is_demo": false,
+            "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+            "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_CO"
+          }
+        },
+        "scene_count": 4,
+        "quality_scene_count": 4,
+        "latency_ms": 1399.84,
+        "cache_hit": false
+      },
+      {
+        "product": "aerosol_index",
+        "status": "live",
+        "availability": "available",
+        "message": "Latest usable satellite observation in the requested window.",
+        "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+        "band": "absorbing_aerosol_index",
+        "unit": "dimensionless",
+        "observation": {
+          "product": "aerosol_index",
+          "value": -1.2593098568040946,
+          "unit": "dimensionless",
+          "observed_at": "2026-09-12T07:51:10Z",
+          "retrieved_at": "2026-09-12T17:01:04.443885Z",
+          "age_seconds": 32994.443885,
+          "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+          "band": "absorbing_aerosol_index",
+          "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+          "source_product_id": "S5P_NRTI_L2__AER_AI_20260912T075116_20260912T075616_46193_03_020901_20260912T081855",
+          "grid_scale_m": 1113.2,
+          "native_footprint": "5.5x3.5 km2",
+          "retrieval_radius_km": 10.0,
+          "statistic": "mean",
+          "quality": {
+            "status": "usable",
+            "catalog_qa_rule": "Catalog L3 ingestion: AER_AI QA >= 0.80",
+            "scene_quality": "NOMINAL",
+            "processing_status": "Nominal",
+            "valid_grid_cells": 323,
+            "applied_filters": [
+              "Upstream L3 valid-pixel mask",
+              "PRODUCT_QUALITY = NOMINAL",
+              "PROCESSING_STATUS = Nominal"
+            ],
+            "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+          },
+          "provenance": {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+            "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+            "is_demo": false,
+            "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+            "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_AER_AI"
+          }
+        },
+        "scene_count": 3,
+        "quality_scene_count": 3,
+        "latency_ms": 690.94,
+        "cache_hit": false
+      }
+    ],
+    "provider_status": {
+      "provider": "earth_engine_sentinel5p",
+      "configured": true,
+      "status": "live",
+      "message": "Fresh search; acquisition times and availability are per product.",
+      "retrieved_at": "2026-09-12T17:01:04.445839Z",
+      "latency_ms": 10759.15
+    },
+    "availability": "complete",
+    "provenance": {
+      "source_id": "earth_engine_sentinel5p",
+      "method": "Sentinel-5P NRTI L3; independent latest usable scene per product",
+      "is_demo": false,
+      "note": "Copernicus Sentinel-5P / TROPOMI via Google Earth Engine. Regional atmospheric context, not surface concentration or causal attribution.",
+      "documentation_url": "https://developers.google.com/earth-engine/datasets/tags/s5p"
+    },
+    "temporal_note": "Latest usable observation per product; acquisition times may differ. Not real-time.",
+    "measurement_note": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+  },
+  "satellite_verification": {
+    "query_pass": true,
+    "cache_pass": true,
+    "product_queries_after_first": 3,
+    "product_queries_after_cache": 3,
+    "cache_status": "cached",
+    "gate_pass": true
+  },
+  "ground_source_statuses": {
+    "air_quality": {
+      "provider": "google_air_quality",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-12T17:01:06.304564Z",
+      "latency_ms": 1855.7
+    },
+    "weather": {
+      "provider": "google_weather",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-12T17:01:05.938700Z",
+      "latency_ms": 1454.13
+    },
+    "fires": {
+      "provider": "nasa_firms",
+      "configured": true,
+      "status": "live",
+      "message": "Current response. Observation times may differ.",
+      "retrieved_at": "2026-09-12T17:01:06.118542Z",
+      "latency_ms": 1633.4
+    }
+  },
+  "ground_verification": {
+    "provider_http_responses": [
+      {
+        "provider": "google_weather",
+        "http_status": 200
+      },
+      {
+        "provider": "nasa_firms",
+        "http_status": 200
+      },
+      {
+        "provider": "google_air_quality",
+        "http_status": 200
+      }
+    ],
+    "outbound_responses_after_first": 3,
+    "outbound_responses_after_cache_and_degraded": 3,
+    "cache_pass": true,
+    "cache_source_statuses": {
+      "air_quality": {
+        "provider": "google_air_quality",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-12T17:01:06.304564Z",
+        "latency_ms": 0.39
+      },
+      "weather": {
+        "provider": "google_weather",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-12T17:01:05.938700Z",
+        "latency_ms": 0.21
+      },
+      "fires": {
+        "provider": "nasa_firms",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-12T17:01:06.118542Z",
+        "latency_ms": 0.09
+      }
+    },
+    "cache_requested_at": "2026-09-12T17:01:06.305555+00:00",
+    "provenance_and_observation_times_unchanged": true,
+    "partial_failure_pass": true,
+    "degraded_source_statuses": {
+      "air_quality": {
+        "provider": "google_air_quality",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-12T17:01:06.304564Z",
+        "latency_ms": 0.52
+      },
+      "weather": {
+        "provider": "google_weather",
+        "configured": false,
+        "status": "not_configured",
+        "message": "Backend provider credentials are not configured.",
+        "retrieved_at": null,
+        "latency_ms": 0.01
+      },
+      "fires": {
+        "provider": "nasa_firms",
+        "configured": true,
+        "status": "cached",
+        "message": "Cached response; original observation and retrieval times retained.",
+        "retrieved_at": "2026-09-12T17:01:06.118542Z",
+        "latency_ms": 0.1
+      }
+    },
+    "degraded_requested_at": "2026-09-12T17:01:06.307247+00:00",
+    "gate_pass": true
+  }
+}

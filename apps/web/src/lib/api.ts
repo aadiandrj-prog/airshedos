@@ -5,6 +5,8 @@ export type ShareResponse = components["schemas"]["ShareResponse"];
 export type ShareRequest = components["schemas"]["ShareRequest"];
 export type EnvironmentalContext =
   components["schemas"]["EnvironmentalContext"];
+export type SatelliteContext =
+  components["schemas"]["SatelliteAtmosphericContext"];
 export type SourceStatus = components["schemas"]["EnvironmentalSourceStatus"];
 export type Measurement = components["schemas"]["Measurement"];
 
@@ -33,7 +35,13 @@ async function request<T>(
 export const api = {
   environment: (lat: number, lng: number) =>
     request<EnvironmentalContext>(
-      `/api/v1/environment/context?${new URLSearchParams({ lat: String(lat), lng: String(lng) })}`,
+      `/api/v1/environment/context?${new URLSearchParams({ lat: String(lat), lng: String(lng), include_satellite: "false" })}`,
+      undefined,
+      70000,
+    ),
+  satellite: (lat: number, lng: number) =>
+    request<SatelliteContext>(
+      `/api/v1/environment/satellite?${new URLSearchParams({ lat: String(lat), lng: String(lng) })}`,
       undefined,
       70000,
     ),

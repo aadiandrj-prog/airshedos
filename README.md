@@ -1,10 +1,10 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 1B environmental data foundation.**
+**AI Pollution Incident Command — Phase 1C satellite availability and normalization.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
-The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters. Missing keys produce explicit `not_configured` states; no substitute readings are shown. AI inference and real notifications are not implemented.
+The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. AI inference and real notifications are not implemented.
 
 ## Current architecture
 
@@ -40,6 +40,7 @@ docs/
   ARCHITECTURE.md
   VERIFICATION.md         # Historical Phase 1A result
   PHASE_1B_VERIFICATION.md
+  PHASE_1C_VERIFICATION.md
   DATA_SOURCES.md
   screenshots/
 .github/workflows/ci.yml
@@ -72,7 +73,7 @@ npm install
 npm run dev
 ```
 
-Open [the command center](http://localhost:3000) and [interactive API docs](http://localhost:8000/docs). The default API URL works without creating an environment file. All UI timestamps are displayed in IST with the date; API timestamps include a timezone.
+Open [the command center](http://localhost:3000) and [interactive API docs](http://localhost:8000/docs). The default API URL works without creating an environment file. Ground-source and incident UI timestamps use IST; satellite timestamps use explicitly labelled UTC. API timestamps include a timezone.
 
 For live providers, copy root `.env.example` to root `.env`, set `GOOGLE_MAPS_PLATFORM_API_KEY` and `NASA_FIRMS_MAP_KEY`, then add `--env-file ../../.env` to the backend command above. Enable Google Air Quality and Weather for the key. See [data sources](docs/DATA_SOURCES.md). **Never copy backend keys into the frontend directory.** Next.js reads only `apps/web/.env.local`; Compose and the manual verification script read root `.env`. Without an env file, backend settings come from the shell. Set `CORS_ORIGINS` when using a different browser origin, for example:
 
@@ -111,6 +112,7 @@ API_PORT=8001 WEB_PORT=3001 NEXT_PUBLIC_API_BASE_URL=http://localhost:8001 CORS_
 | POST | `/api/v1/incidents/{incident_id}/acknowledge` | Updated incident; repeated calls do not duplicate actions |
 | POST | `/api/v1/incidents/{incident_id}/share` | Simulated result, action, and updated incident |
 | GET | `/api/v1/environment/context?lat=28.4595&lng=77.0266` | Independent normalized current environmental context, including partial failures |
+| GET | `/api/v1/environment/satellite?lat=28.4595&lng=77.0266` | Latest usable satellite observations, product availability, QA and provenance |
 | GET | `/api/v1/environment/sources` | Configuration state only; no provider request or credentials |
 | GET | `/openapi.json` | Machine-readable API contract |
 | GET | `/docs` | Swagger UI |
@@ -149,7 +151,7 @@ npm run typecheck
 npm run build
 ```
 
-After model changes, regenerate both OpenAPI and TypeScript definitions and commit them together. CI detects stale generated files. Backend and frontend checks run on every push and pull request.
+After model changes, regenerate both OpenAPI and TypeScript definitions and commit them together. CI detects stale generated files. Backend, frontend, browser/Docker and secret checks run on every push and pull request.
 
 Browser checks require both apps running, ideally after a fresh backend start so the first test exercises both mutations:
 
@@ -159,28 +161,28 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-These checks cover real API connectivity/actions, reload behavior, evidence, desktop/mobile screenshots, connection failure, loading, empty state, and failed actions. Browser regression screenshots are saved under ignored `apps/web/test-results`; curated verification captures are under `docs/screenshots`. Environmental display tests also intercept explicitly synthetic provider fixtures to verify readings, units, cached states, partial responses, and zero detections; these are not live integration evidence. Browser checks are local and are not part of the lightweight CI workflow.
+These checks cover real API connectivity/actions, reload behavior, evidence, desktop/mobile screenshots, connection failure, loading, empty state, and failed actions. Browser regression screenshots are saved under ignored `apps/web/test-results`; curated verification captures are under `docs/screenshots`. Environmental display tests also intercept explicitly synthetic provider fixtures to verify readings, units, cached states, partial responses, and zero detections; these are not live integration evidence. CI also runs browser checks against credential-free Docker containers and runs the repository secret scanner.
 
 ## Data and limitations
 
 - The incident workspace’s environmental values, locations, evidence scores, and forecasts are hand-authored fixtures. The fixed scenario date is 10 September 2026; it does not refresh to masquerade as a live observation.
 - Confidence and probabilities use 0–1 in the API and percentages in the UI. The 86% confidence and 81% spike risk are illustrative, not calibrated model outputs.
-- Satellite evidence is explicitly unavailable, with no observation time or confidence invented for it.
+- The fictional incident’s satellite evidence remains unavailable. The independent satellite probe can retrieve real regional observations; it never changes the demo incident or assigns confidence.
 - State resets when the API restarts, including on development reload. A single process is required; there is no persistence or multi-worker coordination.
 - Acknowledgment is stored locally. Sharing records a simulation and sends nothing externally.
 - The geographic pane is a schematic, not a navigable map or reliable geographic boundary. Possible transport is illustrative; it is not a dispersion model.
 - Environmental providers are independent of incident evidence. They do not alter demo confidence, forecasts, or actions. The probe fetches on page load and on **Check conditions**; there is no background monitoring.
 - Provider outages and missing credentials are expected. FIRMS `null` means unavailable; an empty list means a valid query returned zero nearby detections.
-- Optional timezone-aware `at` is preserved as reference metadata only. All provider requests remain current, with their own observation times.
+- Optional timezone-aware `at` remains reference metadata for AQ/weather/FIRMS, which still query current conditions. For satellite only, it specifies the exclusive search-window end.
 - No authentication, production deployment, historical storage, or automatic attribution is included.
 
 ## Planned architecture (not implemented)
 
 Citizen/environmental signals → Gemini multimodal → environmental data adapters → BigQuery → Vertex AI prediction → evidence fusion → command center → jurisdiction sharing.
 
-Google Air Quality, Weather, and FIRMS adapters are implemented in Phase 1B. Earth Engine, Gemini, Vertex AI, mapping, persistence, and predictions remain planned only. **Phase 1C has not begun.**
+Current: Google AQ, Weather, FIRMS, and a narrowly scoped Earth Engine / Sentinel-5P atmospheric evidence adapter. Planned: Gemini, evidence fusion, Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Phase 1C introduces no causal source attribution or AI. Its authenticated live gate is recorded separately from implementation readiness.
 
-See [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
+See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 
 Manual provider check, from `apps/api` with the virtual environment activated:
 
@@ -189,4 +191,21 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
 # Add --json for complete normalized values, timestamps, and provenance.
 ```
 
-This developer-only command is never run in CI. The live verification gate passed on 11 September 2026: all three providers returned HTTP 200 for the fixed NCR probe, followed by verified cache reuse and a controlled partial failure. Run the command with `--gate --json` to repeat the developer-only gate. See the verification report for timestamped results, which are not ongoing monitoring.
+This developer-only command is never run in CI. The **Phase 1B** live verification gate passed on 11 September 2026: all three providers returned HTTP 200 for the fixed NCR probe, followed by verified cache reuse and a controlled partial failure. Run the command with `--gate --json` to repeat the developer-only gate. See the verification report for timestamped results, which are not ongoing monitoring.
+
+## Earth Engine setup (backend only)
+
+Use an Earth Engine enabled and registered Google Cloud project, preferably the existing Google project. Set `EARTH_ENGINE_PROJECT` in root `.env`, or reuse `GOOGLE_CLOUD_PROJECT` as its fallback. The Maps API key does **not** authenticate Earth Engine. Configure local Application Default Credentials (ADC); the application initializes the official Python SDK lazily and keeps startup healthy without credentials.
+
+See [detailed ADC setup and datasets](docs/DATA_SOURCES.md#earth-engine--sentinel-5p). Default query: a 10 km neighborhood, 72-hour lookback ending at the current UTC hour, mean of usable pixels, latest usable scene independently per product. Cache: one hour. Satellite columns retain `mol/m²`; aerosol index is dimensionless. **These are not ground-level concentrations or AQI.**
+
+The full context endpoint includes `satellite` by default. The browser requests ground context with `include_satellite=false`, and `/environment/satellite` independently, so slow satellite queries do not hold up ground cards. Satellite observations and source QA appear in a separate section, with no charts or imagery.
+
+```sh
+# From apps/api, after ADC and the project are configured:
+python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --satellite-only --gate --json
+```
+
+The full manual gate now covers all sources; exit 1 indicates a ground regression, exit 2 an unmet satellite gate. Genuine empty/filtered satellite searches are valid; configuration and authentication failures are not missing coverage. A wider `--lookback-hours` or explicit `--at` is a separate debug query and must be labelled as such.
+
+Secret checks from the repository root: `python3 scripts/scan_secrets.py --include-build`. The scanner checks Git-visible files and optionally compiled frontend output, with generic token signatures plus exact local provider-key comparisons; it never prints secret values.

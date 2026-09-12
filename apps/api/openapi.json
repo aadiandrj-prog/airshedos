@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 1B. Independent environmental providers plus a fictional demo incident. No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
-    "version": "0.2.0"
+    "description": "Phase 1C. Independent environmental providers plus a fictional demo incident. No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
+    "version": "0.3.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -60,6 +60,34 @@
             }
           },
           {
+            "name": "include_satellite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Include Satellite"
+            }
+          },
+          {
+            "name": "lookback_hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 168,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lookback Hours"
+            }
+          },
+          {
             "name": "at",
             "in": "query",
             "required": false,
@@ -73,10 +101,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone.",
+              "description": "Optional reference time. Ground providers still query current conditions. Satellite uses this as its window end. Include a timezone.",
               "title": "At"
             },
-            "description": "Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone."
+            "description": "Optional reference time. Ground providers still query current conditions. Satellite uses this as its window end. Include a timezone."
           }
         ],
         "responses": {
@@ -86,6 +114,97 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EnvironmentalContext"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/environment/satellite": {
+      "get": {
+        "tags": [
+          "Environmental context"
+        ],
+        "summary": "Satellite Context",
+        "description": "Independent bounded satellite lookup; lets the UI show ground data without waiting.",
+        "operationId": "satellite_context_api_v1_environment_satellite_get",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 90,
+              "minimum": -90,
+              "title": "Lat"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 180,
+              "minimum": -180,
+              "title": "Lng"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "At"
+            }
+          },
+          {
+            "name": "lookback_hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 168,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lookback Hours"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SatelliteAtmosphericContext"
                 }
               }
             }
@@ -564,7 +683,17 @@
           "temporal_note": {
             "type": "string",
             "title": "Temporal Note",
-            "default": "Current conditions only; any supplied reference time is not a historical query."
+            "default": "AQ, weather and FIRMS query current conditions. Satellite uses its explicit search window."
+          },
+          "satellite": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SatelliteAtmosphericContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "air_quality": {
             "anyOf": [
@@ -632,6 +761,7 @@
           "requested_reference_time",
           "time_mode",
           "temporal_note",
+          "satellite",
           "air_quality",
           "weather",
           "fires",
@@ -1573,6 +1703,432 @@
           "high"
         ],
         "title": "RiskLevel"
+      },
+      "SatelliteAtmosphericContext": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "query_latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Query Latitude"
+          },
+          "query_longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Query Longitude"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "search_window": {
+            "$ref": "#/components/schemas/SatelliteSearchWindow"
+          },
+          "retrieval_radius_km": {
+            "type": "number",
+            "title": "Retrieval Radius Km"
+          },
+          "grid_scale_m": {
+            "type": "number",
+            "title": "Grid Scale M"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/SatelliteProductResult"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "provider_status": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "none"
+            ],
+            "title": "Availability"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "temporal_note": {
+            "type": "string",
+            "title": "Temporal Note",
+            "default": "Latest usable observation per product; acquisition times may differ. Not real-time."
+          },
+          "measurement_note": {
+            "type": "string",
+            "title": "Measurement Note",
+            "default": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "query_latitude",
+          "query_longitude",
+          "requested_at",
+          "generated_at",
+          "search_window",
+          "retrieval_radius_km",
+          "grid_scale_m",
+          "products",
+          "provider_status",
+          "availability",
+          "provenance",
+          "temporal_note",
+          "measurement_note"
+        ],
+        "title": "SatelliteAtmosphericContext"
+      },
+      "SatelliteObservation": {
+        "properties": {
+          "product": {
+            "type": "string",
+            "enum": [
+              "no2",
+              "co",
+              "aerosol_index"
+            ],
+            "title": "Product"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "mol/m²",
+              "dimensionless"
+            ],
+            "title": "Unit"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "age_seconds": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Age Seconds"
+          },
+          "collection": {
+            "type": "string",
+            "title": "Collection"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "image_id": {
+            "type": "string",
+            "title": "Image Id"
+          },
+          "source_product_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Product Id"
+          },
+          "grid_scale_m": {
+            "type": "number",
+            "title": "Grid Scale M"
+          },
+          "native_footprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Native Footprint"
+          },
+          "retrieval_radius_km": {
+            "type": "number",
+            "title": "Retrieval Radius Km"
+          },
+          "statistic": {
+            "type": "string",
+            "const": "mean",
+            "title": "Statistic",
+            "default": "mean"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/SatelliteQuality"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product",
+          "value",
+          "unit",
+          "observed_at",
+          "retrieved_at",
+          "age_seconds",
+          "collection",
+          "band",
+          "image_id",
+          "source_product_id",
+          "grid_scale_m",
+          "native_footprint",
+          "retrieval_radius_km",
+          "statistic",
+          "quality",
+          "provenance"
+        ],
+        "title": "SatelliteObservation"
+      },
+      "SatelliteProductResult": {
+        "properties": {
+          "product": {
+            "type": "string",
+            "enum": [
+              "no2",
+              "co",
+              "aerosol_index"
+            ],
+            "title": "Product"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "available",
+              "no_scene",
+              "quality_filtered",
+              "no_usable_pixels",
+              "not_configured",
+              "authentication_error",
+              "configuration_error",
+              "provider_error",
+              "timeout",
+              "busy"
+            ],
+            "title": "Availability"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "collection": {
+            "type": "string",
+            "title": "Collection"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "mol/m²",
+              "dimensionless"
+            ],
+            "title": "Unit"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SatelliteObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scene_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scene Count"
+          },
+          "quality_scene_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality Scene Count"
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "default": 0
+          },
+          "cache_hit": {
+            "type": "boolean",
+            "title": "Cache Hit",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product",
+          "status",
+          "availability",
+          "message",
+          "collection",
+          "band",
+          "unit",
+          "observation",
+          "scene_count",
+          "quality_scene_count",
+          "latency_ms",
+          "cache_hit"
+        ],
+        "title": "SatelliteProductResult"
+      },
+      "SatelliteQuality": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "usable",
+            "title": "Status",
+            "default": "usable"
+          },
+          "catalog_qa_rule": {
+            "type": "string",
+            "title": "Catalog Qa Rule"
+          },
+          "scene_quality": {
+            "type": "string",
+            "enum": [
+              "Nominal",
+              "NOMINAL"
+            ],
+            "title": "Scene Quality"
+          },
+          "processing_status": {
+            "type": "string",
+            "enum": [
+              "Nominal",
+              "NRTI-processing product"
+            ],
+            "title": "Processing Status"
+          },
+          "valid_grid_cells": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Valid Grid Cells"
+          },
+          "applied_filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applied Filters"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "catalog_qa_rule",
+          "scene_quality",
+          "processing_status",
+          "valid_grid_cells",
+          "applied_filters",
+          "note"
+        ],
+        "title": "SatelliteQuality"
+      },
+      "SatelliteSearchWindow": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End"
+          },
+          "lookback_hours": {
+            "type": "integer",
+            "maximum": 168.0,
+            "minimum": 1.0,
+            "title": "Lookback Hours"
+          },
+          "end_mode": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "current_hour"
+            ],
+            "title": "End Mode"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "lookback_hours",
+          "end_mode"
+        ],
+        "title": "SatelliteSearchWindow"
       },
       "ShareRequest": {
         "properties": {

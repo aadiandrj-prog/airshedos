@@ -1,0 +1,309 @@
+{
+  "diagnostic_at": "2026-09-12T16:58:10.418571+00:00",
+  "latitude": 28.4595,
+  "longitude": 77.0266,
+  "radius_km": 10,
+  "lookback_hours": 72,
+  "window_start": "2026-09-09T16:00:00+00:00",
+  "window_end": "2026-09-12T16:00:00+00:00",
+  "expected": {
+    "PRODUCT_QUALITY": "Nominal",
+    "PROCESSING_STATUS": "Nominal"
+  },
+  "products": {
+    "no2": {
+      "accepted_scene_count": 0,
+      "scene_count": 4,
+      "scenes": [
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+          "properties": {
+            "PROCESSING_STATUS": "NRTI-processing product",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_NISE__",
+            "STATUS_MET_2D",
+            "STATUS_CTMFCT",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-12T07:51:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'",
+            "PROCESSING_STATUS: 'NRTI-processing product'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260911T081116_20260911T084745",
+          "properties": {
+            "PROCESSING_STATUS": "NRTI-processing product",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_NISE__",
+            "STATUS_MET_2D",
+            "STATUS_CTMFCT",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-11T08:11:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'",
+            "PROCESSING_STATUS: 'NRTI-processing product'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260910T083116_20260910T090632",
+          "properties": {
+            "PROCESSING_STATUS": "NRTI-processing product",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_NISE__",
+            "STATUS_MET_2D",
+            "STATUS_CTMFCT",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:31:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'",
+            "PROCESSING_STATUS: 'NRTI-processing product'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260910T082616_20260910T090406",
+          "properties": {
+            "PROCESSING_STATUS": "NRTI-processing product",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_NISE__",
+            "STATUS_MET_2D",
+            "STATUS_CTMFCT",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:26:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'",
+            "PROCESSING_STATUS: 'NRTI-processing product'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        }
+      ],
+      "latency_ms": 569.28
+    },
+    "co": {
+      "accepted_scene_count": 0,
+      "scene_count": 4,
+      "scenes": [
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-12T07:51:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260911T081116_20260911T083747",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-11T08:11:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260910T083116_20260910T085605",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:31:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260910T082616_20260910T085546",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:26:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        }
+      ],
+      "latency_ms": 479.66
+    },
+    "aerosol_index": {
+      "accepted_scene_count": 0,
+      "scene_count": 3,
+      "scenes": [
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-12T07:51:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260910T083116_20260910T085607",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:31:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        },
+        {
+          "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260910T082616_20260910T085549",
+          "properties": {
+            "PROCESSING_STATUS": "Nominal",
+            "PRODUCT_QUALITY": "NOMINAL"
+          },
+          "property_presence": {
+            "PROCESSING_STATUS": true,
+            "PRODUCT_QUALITY": true
+          },
+          "related_property_names": [
+            "STATUS_MET_2D",
+            "PRODUCT_QUALITY",
+            "PROCESSING_STATUS"
+          ],
+          "observed_at": "2026-09-10T08:26:10+00:00",
+          "rejections": [
+            "PRODUCT_QUALITY: 'NOMINAL'; expected exact 'Nominal'"
+          ],
+          "passes_current_predicate": false,
+          "passes_corrected_predicate": true
+        }
+      ],
+      "latency_ms": 1521.62
+    }
+  },
+  "remote_query": "pass",
+  "corrected_expected": {
+    "PRODUCT_QUALITY": [
+      "Nominal",
+      "NOMINAL"
+    ],
+    "PROCESSING_STATUS": {
+      "no2": [
+        "Nominal",
+        "NRTI-processing product"
+      ],
+      "co": [
+        "Nominal"
+      ],
+      "aerosol_index": [
+        "Nominal"
+      ]
+    }
+  }
+}

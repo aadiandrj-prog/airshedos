@@ -44,6 +44,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/environment/satellite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Satellite Context
+         * @description Independent bounded satellite lookup; lets the UI show ground data without waiting.
+         */
+        get: operations["satellite_context_api_v1_environment_satellite_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -245,9 +265,10 @@ export interface components {
             time_mode: "current";
             /**
              * Temporal Note
-             * @default Current conditions only; any supplied reference time is not a historical query.
+             * @default AQ, weather and FIRMS query current conditions. Satellite uses its explicit search window.
              */
             temporal_note: string;
+            satellite: components["schemas"]["SatelliteAtmosphericContext"] | null;
             air_quality: components["schemas"]["AirQualityObservation"] | null;
             weather: components["schemas"]["MeteorologicalObservation"] | null;
             /** Fires */
@@ -571,6 +592,190 @@ export interface components {
          * @enum {string}
          */
         RiskLevel: "low" | "moderate" | "high";
+        /** SatelliteAtmosphericContext */
+        SatelliteAtmosphericContext: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /** Query Latitude */
+            query_latitude: number;
+            /** Query Longitude */
+            query_longitude: number;
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            search_window: components["schemas"]["SatelliteSearchWindow"];
+            /** Retrieval Radius Km */
+            retrieval_radius_km: number;
+            /** Grid Scale M */
+            grid_scale_m: number;
+            /** Products */
+            products: components["schemas"]["SatelliteProductResult"][];
+            provider_status: components["schemas"]["EnvironmentalSourceStatus"];
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "complete" | "partial" | "none";
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            /**
+             * Temporal Note
+             * @default Latest usable observation per product; acquisition times may differ. Not real-time.
+             */
+            temporal_note: string;
+            /**
+             * Measurement Note
+             * @default Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations.
+             */
+            measurement_note: string;
+        };
+        /** SatelliteObservation */
+        SatelliteObservation: {
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "no2" | "co" | "aerosol_index";
+            /** Value */
+            value: number;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "mol/m²" | "dimensionless";
+            /**
+             * Observed At
+             * Format: date-time
+             */
+            observed_at: string;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /** Age Seconds */
+            age_seconds: number;
+            /** Collection */
+            collection: string;
+            /** Band */
+            band: string;
+            /** Image Id */
+            image_id: string;
+            /** Source Product Id */
+            source_product_id: string | null;
+            /** Grid Scale M */
+            grid_scale_m: number;
+            /** Native Footprint */
+            native_footprint: string | null;
+            /** Retrieval Radius Km */
+            retrieval_radius_km: number;
+            /**
+             * Statistic
+             * @default mean
+             * @constant
+             */
+            statistic: "mean";
+            quality: components["schemas"]["SatelliteQuality"];
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+        };
+        /** SatelliteProductResult */
+        SatelliteProductResult: {
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "no2" | "co" | "aerosol_index";
+            status: components["schemas"]["SourceState"];
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "available" | "no_scene" | "quality_filtered" | "no_usable_pixels" | "not_configured" | "authentication_error" | "configuration_error" | "provider_error" | "timeout" | "busy";
+            /** Message */
+            message: string;
+            /** Collection */
+            collection: string;
+            /** Band */
+            band: string;
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "mol/m²" | "dimensionless";
+            observation: components["schemas"]["SatelliteObservation"] | null;
+            /** Scene Count */
+            scene_count: number | null;
+            /** Quality Scene Count */
+            quality_scene_count: number | null;
+            /**
+             * Latency Ms
+             * @default 0
+             */
+            latency_ms: number;
+            /**
+             * Cache Hit
+             * @default false
+             */
+            cache_hit: boolean;
+        };
+        /** SatelliteQuality */
+        SatelliteQuality: {
+            /**
+             * Status
+             * @default usable
+             * @constant
+             */
+            status: "usable";
+            /** Catalog Qa Rule */
+            catalog_qa_rule: string;
+            /**
+             * Scene Quality
+             * @enum {string}
+             */
+            scene_quality: "Nominal" | "NOMINAL";
+            /**
+             * Processing Status
+             * @enum {string}
+             */
+            processing_status: "Nominal" | "NRTI-processing product";
+            /** Valid Grid Cells */
+            valid_grid_cells: number;
+            /** Applied Filters */
+            applied_filters: string[];
+            /**
+             * Note
+             * @default L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score.
+             */
+            note: string;
+        };
+        /** SatelliteSearchWindow */
+        SatelliteSearchWindow: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Lookback Hours */
+            lookback_hours: number;
+            /**
+             * End Mode
+             * @enum {string}
+             */
+            end_mode: "explicit" | "current_hour";
+        };
         /** ShareRequest */
         ShareRequest: {
             /** Target Jurisdiction Id */
@@ -644,7 +849,9 @@ export interface operations {
             query: {
                 lat: number;
                 lng: number;
-                /** @description Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone. */
+                include_satellite?: boolean;
+                lookback_hours?: number | null;
+                /** @description Optional reference time. Ground providers still query current conditions. Satellite uses this as its window end. Include a timezone. */
                 at?: string | null;
             };
             header?: never;
@@ -660,6 +867,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EnvironmentalContext"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    satellite_context_api_v1_environment_satellite_get: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+                at?: string | null;
+                lookback_hours?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SatelliteAtmosphericContext"];
                 };
             };
             /** @description Validation Error */

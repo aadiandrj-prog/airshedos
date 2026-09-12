@@ -1,0 +1,185 @@
+{
+  "latitude": 28.4595,
+  "longitude": 77.0266,
+  "query_latitude": 28.4595,
+  "query_longitude": 77.0266,
+  "requested_at": "2026-09-11T00:00:00Z",
+  "generated_at": "2026-09-11T00:00:00Z",
+  "search_window": {
+    "start": "2026-09-08T00:00:00Z",
+    "end": "2026-09-11T00:00:00Z",
+    "lookback_hours": 72,
+    "end_mode": "explicit"
+  },
+  "retrieval_radius_km": 10.0,
+  "grid_scale_m": 1113.2,
+  "products": [
+    {
+      "product": "no2",
+      "status": "live",
+      "availability": "available",
+      "message": "Latest usable satellite observation in the requested window.",
+      "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+      "band": "tropospheric_NO2_column_number_density",
+      "unit": "mol/m²",
+      "observation": {
+        "product": "no2",
+        "value": 0.000032,
+        "unit": "mol/m²",
+        "observed_at": "2026-09-10T08:00:00Z",
+        "retrieved_at": "2026-09-11T00:00:00Z",
+        "age_seconds": 57600.0,
+        "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+        "band": "tropospheric_NO2_column_number_density",
+        "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/SYNTHETIC_TEST_SCENE",
+        "source_product_id": "SYNTHETIC_TEST_ONLY",
+        "grid_scale_m": 1113.2,
+        "native_footprint": "7x7 km2",
+        "retrieval_radius_km": 10.0,
+        "statistic": "mean",
+        "quality": {
+          "status": "usable",
+          "catalog_qa_rule": "Catalog L3 ingestion: tropospheric NO2 QA >= 0.75",
+          "scene_quality": "Nominal",
+          "processing_status": "Nominal",
+          "valid_grid_cells": 120,
+          "applied_filters": [
+            "Upstream L3 valid-pixel mask",
+            "PRODUCT_QUALITY = Nominal",
+            "PROCESSING_STATUS = Nominal",
+            "Column >= -0.001 mol/m²; retain non-outlier negative values"
+          ],
+          "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+        },
+        "provenance": {
+          "source_id": "COPERNICUS/S5P/NRTI/L3_NO2/SYNTHETIC_TEST_SCENE",
+          "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+          "is_demo": false,
+          "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+          "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_NO2"
+        }
+      },
+      "scene_count": 3,
+      "quality_scene_count": 2,
+      "latency_ms": 0.0,
+      "cache_hit": false
+    },
+    {
+      "product": "co",
+      "status": "live",
+      "availability": "available",
+      "message": "Latest usable satellite observation in the requested window.",
+      "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+      "band": "CO_column_number_density",
+      "unit": "mol/m²",
+      "observation": {
+        "product": "co",
+        "value": 0.033,
+        "unit": "mol/m²",
+        "observed_at": "2026-09-10T08:00:00Z",
+        "retrieved_at": "2026-09-11T00:00:00Z",
+        "age_seconds": 57600.0,
+        "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+        "band": "CO_column_number_density",
+        "image_id": "COPERNICUS/S5P/NRTI/L3_CO/SYNTHETIC_TEST_SCENE",
+        "source_product_id": "SYNTHETIC_TEST_ONLY",
+        "grid_scale_m": 1113.2,
+        "native_footprint": "7x7 km2",
+        "retrieval_radius_km": 10.0,
+        "statistic": "mean",
+        "quality": {
+          "status": "usable",
+          "catalog_qa_rule": "Catalog L3 ingestion: CO QA >= 0.50",
+          "scene_quality": "Nominal",
+          "processing_status": "Nominal",
+          "valid_grid_cells": 120,
+          "applied_filters": [
+            "Upstream L3 valid-pixel mask",
+            "PRODUCT_QUALITY = Nominal",
+            "PROCESSING_STATUS = Nominal",
+            "Column >= -0.001 mol/m²; retain non-outlier negative values"
+          ],
+          "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+        },
+        "provenance": {
+          "source_id": "COPERNICUS/S5P/NRTI/L3_CO/SYNTHETIC_TEST_SCENE",
+          "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+          "is_demo": false,
+          "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+          "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_CO"
+        }
+      },
+      "scene_count": 3,
+      "quality_scene_count": 2,
+      "latency_ms": 0.0,
+      "cache_hit": false
+    },
+    {
+      "product": "aerosol_index",
+      "status": "live",
+      "availability": "available",
+      "message": "Latest usable satellite observation in the requested window.",
+      "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+      "band": "absorbing_aerosol_index",
+      "unit": "dimensionless",
+      "observation": {
+        "product": "aerosol_index",
+        "value": -0.7,
+        "unit": "dimensionless",
+        "observed_at": "2026-09-10T08:00:00Z",
+        "retrieved_at": "2026-09-11T00:00:00Z",
+        "age_seconds": 57600.0,
+        "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+        "band": "absorbing_aerosol_index",
+        "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/SYNTHETIC_TEST_SCENE",
+        "source_product_id": "SYNTHETIC_TEST_ONLY",
+        "grid_scale_m": 1113.2,
+        "native_footprint": "7x7 km2",
+        "retrieval_radius_km": 10.0,
+        "statistic": "mean",
+        "quality": {
+          "status": "usable",
+          "catalog_qa_rule": "Catalog L3 ingestion: AER_AI QA >= 0.80",
+          "scene_quality": "Nominal",
+          "processing_status": "Nominal",
+          "valid_grid_cells": 120,
+          "applied_filters": [
+            "Upstream L3 valid-pixel mask",
+            "PRODUCT_QUALITY = Nominal",
+            "PROCESSING_STATUS = Nominal"
+          ],
+          "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+        },
+        "provenance": {
+          "source_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/SYNTHETIC_TEST_SCENE",
+          "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+          "is_demo": false,
+          "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+          "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_AER_AI"
+        }
+      },
+      "scene_count": 3,
+      "quality_scene_count": 2,
+      "latency_ms": 0.0,
+      "cache_hit": false
+    }
+  ],
+  "provider_status": {
+    "provider": "earth_engine_sentinel5p",
+    "configured": true,
+    "status": "live",
+    "message": "SYNTHETIC TEST ONLY",
+    "retrieved_at": "2026-09-11T00:00:00Z",
+    "latency_ms": 100.0
+  },
+  "availability": "complete",
+  "provenance": {
+    "source_id": "earth_engine_sentinel5p",
+    "method": "Sentinel-5P NRTI L3; independent latest usable scene per product",
+    "is_demo": false,
+    "note": "Copernicus Sentinel-5P / TROPOMI via Google Earth Engine. Regional atmospheric context, not surface concentration or causal attribution.",
+    "documentation_url": "https://developers.google.com/earth-engine/datasets/tags/s5p"
+  },
+  "temporal_note": "Latest usable observation per product; acquisition times may differ. Not real-time.",
+  "measurement_note": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+}

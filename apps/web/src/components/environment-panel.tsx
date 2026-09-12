@@ -8,6 +8,8 @@ import {
   type SourceStatus,
 } from "@/lib/api";
 
+import { SatellitePanel } from "./satellite-panel";
+
 const DEFAULT_POINT = { lat: 28.4595, lng: 77.0266 };
 const states: Record<SourceStatus["status"], string> = {
   live: "Live data",
@@ -90,6 +92,7 @@ function SourceDetails({
 }
 
 export function EnvironmentPanel() {
+  const [point, setPoint] = useState({ ...DEFAULT_POINT, sequence: 0 });
   const [lat, setLat] = useState(String(DEFAULT_POINT.lat));
   const [lng, setLng] = useState(String(DEFAULT_POINT.lng));
   const [context, setContext] = useState<EnvironmentalContext | null>(null);
@@ -119,6 +122,11 @@ export function EnvironmentPanel() {
 
   async function probe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setPoint((previous) => ({
+      lat: Number(lat),
+      lng: Number(lng),
+      sequence: previous.sequence + 1,
+    }));
     setLoading(true);
     setError("");
     setContext(null);
@@ -488,6 +496,7 @@ export function EnvironmentPanel() {
           </div>
         </>
       )}
+      <SatellitePanel key={point.sequence} lat={point.lat} lng={point.lng} />
     </section>
   );
 }

@@ -51,9 +51,9 @@ def create_app(environment: EnvironmentService | None = None) -> FastAPI:
 
     api = FastAPI(
         title="AirshedOS API",
-        version="0.2.0",
+        version="0.3.0",
         lifespan=lifespan,
-        description="Phase 1B. Independent environmental providers plus a fictional demo incident. "
+        description="Phase 1C. Independent environmental providers plus a fictional demo incident. "
         "No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
     )
     api.include_router(environment_router)
