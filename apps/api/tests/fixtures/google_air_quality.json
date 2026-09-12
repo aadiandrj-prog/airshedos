@@ -1,0 +1,12 @@
+{
+  "dateTime": "2026-09-10T04:00:00Z", "regionCode": "in",
+  "indexes": [
+    {"code":"uaqi","displayName":"Universal AQI","aqi":68,"category":"Moderate air quality","dominantPollutant":"pm25"},
+    {"code":"ind_cpcb","displayName":"National Air Quality Index","aqi":112,"category":"Moderately polluted","dominantPollutant":"pm25"}
+  ],
+  "pollutants": [
+    {"code":"pm25","displayName":"PM2.5","fullName":"Fine particulate matter","concentration":{"value":40.2,"units":"MICROGRAMS_PER_CUBIC_METER"}},
+    {"code":"o3","displayName":"O3","concentration":{"value":23.1,"units":"PARTS_PER_BILLION"}},
+    {"code":"no2","displayName":"NO2"}
+  ]
+}

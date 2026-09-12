@@ -35,13 +35,13 @@ export function OperationsPane({ incident }: { incident: Incident }) {
             <path
               d="M 36 0 L 0 0 0 36"
               fill="none"
-              stroke="#d7e1df"
+              stroke="#314334"
               strokeWidth="0.8"
             />
           </pattern>
           <linearGradient id="transport">
-            <stop stopColor="#d79537" stopOpacity="0.3" />
-            <stop offset="1" stopColor="#d79537" stopOpacity="0.04" />
+            <stop stopColor="#d7b070" stopOpacity="0.3" />
+            <stop offset="1" stopColor="#d7b070" stopOpacity="0.04" />
           </linearGradient>
           <marker
             id="arrow"
@@ -51,27 +51,27 @@ export function OperationsPane({ incident }: { incident: Incident }) {
             refY="3"
             orient="auto"
           >
-            <path d="M0,0 L0,6 L7,3 z" fill="#a46715" />
+            <path d="M0,0 L0,6 L7,3 z" fill="#d7b070" />
           </marker>
         </defs>
-        <rect width="720" height="450" fill="#edf2f0" />
+        <rect width="720" height="450" fill="#15231a" />
         <rect width="720" height="450" fill="url(#grid)" />
         <path
           d="M0 335 Q150 235 240 256 T420 195 T720 100"
           fill="none"
-          stroke="white"
+          stroke="#344935"
           strokeWidth="16"
         />
         <path
           d="M160 450 L236 337 L300 240 L362 154 L410 0"
           fill="none"
-          stroke="white"
+          stroke="#344935"
           strokeWidth="10"
         />
         <path
           d="M430 0 Q380 95 432 166 T398 299 T477 450"
           fill="none"
-          stroke="#98ada8"
+          stroke="#6c806b"
           strokeDasharray="7 7"
           strokeWidth="2"
         />
@@ -96,7 +96,7 @@ export function OperationsPane({ incident }: { incident: Incident }) {
             <path
               d="M296 261 Q387 169 511 137"
               fill="none"
-              stroke="#a46715"
+              stroke="#d7b070"
               strokeWidth="2"
               strokeDasharray="6 5"
               markerEnd="url(#arrow)"
@@ -106,17 +106,17 @@ export function OperationsPane({ incident }: { incident: Incident }) {
             </text>
           </>
         )}
-        <circle cx="277" cy="279" r="33" fill="#b95b30" opacity="0.09" />
-        <circle cx="277" cy="279" r="19" fill="#b95b30" opacity="0.16" />
+        <circle cx="277" cy="279" r="33" fill="#d7b070" opacity="0.09" />
+        <circle cx="277" cy="279" r="19" fill="#d7b070" opacity="0.16" />
         <circle
           cx="277"
           cy="279"
           r="8"
-          fill="#af4b24"
-          stroke="white"
+          fill="#e6b77b"
+          stroke="#344935"
           strokeWidth="3"
         />
-        <rect x="307" y="265" width="139" height="37" rx="5" fill="#172f34" />
+        <rect x="307" y="265" width="139" height="37" rx="5" fill="#344c38" />
         <text x="322" y="289" fill="white" fontSize="14" fontWeight="600">
           {incident.id}
         </text>
@@ -125,7 +125,7 @@ export function OperationsPane({ incident }: { incident: Incident }) {
         </text>
         <path
           d="M654 379 L654 359 M649 365 L654 359 L659 365"
-          stroke="#526b65"
+          stroke="#a0b198"
           fill="none"
           strokeWidth="2"
         />

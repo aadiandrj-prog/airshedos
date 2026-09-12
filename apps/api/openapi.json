@@ -2,10 +2,107 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 1A. Fictional demo evidence; no live data or AI inference. Acknowledgment is local; sharing is simulated. State resets on restart.",
-    "version": "0.1.0"
+    "description": "Phase 1B. Independent environmental providers plus a fictional demo incident. No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
+    "version": "0.2.0"
   },
   "paths": {
+    "/api/v1/environment/sources": {
+      "get": {
+        "tags": [
+          "Environmental context"
+        ],
+        "summary": "Sources",
+        "description": "Configuration presence only; no network call or credential disclosure.",
+        "operationId": "sources_api_v1_environment_sources_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentalSources"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/environment/context": {
+      "get": {
+        "tags": [
+          "Environmental context"
+        ],
+        "summary": "Context",
+        "description": "Independent environmental context; never corroborates the fictional demo incident.",
+        "operationId": "context_api_v1_environment_context_get",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 90,
+              "minimum": -90,
+              "title": "Lat"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 180,
+              "minimum": -180,
+              "title": "Lng"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone.",
+              "title": "At"
+            },
+            "description": "Optional reference time, preserved as metadata only. This phase always queries current conditions; no historical retrieval is performed. Include a timezone."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentalContext"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -220,6 +317,145 @@
   },
   "components": {
     "schemas": {
+      "AirQualityIndex": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "dominant_pollutant": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dominant Pollutant"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "display_name",
+          "value",
+          "category",
+          "dominant_pollutant"
+        ],
+        "title": "AirQualityIndex"
+      },
+      "AirQualityObservation": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "live",
+              "cached"
+            ],
+            "title": "Status",
+            "default": "live"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "region_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Code"
+          },
+          "indexes": {
+            "items": {
+              "$ref": "#/components/schemas/AirQualityIndex"
+            },
+            "type": "array",
+            "title": "Indexes"
+          },
+          "pollutants": {
+            "items": {
+              "$ref": "#/components/schemas/PollutantMeasurement"
+            },
+            "type": "array",
+            "title": "Pollutants"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "observed_at",
+          "retrieved_at",
+          "status",
+          "provenance",
+          "region_code",
+          "indexes",
+          "pollutants"
+        ],
+        "title": "AirQualityObservation"
+      },
       "CitizenReport": {
         "properties": {
           "id": {
@@ -282,6 +518,255 @@
           "source_type"
         ],
         "title": "CitizenReport"
+      },
+      "EnvironmentalContext": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "requested_reference_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Reference Time"
+          },
+          "time_mode": {
+            "type": "string",
+            "const": "current",
+            "title": "Time Mode",
+            "default": "current"
+          },
+          "temporal_note": {
+            "type": "string",
+            "title": "Temporal Note",
+            "default": "Current conditions only; any supplied reference time is not a historical query."
+          },
+          "air_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AirQualityObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "weather": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeteorologicalObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fires": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FireObservation"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fires"
+          },
+          "fire_dataset": {
+            "type": "string",
+            "title": "Fire Dataset"
+          },
+          "fire_search_radius_km": {
+            "type": "number",
+            "title": "Fire Search Radius Km"
+          },
+          "fire_window_days": {
+            "type": "integer",
+            "title": "Fire Window Days"
+          },
+          "source_statuses": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatuses"
+          },
+          "incident_relationship": {
+            "type": "string",
+            "const": "independent_context_not_demo_corroboration",
+            "title": "Incident Relationship",
+            "default": "independent_context_not_demo_corroboration"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "requested_at",
+          "generated_at",
+          "requested_reference_time",
+          "time_mode",
+          "temporal_note",
+          "air_quality",
+          "weather",
+          "fires",
+          "fire_dataset",
+          "fire_search_radius_km",
+          "fire_window_days",
+          "source_statuses",
+          "incident_relationship"
+        ],
+        "title": "EnvironmentalContext"
+      },
+      "EnvironmentalProvenance": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "const": false,
+            "title": "Is Demo",
+            "default": false
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "documentation_url": {
+            "type": "string",
+            "title": "Documentation Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_id",
+          "method",
+          "is_demo",
+          "note",
+          "documentation_url"
+        ],
+        "title": "EnvironmentalProvenance"
+      },
+      "EnvironmentalSourceStatus": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "configured": {
+            "type": "boolean",
+            "title": "Configured"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Latency Ms"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "configured",
+          "status",
+          "message",
+          "retrieved_at",
+          "latency_ms"
+        ],
+        "title": "EnvironmentalSourceStatus"
+      },
+      "EnvironmentalSourceStatuses": {
+        "properties": {
+          "air_quality": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          },
+          "weather": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          },
+          "fires": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "air_quality",
+          "weather",
+          "fires"
+        ],
+        "title": "EnvironmentalSourceStatuses"
+      },
+      "EnvironmentalSources": {
+        "properties": {
+          "air_quality": {
+            "$ref": "#/components/schemas/ProviderConfiguration"
+          },
+          "weather": {
+            "$ref": "#/components/schemas/ProviderConfiguration"
+          },
+          "fires": {
+            "$ref": "#/components/schemas/ProviderConfiguration"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "air_quality",
+          "weather",
+          "fires"
+        ],
+        "title": "EnvironmentalSources"
       },
       "EvidenceSignal": {
         "properties": {
@@ -367,6 +852,136 @@
           "conflicting"
         ],
         "title": "EvidenceStatus"
+      },
+      "FireObservation": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "live",
+              "cached"
+            ],
+            "title": "Status",
+            "default": "live"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "description": {
+            "type": "string",
+            "const": "Nearby active-fire detection",
+            "title": "Description",
+            "default": "Nearby active-fire detection"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "l",
+                  "n",
+                  "h"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "satellite": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Satellite"
+          },
+          "instrument": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument"
+          },
+          "brightness": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fire_radiative_power": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "distance_from_query_km": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Distance From Query Km"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "observed_at",
+          "retrieved_at",
+          "status",
+          "provenance",
+          "source_id",
+          "description",
+          "confidence",
+          "satellite",
+          "instrument",
+          "brightness",
+          "fire_radiative_power",
+          "distance_from_query_km"
+        ],
+        "title": "FireObservation"
       },
       "ForecastRisk": {
         "properties": {
@@ -525,6 +1140,235 @@
           "authority_type"
         ],
         "title": "Jurisdiction"
+      },
+      "Measurement": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "unit"
+        ],
+        "title": "Measurement"
+      },
+      "MeteorologicalObservation": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "live",
+              "cached"
+            ],
+            "title": "Status",
+            "default": "live"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "relative_humidity_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relative Humidity Percent"
+          },
+          "wind_speed": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wind_from_degrees": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMaximum": 360.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wind From Degrees"
+          },
+          "wind_cardinal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wind Cardinal"
+          },
+          "sea_level_pressure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "precipitation_probability_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precipitation Probability Percent"
+          },
+          "precipitation_qpf": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cloud_cover_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cloud Cover Percent"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "observed_at",
+          "retrieved_at",
+          "status",
+          "provenance",
+          "temperature",
+          "relative_humidity_percent",
+          "wind_speed",
+          "wind_from_degrees",
+          "wind_cardinal",
+          "sea_level_pressure",
+          "precipitation_probability_percent",
+          "precipitation_qpf",
+          "cloud_cover_percent"
+        ],
+        "title": "MeteorologicalObservation"
+      },
+      "PollutantMeasurement": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "concentration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "full_name",
+          "concentration"
+        ],
+        "title": "PollutantMeasurement"
       },
       "PollutionIncident": {
         "properties": {
@@ -693,6 +1537,34 @@
         ],
         "title": "Provenance"
       },
+      "ProviderConfiguration": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "configured": {
+            "type": "boolean",
+            "title": "Configured"
+          },
+          "configuration_state": {
+            "type": "string",
+            "enum": [
+              "configured",
+              "not_configured"
+            ],
+            "title": "Configuration State"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "configured",
+          "configuration_state"
+        ],
+        "title": "ProviderConfiguration"
+      },
       "RiskLevel": {
         "type": "string",
         "enum": [
@@ -752,6 +1624,17 @@
           "satellite"
         ],
         "title": "SignalType"
+      },
+      "SourceState": {
+        "type": "string",
+        "enum": [
+          "live",
+          "cached",
+          "unavailable",
+          "not_configured",
+          "error"
+        ],
+        "title": "SourceState"
       },
       "ValidationError": {
         "properties": {

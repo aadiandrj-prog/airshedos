@@ -1,12 +1,12 @@
 [project]
 name = "airshedos-api"
-version = "0.1.0"
-description = "AirshedOS Phase 1A local incident command API"
+version = "0.2.0"
+description = "AirshedOS incident command and environmental context API"
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic>=2.10,<3"]
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic>=2.10,<3", "httpx>=0.28,<1", "python-dotenv>=1,<2"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<10", "httpx>=0.28,<1", "ruff>=0.11,<1"]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

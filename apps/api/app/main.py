@@ -1,9 +1,20 @@
 import os
+from contextlib import asynccontextmanager
 from typing import Annotated
 
+import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.environment.http import ProviderHTTP
+from app.environment.providers import (
+    GoogleAirQualityProvider,
+    GoogleWeatherProvider,
+    NasaFirmsProvider,
+)
+from app.environment.router import router as environment_router
+from app.environment.service import EnvironmentService
+from app.environment.settings import EnvironmentSettings
 from app.models import PollutionIncident, ShareRequest, ShareResponse
 from app.repository import IncidentRepository
 
@@ -15,13 +26,37 @@ def get_repository(request: Request) -> IncidentRepository:
 Repository = Annotated[IncidentRepository, Depends(get_repository)]
 
 
-def create_app() -> FastAPI:
+def create_app(environment: EnvironmentService | None = None) -> FastAPI:
+    @asynccontextmanager
+    async def lifespan(api: FastAPI):
+        if environment is not None:
+            api.state.environment = environment
+            yield
+        else:
+            settings = EnvironmentSettings.from_env()
+            async with httpx.AsyncClient(follow_redirects=False) as client:
+                http = ProviderHTTP(client, settings.timeout_seconds)
+                api.state.environment = EnvironmentService(
+                    GoogleAirQualityProvider(http, settings.google_key.get_secret_value()),
+                    GoogleWeatherProvider(http, settings.google_key.get_secret_value()),
+                    NasaFirmsProvider(
+                        http,
+                        settings.firms_key.get_secret_value(),
+                        settings.firms_radius_km,
+                        settings.firms_dataset,
+                    ),
+                    settings,
+                )
+                yield
+
     api = FastAPI(
         title="AirshedOS API",
-        version="0.1.0",
-        description="Phase 1A. Fictional demo evidence; no live data or AI inference. "
-        "Acknowledgment is local; sharing is simulated. State resets on restart.",
+        version="0.2.0",
+        lifespan=lifespan,
+        description="Phase 1B. Independent environmental providers plus a fictional demo incident. "
+        "No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
     )
+    api.include_router(environment_router)
     api.state.repository = IncidentRepository()
     api.add_middleware(
         CORSMiddleware,

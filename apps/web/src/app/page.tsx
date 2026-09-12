@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { api, type Incident } from "@/lib/api";
 import { OperationsPane } from "@/components/operations-pane";
+import { EnvironmentPanel } from "@/components/environment-panel";
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 const label = (value: string) => value.replaceAll("_", " ");
@@ -176,6 +177,15 @@ export default function CommandCenter() {
           >
             ↻ Refresh
           </button>
+        </div>
+        <EnvironmentPanel />
+        <div className="workspace-heading" id="incident-command">
+          <span className="eyebrow">02 / DEMO INCIDENT WORKSPACE</span>
+          <h2>From evidence to action.</h2>
+          <p>
+            A fictional operations scenario. All incident evidence and forecast
+            values below are sample data.
+          </p>
         </div>
         <div className="demo-banner">
           <span className="tag demo">DEMO · PHASE 1A</span>
@@ -486,7 +496,10 @@ export default function CommandCenter() {
         )}
         <footer>
           AirshedOS{" "}
-          <span>Phase 1A · Local demonstration · Evidence before action</span>
+          <span>
+            Phase 1B · Environmental context & demo operations · No causal
+            attribution
+          </span>
         </footer>
       </main>
     </>
