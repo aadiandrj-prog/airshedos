@@ -105,7 +105,7 @@ Sources: [official NO₂ catalog](https://developers.google.com/earth-engine/dat
 
 The catalog’s older example HARP commands use validity >50 even for NO₂/AER_AI; the table above follows its explicit current ingestion-threshold description. Because the L3 QA band is absent, AirshedOS cannot independently audit each upstream QA value. This limitation is retained rather than claiming a newly verified pixel threshold.
 
-These Earth Engine L3 assets have **already been quality-filtered during ingestion**. The original L2 pixel `qa_value` band is not exposed. AirshedOS preserves the existing valid-pixel mask; it does not pretend to apply a nonexistent QA band or infer a confidence percentage. It additionally requires `PRODUCT_QUALITY = Nominal` and `PROCESSING_STATUS = Nominal`; missing/non-nominal scene metadata is filtered. For column bands only, it masks values below −0.001 mol/m² following the catalog’s negative-outlier guidance, while retaining other negative retrievals. Negative aerosol-index values remain valid. No arbitrary cloud mask or extra product is added. `usable` means these filters passed, not calibrated confidence or source attribution.
+These Earth Engine L3 assets have **already been quality-filtered during ingestion**. The original L2 pixel `qa_value` band is not exposed. AirshedOS preserves the existing valid-pixel mask; it does not pretend to apply a nonexistent QA band or infer a confidence percentage. It additionally requires `PRODUCT_QUALITY` in `{Nominal, NOMINAL}`. Accepted `PROCESSING_STATUS` is `{Nominal, NRTI-processing product}` for NO₂ only, and `{Nominal}` for CO and Aerosol Index. Missing, unknown, degraded and OFFL backup values are rejected. Raw accepted metadata is preserved in observation quality. For column bands only, it masks values below −0.001 mol/m² following the catalog’s negative-outlier guidance, while retaining other negative retrievals. Negative aerosol-index values remain valid. No arbitrary cloud mask or extra product is added. `usable` means these filters passed, not calibrated confidence or source attribution.
 
 ### Geometry, timing, and selection
 
@@ -121,7 +121,7 @@ The latest NO₂, CO and aerosol observations may have different acquisition tim
 
 - `available`: usable observation selected.
 - `no_scene`: no candidate intersects the neighborhood/time window.
-- `quality_filtered`: candidates exist, none have nominal scene metadata.
+- `quality_filtered`: candidates exist, none have accepted product quality and product-specific processing metadata.
 - `no_usable_pixels`: nominal candidates exist, no valid local cells survive; L3 cannot distinguish all QA losses from missing coverage.
 - `not_configured`, `authentication_error`, `configuration_error`, `provider_error`, `timeout`, `busy`: operational states, not scientific absence.
 
@@ -145,3 +145,10 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --satel
 ```
 
 This reports query/configuration status, each product's native value/unit, acquisition time/age, QA, provenance, latency and cache result. Genuine missing coverage passes the query gate; auth/config failures do not. Exit 2 means the satellite gate remains unmet. Debug `--lookback-hours 168` or `--at` must be recorded separately; default coordinates/windows must not be changed to manufacture positive results. CI never runs this tool and blocks SDK/HTTP network transports in unit tests.
+
+
+### Verified metadata semantics (12 September 2026)
+
+The [authenticated scene inspection](verification/phase1c-metadata-diagnostic.json) found uppercase `NOMINAL` for all 11 Gurugram NRTI candidates. NO₂ processing metadata was `NRTI-processing product`; CO/Aerosol Index processing metadata was `Nominal`. No consulted property was missing. The catalog's generic title-case Nominal/Degraded descriptions do not enumerate those actual source strings correctly.
+
+The [official NO₂ Product User Manual v4.5.0](https://sentiwiki.copernicus.eu/__attachments/1673595/S5P-KNMI-L2-0021-MA%20-%20Sentinel-5P%20Level%202%20Product%20User%20Manual%20Nitrogendioxide%202025-4.5.0.pdf?inst-v=48f4e5b4-21dc-4a3c-b262-15dde094f6bd), pp. 37 and 143, defines the NRTI processing label as a production mode and the uppercase nominal quality enum. The predicate therefore accepts these exact source strings, retaining the catalog-described Nominal forms for compatibility. It does not treat arbitrary processing strings as usable or admit the NO₂ processing mode for other products. Pixel masks, QA thresholds, outlier cutoff, geometry, time window and reducer are unchanged. See [the final diagnostic](PHASE_1C_VERIFICATION.md#final-metadata-diagnostic--12-september-2026).

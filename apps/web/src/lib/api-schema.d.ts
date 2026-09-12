@@ -738,14 +738,14 @@ export interface components {
             catalog_qa_rule: string;
             /**
              * Scene Quality
-             * @constant
+             * @enum {string}
              */
-            scene_quality: "Nominal";
+            scene_quality: "Nominal" | "NOMINAL";
             /**
              * Processing Status
-             * @constant
+             * @enum {string}
              */
-            processing_status: "Nominal";
+            processing_status: "Nominal" | "NRTI-processing product";
             /** Valid Grid Cells */
             valid_grid_cells: number;
             /** Applied Filters */

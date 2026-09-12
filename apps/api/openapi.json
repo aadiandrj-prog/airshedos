@@ -2048,12 +2048,18 @@
           },
           "scene_quality": {
             "type": "string",
-            "const": "Nominal",
+            "enum": [
+              "Nominal",
+              "NOMINAL"
+            ],
             "title": "Scene Quality"
           },
           "processing_status": {
             "type": "string",
-            "const": "Nominal",
+            "enum": [
+              "Nominal",
+              "NRTI-processing product"
+            ],
             "title": "Processing Status"
           },
           "valid_grid_cells": {

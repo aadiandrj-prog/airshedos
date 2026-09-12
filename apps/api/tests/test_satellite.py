@@ -214,6 +214,8 @@ def test_official_sdk_query_graph_filters_selects_latest_and_preserves_units(mon
             "PRODUCT_QUALITY",
             "PROCESSING_STATUS",
             "Nominal",
+            "NOMINAL",
+            "Filter.listContains",
             "Geometry.buffer",
             "Number.max",
             "Image.reduceRegion",
@@ -248,6 +250,7 @@ def test_official_sdk_query_graph_filters_selects_latest_and_preserves_units(mon
         assert sort["arguments"]["key"] == {"constantValue": "observed_ms"}
         assert sort["arguments"]["ascending"] == {"constantValue": False}
         assert ("Image.gte" in graph) == (product != "aerosol_index")
+        assert ("NRTI-processing product" in graph) == (product == "no2")
         assert "qa_value" not in graph and "multiply" not in graph
     finally:
         ee.Reset()
@@ -400,3 +403,47 @@ async def test_live_cli_missing_config_is_failed_gate_not_missing_coverage(monke
     output = json.loads(capsys.readouterr().out)
     assert not output["satellite_verification"]["gate_pass"]
     assert all(p["availability"] == "not_configured" for p in output["satellite"]["products"])
+
+
+@pytest.mark.parametrize("product", PRODUCTS)
+def test_actual_nrti_metadata_is_accepted_without_changing_pixel_quality(product):
+    raw = deepcopy(FIXTURE[product])
+    raw["observation"]["product_quality"] = "NOMINAL"
+    processing = "NRTI-processing product" if product == "no2" else "Nominal"
+    raw["observation"]["processing_status"] = processing
+    obs = normalize(product, raw, QUERY, END).observation
+    assert obs.quality.scene_quality == "NOMINAL"
+    assert obs.quality.processing_status == processing
+    assert obs.quality.catalog_qa_rule == PRODUCTS[product][3]
+    assert "Upstream L3 valid-pixel mask" in obs.quality.applied_filters
+    assert obs.value == raw["observation"]["value"]
+    assert obs.unit == PRODUCTS[product][2]
+
+
+@pytest.mark.parametrize("product", PRODUCTS)
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("product_quality", "DEGRADED"),
+        ("product_quality", None),
+        ("product_quality", "UNKNOWN"),
+        ("processing_status", "Degraded"),
+        ("processing_status", None),
+        ("processing_status", "UNKNOWN"),
+        ("processing_status", "OFFL-processing backup product/slant column product"),
+        ("processing_status", "OFFL-processing nominal product"),
+    ],
+)
+def test_metadata_fix_still_rejects_degraded_missing_unknown_and_wrong_mode(product, field, value):
+    raw = deepcopy(FIXTURE[product])
+    raw["observation"][field] = value
+    with pytest.raises(ValueError):
+        normalize(product, raw, QUERY, END)
+
+
+@pytest.mark.parametrize("product", ["co", "aerosol_index"])
+def test_no2_processing_mode_is_not_accepted_for_other_products(product):
+    raw = deepcopy(FIXTURE[product])
+    raw["observation"]["processing_status"] = "NRTI-processing product"
+    with pytest.raises(ValueError):
+        normalize(product, raw, QUERY, END)

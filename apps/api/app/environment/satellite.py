@@ -37,6 +37,15 @@ PRODUCTS = {
     ),
 }
 GRID_SCALE_M = 1113.2
+# Catalog uses title case; actual NRTI assets expose the source's uppercase quality enum.
+ACCEPTED_PRODUCT_QUALITY = ("Nominal", "NOMINAL")
+# NO2's source manual defines a processing mode, not a nominal/degraded flag here.
+# Keep catalog-described Nominal for compatibility; never accept OFFL backup/degraded modes.
+ACCEPTED_PROCESSING_STATUS = {
+    "no2": ("Nominal", "NRTI-processing product"),
+    "co": ("Nominal",),
+    "aerosol_index": ("Nominal",),
+}
 
 
 def catalog_url(product: str) -> str:
@@ -104,7 +113,9 @@ def normalize(
         )
         messages = {
             "no_scene": "No scene intersects this neighborhood in the search window.",
-            "quality_filtered": "No scenes have nominal quality and processing metadata.",
+            "quality_filtered": (
+                "No scenes have accepted product quality and product-specific processing metadata."
+            ),
             "no_usable_pixels": (
                 "Scenes exist but no valid local pixels remain after masks and filtering. "
                 "QA loss and missing coverage cannot be separated in L3."
@@ -124,10 +135,15 @@ def normalize(
             raise ValueError("Observation outside requested window")
         if not row["image_id"].startswith(collection + "/") or quality_count == 0:
             raise ValueError("Invalid image identity")
+        if (
+            row["product_quality"] not in ACCEPTED_PRODUCT_QUALITY
+            or row["processing_status"] not in ACCEPTED_PROCESSING_STATUS[product]
+        ):
+            raise ValueError("Unaccepted product quality or processing metadata")
         filters = [
             "Upstream L3 valid-pixel mask",
-            "PRODUCT_QUALITY = Nominal",
-            "PROCESSING_STATUS = Nominal",
+            f"PRODUCT_QUALITY = {row['product_quality']}",
+            f"PROCESSING_STATUS = {row['processing_status']}",
         ]
         if unit == "mol/m²":
             filters.append("Column >= -0.001 mol/m²; retain non-outlier negative values")
@@ -216,9 +232,9 @@ class EarthEngineClient:
             .filterBounds(geometry)
             .filterDate(query.window.start.isoformat(), query.window.end.isoformat())
         )
-        nominal = scenes.filter(ee.Filter.eq("PRODUCT_QUALITY", "Nominal")).filter(
-            ee.Filter.eq("PROCESSING_STATUS", "Nominal")
-        )
+        nominal = scenes.filter(
+            ee.Filter.inList("PRODUCT_QUALITY", list(ACCEPTED_PRODUCT_QUALITY))
+        ).filter(ee.Filter.inList("PROCESSING_STATUS", list(ACCEPTED_PROCESSING_STATUS[product])))
 
         def summarize(image):
             image = ee.Image(image)

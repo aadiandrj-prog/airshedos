@@ -131,8 +131,8 @@ class SatelliteSearchWindow(DomainModel):
 class SatelliteQuality(DomainModel):
     status: Literal["usable"] = "usable"
     catalog_qa_rule: str
-    scene_quality: Literal["Nominal"]
-    processing_status: Literal["Nominal"]
+    scene_quality: Literal["Nominal", "NOMINAL"]
+    processing_status: Literal["Nominal", "NRTI-processing product"]
     valid_grid_cells: Annotated[int, Field(gt=0)]
     applied_filters: list[str]
     note: str = (
