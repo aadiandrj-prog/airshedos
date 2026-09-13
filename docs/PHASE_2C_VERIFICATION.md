@@ -33,7 +33,7 @@ Three clearly named synthetic test locations, 2025-01-01T00:00:00Z to 2025-04-01
 
 Artifacts remain under ignored `data/processed/fixture_v1/`: all three Parquet files, dataset/source/split manifests, coverage CSV, target analysis, baseline metrics and leakage report. No generated data is committed. The deterministic generator and small request-shaped fixtures are code in the repository; all locations and values are artificial.
 
-Frame construction and validation timing recorded in this run: **0.168 seconds**, excluding artifact serialization. Live build duration/cost is unknown. The fixture command made **0 OpenAQ requests and 0 Earth Engine RPCs**. A separate full pipeline test exercised fake discovery, ingestion and 18 simulated weather batches; a repeat made no additional simulated requests.
+Frame construction and validation timing recorded in this run: **0.159 seconds**, excluding artifact serialization. Live build duration/cost is unknown. The fixture command made **0 OpenAQ requests and 0 Earth Engine RPCs**. A separate full pipeline test exercised fake discovery, ingestion and 18 simulated weather batches; a repeat made no additional simulated requests.
 
 ### Targets and features
 
@@ -89,7 +89,7 @@ Always-negative precision/recall/F1 are 0 in all splits; zero precision denomina
 - Browser: **26 passed in 29.1 seconds** after resuming Docker and starting the app.
 - Docker: **build/start/health passed**; API and web healthy on loopback ports 8000/3000, frontend HTTP 200, existing ADC mount confirmed read-only.
 - Secret scan: **pass, 0 findings** across Git-visible files, compiled frontend and all generated fixture artifacts; **1,714 files scanned**.
-- GitHub CI: pending Phase 2C push.
+- GitHub CI: current per-commit checks are linked from [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5). CI is fixture-only and does not satisfy the live-data gate.
 
 Leakage tests cover independent numerical lag/rolling/future-target expectations, future-input perturbation invariance, station isolation, missing future hours, minimum trailing history, training-only sensitivity selection, explicit target exclusion, chronological alignment/purge, exact fire acquisition/availability windows, deliberate feature/target corruption and checksum tampering. No live calls are permitted in CI.
 
@@ -97,6 +97,6 @@ First browser attempts encountered `ERR_CONNECTION_REFUSED`: Docker Desktop had 
 
 ## Git and remaining gates
 
-Branch: `codex/phase-2c-prediction-dataset`, based on verified Phase 2B `fdfb79300c05576df93b1ae7a4f0cb25526f4893`. Phase 2A PR #3 and Phase 2B PR #4 remain open; this change is stacked against the Phase 2B branch. No automatic merge is performed. Commit and PR will be recorded after final checks.
+Branch: `codex/phase-2c-prediction-dataset`, based on verified Phase 2B `fdfb79300c05576df93b1ae7a4f0cb25526f4893`. Phase 2A PR #3 and Phase 2B PR #4 remain open; this change is stacked against the Phase 2B branch. No automatic merge is performed. Implementation commit: `547b53c`; [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5). The fixture artifacts were regenerated from this clean implementation commit; subsequent documentation commits do not change their data contract.
 
 **Recommendation: do not start Phase 2D yet.** Complete OpenAQ setup, real 2–4-week two-station feasibility, real measured station selection, full practical common-period dataset and real baselines. Separately resolve operational publication availability with an as-of source design and prospective validation. Scientific limits remain: NCR specificity, monitors are not every street, coarse reanalysis, no causal source attribution, and a heuristic spike label that is neither regulatory nor epidemiological. No production training, forecast service/UI, new Gemini pass, database or warehouse was added.
