@@ -9,6 +9,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.citizen.models import CitizenAnalysisResponse, CitizenInputError
 from app.citizen.service import interpret
+from app.corroboration.models import StructuredReport
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 MAX_BODY_BYTES = MAX_IMAGE_BYTES + 64 * 1024
@@ -118,6 +119,16 @@ async def analyze(
         return invalid(str(exc))
     finally:
         await image.close()
-    return await interpret(
+    result = await interpret(
         request.app.state.citizen_analyzer, clean, mime_type, latitude, longitude, description
     )
+    if result.analysis is not None and result.evidence is not None:
+        request.app.state.structured_reports.put(
+            StructuredReport(
+                report=result.report, analysis=result.analysis, evidence=result.evidence
+            )
+        )
+        result.structured_report_ttl_seconds = (
+            request.app.state.corroboration_settings.report_ttl_seconds
+        )
+    return result

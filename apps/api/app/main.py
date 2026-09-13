@@ -12,6 +12,9 @@ from app.citizen.provider import CitizenEvidenceAnalyzer, GeminiCitizenEvidenceA
 from app.citizen.router import PATH, CitizenUploadLimit, invalid
 from app.citizen.router import router as citizen_router
 from app.citizen.settings import CitizenSettings
+from app.corroboration.repository import EphemeralReportRepository
+from app.corroboration.router import router as corroboration_router
+from app.corroboration.settings import CorroborationSettings
 from app.environment.http import ProviderHTTP
 from app.environment.providers import (
     GoogleAirQualityProvider,
@@ -35,41 +38,53 @@ Repository = Annotated[IncidentRepository, Depends(get_repository)]
 def create_app(
     environment: EnvironmentService | None = None,
     citizen_analyzer: CitizenEvidenceAnalyzer | None = None,
+    structured_reports: EphemeralReportRepository | None = None,
+    corroboration_settings: CorroborationSettings | None = None,
 ) -> FastAPI:
     @asynccontextmanager
     async def lifespan(api: FastAPI):
         api.state.citizen_analyzer = citizen_analyzer or GeminiCitizenEvidenceAnalyzer(
             CitizenSettings.from_env()
         )
-        if environment is not None:
-            api.state.environment = environment
-            yield
-        else:
-            settings = EnvironmentSettings.from_env()
-            async with httpx.AsyncClient(follow_redirects=False) as client:
-                http = ProviderHTTP(client, settings.timeout_seconds)
-                api.state.environment = EnvironmentService(
-                    GoogleAirQualityProvider(http, settings.google_key.get_secret_value()),
-                    GoogleWeatherProvider(http, settings.google_key.get_secret_value()),
-                    NasaFirmsProvider(
-                        http,
-                        settings.firms_key.get_secret_value(),
-                        settings.firms_radius_km,
-                        settings.firms_dataset,
-                    ),
-                    settings,
-                )
+        api.state.corroboration_settings = (
+            corroboration_settings or CorroborationSettings.from_env()
+        )
+        api.state.structured_reports = structured_reports or EphemeralReportRepository(
+            api.state.corroboration_settings
+        )
+        try:
+            if environment is not None:
+                api.state.environment = environment
                 yield
+            else:
+                settings = EnvironmentSettings.from_env()
+                async with httpx.AsyncClient(follow_redirects=False) as client:
+                    http = ProviderHTTP(client, settings.timeout_seconds)
+                    api.state.environment = EnvironmentService(
+                        GoogleAirQualityProvider(http, settings.google_key.get_secret_value()),
+                        GoogleWeatherProvider(http, settings.google_key.get_secret_value()),
+                        NasaFirmsProvider(
+                            http,
+                            settings.firms_key.get_secret_value(),
+                            settings.firms_radius_km,
+                            settings.firms_dataset,
+                        ),
+                        settings,
+                    )
+                    yield
+        finally:
+            api.state.structured_reports.clear()
 
     api = FastAPI(
         title="AirshedOS API",
-        version="0.4.0",
+        version="0.5.0",
         lifespan=lifespan,
-        description="Phase 2A. Environmental providers and independent citizen interpretation. "
-        "No evidence fusion or causal attribution. Demo incident sharing is simulated.",
+        description="Phase 2B. Transparent deterministic evidence corroboration. "
+        "No causal attribution. Demo incident sharing is simulated.",
     )
     api.include_router(environment_router)
     api.include_router(citizen_router)
+    api.include_router(corroboration_router)
     api.add_middleware(CitizenUploadLimit)
 
     @api.exception_handler(RequestValidationError)

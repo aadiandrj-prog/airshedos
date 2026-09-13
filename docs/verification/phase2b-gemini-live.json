@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-09-13T06:47:39.416454+00:00",
+  "note": "Image-location pairing is synthetic; this verifies pipeline behavior, not event truth.",
+  "mode": "gemini",
+  "latitude": 28.4595,
+  "longitude": 77.0266,
+  "image": "synthetic open-burning.png; see citizen-evaluation/README.md",
+  "authentication": "backend Vertex / Earth Engine ADC; existing ground provider keys",
+  "gemini_wall_latency_ms": 4760.39,
+  "citizen": {
+    "request_id": "02521e2c-87be-46e1-85c8-fd80d7677706",
+    "status": "interpreted",
+    "report": {
+      "id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+      "created_at": "2026-09-13T06:47:39.580331Z",
+      "latitude": 28.4595,
+      "longitude": 77.0266,
+      "description": "",
+      "language": "und",
+      "image_url": null,
+      "source_type": "citizen_report"
+    },
+    "analysis": {
+      "event_type": "open_burning",
+      "event_type_confidence": "high",
+      "visible_smoke": true,
+      "visible_flames": true,
+      "visible_dust": false,
+      "industrial_context": false,
+      "construction_context": false,
+      "waste_burning_context": false,
+      "vegetation_burning_context": true,
+      "traffic_context": false,
+      "scene_type": "outdoor",
+      "apparent_scale": "localized",
+      "visual_observations": [
+        "Gray plume or cloud-like feature visible.",
+        "Flame-like features visible.",
+        "Open ground visible.",
+        "Vegetation visible."
+      ],
+      "uncertainty_reasons": [
+        "Image alone cannot establish source or pollutant type.",
+        "Material composition cannot be established visually.",
+        "Image alone cannot establish pollutant concentration or air quality."
+      ],
+      "insufficient_evidence": false,
+      "source_report_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+      "analyzed_at": "2026-09-13T06:47:44.236352Z",
+      "provenance": {
+        "source_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+        "method": "vertex_ai_gemini_multimodal",
+        "is_demo": false,
+        "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+        "model": "gemini-3.1-flash-lite",
+        "model_version": "gemini-3.1-flash-lite",
+        "prompt_version": "citizen_evidence_v1",
+        "generated_at": "2026-09-13T06:47:44.236352Z",
+        "source_report_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+        "derived": true,
+        "author": "model",
+        "confidence_basis": "model_estimated_ordinal_not_calibrated"
+      },
+      "safety_note": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation."
+    },
+    "evidence": {
+      "id": "CE-060d8ec0-1b1e-45cf-b7b4-eedf396299bc",
+      "signal_type": "citizen_report",
+      "source": "gemini_multimodal",
+      "status": "interpreted",
+      "confidence": null,
+      "observed_at": null,
+      "summary": "Possible event type: open burning. Visual evidence only; requires environmental corroboration.",
+      "provenance": {
+        "source_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+        "method": "vertex_ai_gemini_multimodal",
+        "is_demo": false,
+        "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+        "model": "gemini-3.1-flash-lite",
+        "model_version": "gemini-3.1-flash-lite",
+        "prompt_version": "citizen_evidence_v1",
+        "generated_at": "2026-09-13T06:47:44.236352Z",
+        "source_report_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+        "derived": true,
+        "author": "model",
+        "confidence_basis": "model_estimated_ordinal_not_calibrated"
+      },
+      "raw_reference": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+      "source_report_id": "CR-e82fbab8-3db8-49b0-a56f-52ba5386e646",
+      "derived": true,
+      "interpretation_at": "2026-09-13T06:47:44.236352Z"
+    },
+    "message": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+    "latency_ms": 4660.05,
+    "structured_report_ttl_seconds": 1800
+  },
+  "gemini_http_status": 200,
+  "gemini_calls": 1,
+  "gate": "PASS"
+}

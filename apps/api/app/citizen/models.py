@@ -151,6 +151,7 @@ class CitizenAnalysisResponse(DomainModel):
     evidence: CitizenVisualSignal | None = None
     message: str
     latency_ms: float = Field(ge=0)
+    structured_report_ttl_seconds: int | None = Field(default=None, ge=60, le=3600)
 
 
 class CitizenInputError(DomainModel):

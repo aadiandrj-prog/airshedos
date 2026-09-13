@@ -1,6 +1,6 @@
 # AirshedOS architecture
 
-## Current: Phase 2A
+## Current: Phase 2B
 
 ```mermaid
 flowchart LR
@@ -44,7 +44,7 @@ The suggested model was extended with structured provenance on the incident and 
 
 ## Scope and deployment
 
-Two local processes or two Docker containers; no database, queue, authentication, shared language packages, cloud resources, or notification delivery. CORS allows configured local frontend origins. The frontend calls the API from the browser, so its API URL must be reachable from that browser. Production Docker output uses Next.js standalone mode and a single Uvicorn worker. Compose waits for API readiness before starting the frontend.
+Two local processes or two Docker containers; no database, queue, application authentication, shared language packages or notification delivery. Existing cloud APIs are called only from the backend. CORS allows configured local frontend origins. The frontend calls the API from the browser, so its API URL must be reachable from that browser. Production Docker output uses Next.js standalone mode and a single Uvicorn worker. Compose waits for API readiness before starting the frontend.
 
 In-memory state is deliberately ephemeral and unsuitable for multi-worker or public production use. Future durability and authorization need an explicit later-phase decision. The current API serves complete incident objects in the list because the fixture is tiny; a separate summary schema can be introduced when payload size warrants it.
 
@@ -72,7 +72,7 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Translation, Vertex AI prediction, BigQuery, evidence fusion, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 2A.
+Translation, Vertex AI prediction, BigQuery, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 2B.
 
 ## Satellite evidence boundary
 
@@ -103,7 +103,7 @@ flowchart LR
   Environment --> Probe[Independent environmental probe]
 ```
 
-There is no join between these paths. Future Phase 2B may join citizen and environmental evidence in an evidence fusion engine; Phase 2A does not query or score environmental evidence from citizen intake. The existing fictional incident and all its fixture-only evidence remain separate.
+The analyze operation still does not query or score environmental evidence. Phase 2B adds a separate explicit join after this operation, described below. The existing fictional incident and all its fixture-only evidence remain separate.
 
 `app/citizen` contains a focused router, image validation, settings, service, models and one provider protocol. `CitizenEvidenceAnalyzer` allows a fake in tests and a `GeminiCitizenEvidenceAnalyzer` in runtime. The app factory injects the analyzer without initializing remote credentials at startup. The official `google-genai` client uses `vertexai=True`, backend ADC, project/location and a configurable model. There are no agents, tools, function calls, chat history, explicit prompt caches or storage APIs.
 
@@ -113,8 +113,30 @@ The provider uses `response_mime_type=application/json` and an enum-constrained 
 
 `CitizenVisualSignal` extends the existing `EvidenceSignal` with `source_report_id`, `derived=true`, interpretation time and model provenance. The only existing-domain enum addition is `EvidenceStatus.INTERPRETED`; it carries no incident confidence and permits unknown observation time. `observed_at=null` correctly avoids mistaking upload time for image acquisition. `ModelProvenance` extends `Provenance` with source report ID, model, returned model version (null if omitted), prompt version `citizen_evidence_v1`, generation time, `author=model` and the ordinal confidence basis. No citizen report or signal is inserted into the demo repository.
 
-Upload processing is limited to 5 MiB of image bytes plus 64 KiB of multipart overhead. A scoped ASGI limiter counts actual streamed bytes before multipart parsing, independent of Content-Length. Pillow checks decoded format, still-image status and 16 MP dimensions before full decode. The image is oriented, metadata stripped, bounded to 2048×2048 and re-encoded as JPEG in memory. Multipart upload handles close before inference (FastAPI also closes them on validation failures); large temporary spool files are deleted. There is no application media storage or history. No image bytes, base64, full citizen description, raw model result or provider exception body is logged. The response preserves citizen text as human-authored context, rendered as escaped text in React; model output cannot insert HTML or arbitrary text.
+Upload processing is limited to 5 MiB of image bytes plus 64 KiB of multipart overhead. A scoped ASGI limiter counts actual streamed bytes before multipart parsing, independent of Content-Length. Pillow checks decoded format, still-image status and 16 MP dimensions before full decode. The image is oriented, metadata stripped, bounded to 2048×2048 and re-encoded as JPEG in memory. Multipart upload handles close before inference (FastAPI also closes them on validation failures); large temporary spool files are deleted. There is no application media storage. Phase 2B retains only temporary structured metadata after a successful interpretation. No image bytes, base64, full citizen description, raw model result or provider exception body is logged. The response preserves citizen text as human-authored context, rendered as escaped text in React; model output cannot insert HTML or arbitrary text.
 
 A 30-second service deadline and SDK HTTP timeout bound inference; one attempt, no automatic retries. Cancellation exits the async client context. Invalid/schema/safety responses never retry. Safe result states distinguish not-configured, authentication/permission/API enablement, model unavailable, quota, timeout, safety block, invalid response and generic provider failure. Valid input with provider failure returns HTTP 200 and null analysis/evidence; invalid input returns 422 or 413. Logs include only request ID, configured model, prompt version, status, event class and latency. This local prototype has no public-service authentication or admission control; deployment beyond trusted local use requires a separately scoped access/quota decision.
 
 The frontend uses generated OpenAPI types and browser-owned object URLs for preview, revoking them on replacement/clear/unmount. It never embeds Vertex credentials. Submission fields are disabled during inference; errors allow manual retry. Citizen description and AI interpretation have separate labels. Environmental provider cards use their existing independent request paths. CI blocks network transports, uses injected fakes and synthetic browser responses, and never invokes the live evaluation script.
+
+## Transparent corroboration boundary (Phase 2B)
+
+`app/corroboration` contains strict domain models, validated configuration, a bounded ephemeral repository, deterministic rules/aggregation and one POST route. The existing citizen router stores only successful structured outputs; Gemini inference and response/error behavior are preserved. The additive response TTL tells the UI the maximum temporary availability.
+
+```mermaid
+flowchart LR
+  Analyze[Successful citizen interpretation] --> Temporary[Structured report / bounded memory / TTL]
+  Temporary --> Join[Explicit POST by report ID]
+  Cache[Existing environment service and provider caches] --> Join
+  Join --> Rules[Deterministic checklist v1]
+  Rules --> Assessment[Corroboration assessment]
+  Assessment --> Card[Evidence Fusion Card]
+```
+
+The repository accepts only report metadata, model analysis and derived signal/provenance. It has 256 entries and a 30-minute TTL by default, deep-copy isolation, fixed expiry timers, LRU eviction and shutdown cleanup. Operations occur synchronously between awaits on the single application event loop. No image argument, image URL, durable store, assessment cache or user-controlled replacement analysis exists. A retained request-local copy may finish an accepted lookup after TTL expiry; idle repository entries still expire. This does not create multi-worker consistency or access control.
+
+The POST route rejects non-empty bodies and missing/invalid/expired IDs before network work. It supplies stored coordinates and the report creation time to the existing environment service. That service independently bounds and gathers provider requests. Ground queries remain current, satellite uses the exact submission-ended window, and caches retain original observation/retrieval times. Partial failures yield a complete assessment with visible degraded rules. No call to Gemini is made during corroboration.
+
+The pure engine uses explicit normalized context time; each rule returns its inputs, rationale, source references, ages, offsets and provenance. Assessment IDs derive deterministically from output and policy. [Rules and aggregation](CORROBORATION_RULES.md) are versioned, conservative and contain no hidden probabilities. Satellite observations are context-only. Weather alignment is conditional on a nearby recent fire, not an independent pollution stream. Actual visual-field disagreement is a review guard; missing data never supplies a contradiction.
+
+The generated OpenAPI contract owns frontend types. The keyed CorroborationCard issues a body-free POST on explicit click, shows lookup/checklist loading, handles missing reports, and aborts pending UI work on clear/replacement. Its concise evidence rows and expandable rule/source details use the existing green editorial/status styling. Browser tests use synthetic responses. The fictional incident repository is never read or mutated by corroboration.

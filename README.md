@@ -1,10 +1,10 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 2A citizen evidence and Gemini interpretation.**
+**AI Pollution Incident Command — Phase 2B transparent evidence corroboration.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
-The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. It does not corroborate incidents or query environmental sources. Real notifications remain unimplemented.
+The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. An explicit corroboration step now joins the server-owned interpretation with environmental context through a deterministic checklist. It creates an advisory assessment, not an incident. Real notifications remain unimplemented.
 
 ## Current architecture
 
@@ -42,6 +42,8 @@ docs/
   PHASE_1B_VERIFICATION.md
   PHASE_1C_VERIFICATION.md
   PHASE_2A_VERIFICATION.md
+  PHASE_2B_VERIFICATION.md
+  CORROBORATION_RULES.md
   DATA_SOURCES.md
   screenshots/
 .github/workflows/ci.yml
@@ -179,9 +181,9 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 
 ## Planned architecture (not implemented)
 
-Future Phase 2B may join independently tested citizen and environmental evidence. Prediction, persistence, mapping and real jurisdiction workflows require separate later phases.
+Phase 2B now joins structured citizen and environmental evidence through transparent deterministic rules. Prediction, persistence, mapping and real jurisdiction workflows require separate later phases.
 
-Current: Google AQ, Weather, FIRMS, Sentinel-5P atmospheric evidence, and **independent Gemini citizen visual interpretation**. Planned: evidence fusion, Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Gemini interpretation is NOT incident corroboration. No source attribution is implemented. Stop after Phase 2A.
+Current: Google AQ, Weather, FIRMS, Sentinel-5P atmospheric evidence, **Gemini citizen visual interpretation**, and **deterministic evidence corroboration**. Planned: Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Gemini interpretation alone is not corroboration. No source attribution is implemented. Stop after Phase 2B.
 
 See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 
@@ -240,6 +242,24 @@ For Docker, the existing optional `docker-compose.earth-engine.yml` ADC mount is
 
 `POST /api/v1/citizen-reports/analyze` accepts multipart fields `image`, `latitude`, `longitude`, `description` (optional, at most 2,000 characters). JPEG/PNG only, at most **5 MiB / 16 MP**, one still frame. Malformed input returns a safe 422; oversize uploads return 413. A valid submission returns HTTP 200 with `status`, original `report`, nullable `analysis` and `evidence`, a safe message, request ID and inference latency. Provider failure never invents an interpretation.
 
-Images are decoded, oriented, stripped of metadata and resized to at most 2048 pixels per edge before inference. AirshedOS retains no images, report history or analysis cache. Multipart files may spool temporarily above 1 MiB and are closed/deleted within the request; cleaned images stay in memory. The browser preview remains only until clear/replacement/navigation. Google processes the submitted image/context under its service policies; this does not assert zero retention by the cloud provider. Avoid identifying content. No facial/plate recognition, identity inference, database or upload gallery is implemented.
+Images are decoded, oriented, stripped of metadata and resized to at most 2048 pixels per edge before inference. AirshedOS retains no images. Phase 2B holds structured report metadata and interpretation in bounded server memory for 30 minutes (up to 256 reports), with earlier capacity eviction or restart loss. Multipart files may spool temporarily above 1 MiB and are closed/deleted within the request; cleaned images stay in memory. The browser preview remains only until clear/replacement/navigation. Google processes the submitted image/context under its service policies; this does not assert zero retention by the cloud provider. Avoid identifying content. No facial/plate recognition, identity inference, database or upload gallery is implemented.
 
 See [Phase 2A verification](docs/PHASE_2A_VERIFICATION.md) for live results, limitations and exact regression checks, and [synthetic fixture provenance](apps/api/scripts/citizen-evaluation/README.md).
+
+## Transparent corroboration (Phase 2B)
+
+After interpretation, click **Corroborate with environmental data**. The backend retrieves its temporary structured report by ID, looks up AQ/weather/FIRMS/Sentinel-5P concurrently using the existing provider caches, and applies the [versioned checklist](docs/CORROBORATION_RULES.md). The Evidence Fusion Card shows a categorical result, each source's contribution or absence, an advisory next step and expandable provenance.
+
+```text
+Image → Gemini → structured report (memory, no image)
+                         ↓ explicit corroborate
+          AQ / Weather / FIRMS / Sentinel-5P
+                         ↓ deterministic checklist
+            assessment → Evidence Fusion Card
+```
+
+`POST /api/v1/citizen-reports/{report_id}/corroborate` takes no body. It does not accept browser-supplied analysis, reupload an image or rerun Gemini. Expired/unavailable IDs return 404; successful analyses expose `structured_report_ttl_seconds` additively. The temporary repository resets with the API and requires the existing single worker. No demo incident, authority task or notification is created.
+
+Image capture time is unknown. Environmental evidence uses **submission_time_proxy**, with current-service semantics for ground providers and an explicit satellite window. All satellite products retain native units and remain context-only. Missing evidence is not a contradiction. STRONG/MODERATE/WEAK/INSUFFICIENT/CONFLICTING are checklist categories, never probabilities, source confirmation or legal findings.
+
+Configuration defaults and exact aggregation are in [CORROBORATION_RULES.md](docs/CORROBORATION_RULES.md). See [Phase 2B verification](docs/PHASE_2B_VERIFICATION.md) for automated checks and the separately labeled synthetic live transport test. Prediction, BigQuery, mapping and persistent operational workflows are future work.
