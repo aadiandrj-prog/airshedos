@@ -12,3 +12,7 @@ openapi.json
 **/*service-account*.json
 **/*service_account*.json
 **/credentials.json
+
+# Offline dataset tooling never enters runtime images.
+prediction
+requirements-dataset.*

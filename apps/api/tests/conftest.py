@@ -14,6 +14,7 @@ def no_external_network(monkeypatch):
     monkeypatch.delenv("NASA_FIRMS_MAP_KEY", raising=False)
 
     for name in (
+        "OPENAQ_API_KEY",
         "EARTH_ENGINE_PROJECT",
         "GOOGLE_CLOUD_PROJECT",
         "GOOGLE_APPLICATION_CREDENTIALS",
