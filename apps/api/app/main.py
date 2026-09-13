@@ -4,8 +4,14 @@ from typing import Annotated
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.citizen.provider import CitizenEvidenceAnalyzer, GeminiCitizenEvidenceAnalyzer
+from app.citizen.router import PATH, CitizenUploadLimit, invalid
+from app.citizen.router import router as citizen_router
+from app.citizen.settings import CitizenSettings
 from app.environment.http import ProviderHTTP
 from app.environment.providers import (
     GoogleAirQualityProvider,
@@ -26,9 +32,15 @@ def get_repository(request: Request) -> IncidentRepository:
 Repository = Annotated[IncidentRepository, Depends(get_repository)]
 
 
-def create_app(environment: EnvironmentService | None = None) -> FastAPI:
+def create_app(
+    environment: EnvironmentService | None = None,
+    citizen_analyzer: CitizenEvidenceAnalyzer | None = None,
+) -> FastAPI:
     @asynccontextmanager
     async def lifespan(api: FastAPI):
+        api.state.citizen_analyzer = citizen_analyzer or GeminiCitizenEvidenceAnalyzer(
+            CitizenSettings.from_env()
+        )
         if environment is not None:
             api.state.environment = environment
             yield
@@ -51,12 +63,23 @@ def create_app(environment: EnvironmentService | None = None) -> FastAPI:
 
     api = FastAPI(
         title="AirshedOS API",
-        version="0.3.0",
+        version="0.4.0",
         lifespan=lifespan,
-        description="Phase 1C. Independent environmental providers plus a fictional demo incident. "
-        "No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
+        description="Phase 2A. Environmental providers and independent citizen interpretation. "
+        "No evidence fusion or causal attribution. Demo incident sharing is simulated.",
     )
     api.include_router(environment_router)
+    api.include_router(citizen_router)
+    api.add_middleware(CitizenUploadLimit)
+
+    @api.exception_handler(RequestValidationError)
+    async def validation_error(request: Request, exc: RequestValidationError):
+        if request.url.path == PATH:
+            return invalid(
+                "Provide one image, valid coordinates and description up to 2,000 characters."
+            )
+        return await request_validation_exception_handler(request, exc)
+
     api.state.repository = IncidentRepository()
     api.add_middleware(
         CORSMiddleware,

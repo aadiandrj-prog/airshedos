@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 1C. Independent environmental providers plus a fictional demo incident. No causal attribution or AI inference. Sharing is simulated; state resets on restart.",
-    "version": "0.3.0"
+    "description": "Phase 2A. Environmental providers and independent citizen interpretation. No evidence fusion or causal attribution. Demo incident sharing is simulated.",
+    "version": "0.4.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -215,6 +215,57 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/citizen-reports/analyze": {
+      "post": {
+        "tags": [
+          "Citizen evidence"
+        ],
+        "summary": "Analyze",
+        "operationId": "analyze_api_v1_citizen_reports_analyze_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_analyze_api_v1_citizen_reports_analyze_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CitizenAnalysisResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Content Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CitizenInputError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CitizenInputError"
                 }
               }
             }
@@ -575,6 +626,132 @@
         ],
         "title": "AirQualityObservation"
       },
+      "AnalysisStatus": {
+        "type": "string",
+        "enum": [
+          "interpreted",
+          "not_configured",
+          "auth_error",
+          "model_unavailable",
+          "quota_limited",
+          "timeout",
+          "safety_blocked",
+          "invalid_response",
+          "error"
+        ],
+        "title": "AnalysisStatus"
+      },
+      "Body_analyze_api_v1_citizen_reports_analyze_post": {
+        "properties": {
+          "image": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Image",
+            "description": "One JPEG/PNG, maximum 5 MiB and 16 MP"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "image",
+          "latitude",
+          "longitude"
+        ],
+        "title": "Body_analyze_api_v1_citizen_reports_analyze_post"
+      },
+      "CitizenAnalysisResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AnalysisStatus"
+          },
+          "report": {
+            "$ref": "#/components/schemas/CitizenReport"
+          },
+          "analysis": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeminiEvidenceAnalysis"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CitizenVisualSignal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Latency Ms"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "status",
+          "report",
+          "analysis",
+          "evidence",
+          "message",
+          "latency_ms"
+        ],
+        "title": "CitizenAnalysisResponse"
+      },
+      "CitizenInputError": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "invalid_input",
+            "title": "Status",
+            "default": "invalid_input"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "message"
+        ],
+        "title": "CitizenInputError"
+      },
       "CitizenReport": {
         "properties": {
           "id": {
@@ -637,6 +814,82 @@
           "source_type"
         ],
         "title": "CitizenReport"
+      },
+      "CitizenVisualSignal": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "signal_type": {
+            "$ref": "#/components/schemas/SignalType"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvidenceStatus"
+          },
+          "confidence": {
+            "type": "null",
+            "title": "Confidence"
+          },
+          "observed_at": {
+            "type": "null",
+            "title": "Observed At"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ModelProvenance"
+          },
+          "raw_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Raw Reference"
+          },
+          "source_report_id": {
+            "type": "string",
+            "title": "Source Report Id"
+          },
+          "derived": {
+            "type": "boolean",
+            "const": true,
+            "title": "Derived",
+            "default": true
+          },
+          "interpretation_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Interpretation At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "signal_type",
+          "source",
+          "status",
+          "confidence",
+          "observed_at",
+          "summary",
+          "provenance",
+          "raw_reference",
+          "source_report_id",
+          "derived",
+          "interpretation_at"
+        ],
+        "title": "CitizenVisualSignal"
       },
       "EnvironmentalContext": {
         "properties": {
@@ -898,6 +1151,22 @@
         ],
         "title": "EnvironmentalSources"
       },
+      "EventType": {
+        "type": "string",
+        "enum": [
+          "open_burning",
+          "industrial_smoke",
+          "construction_dust",
+          "road_dust",
+          "vehicular_emissions",
+          "fire_or_combustion",
+          "haze_or_smog",
+          "no_visible_pollution",
+          "uncertain",
+          "other"
+        ],
+        "title": "EventType"
+      },
       "EvidenceSignal": {
         "properties": {
           "id": {
@@ -976,6 +1245,7 @@
       "EvidenceStatus": {
         "type": "string",
         "enum": [
+          "interpreted",
           "supported",
           "partial",
           "unavailable",
@@ -1166,6 +1436,187 @@
           "provenance"
         ],
         "title": "ForecastRisk"
+      },
+      "GeminiEvidenceAnalysis": {
+        "properties": {
+          "event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "event_type_confidence": {
+            "$ref": "#/components/schemas/VisualConfidence"
+          },
+          "visible_smoke": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visible Smoke"
+          },
+          "visible_flames": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visible Flames"
+          },
+          "visible_dust": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visible Dust"
+          },
+          "industrial_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industrial Context"
+          },
+          "construction_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Construction Context"
+          },
+          "waste_burning_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Waste Burning Context"
+          },
+          "vegetation_burning_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vegetation Burning Context"
+          },
+          "traffic_context": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Traffic Context"
+          },
+          "scene_type": {
+            "type": "string",
+            "enum": [
+              "outdoor",
+              "indoor",
+              "unclear"
+            ],
+            "title": "Scene Type"
+          },
+          "apparent_scale": {
+            "type": "string",
+            "enum": [
+              "localized",
+              "widespread_in_frame",
+              "unclear"
+            ],
+            "title": "Apparent Scale"
+          },
+          "visual_observations": {
+            "items": {
+              "$ref": "#/components/schemas/VisualObservation"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Visual Observations"
+          },
+          "uncertainty_reasons": {
+            "items": {
+              "$ref": "#/components/schemas/VisualUncertainty"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Uncertainty Reasons"
+          },
+          "insufficient_evidence": {
+            "type": "boolean",
+            "title": "Insufficient Evidence",
+            "description": "True only when visual ambiguity prevents choosing an event category. False for a clear no_visible_pollution scene. True requires uncertain with low confidence."
+          },
+          "source_report_id": {
+            "type": "string",
+            "title": "Source Report Id"
+          },
+          "analyzed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Analyzed At"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ModelProvenance"
+          },
+          "safety_note": {
+            "type": "string",
+            "const": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+            "title": "Safety Note",
+            "default": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "event_type",
+          "event_type_confidence",
+          "visible_smoke",
+          "visible_flames",
+          "visible_dust",
+          "industrial_context",
+          "construction_context",
+          "waste_burning_context",
+          "vegetation_burning_context",
+          "traffic_context",
+          "scene_type",
+          "apparent_scale",
+          "visual_observations",
+          "uncertainty_reasons",
+          "insufficient_evidence",
+          "source_report_id",
+          "analyzed_at",
+          "provenance",
+          "safety_note"
+        ],
+        "title": "GeminiEvidenceAnalysis"
       },
       "HTTPValidationError": {
         "properties": {
@@ -1450,6 +1901,91 @@
           "cloud_cover_percent"
         ],
         "title": "MeteorologicalObservation"
+      },
+      "ModelProvenance": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "is_demo": {
+            "type": "boolean",
+            "title": "Is Demo"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "prompt_version": {
+            "type": "string",
+            "const": "citizen_evidence_v1",
+            "title": "Prompt Version",
+            "default": "citizen_evidence_v1"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "source_report_id": {
+            "type": "string",
+            "title": "Source Report Id"
+          },
+          "derived": {
+            "type": "boolean",
+            "const": true,
+            "title": "Derived",
+            "default": true
+          },
+          "author": {
+            "type": "string",
+            "const": "model",
+            "title": "Author",
+            "default": "model"
+          },
+          "confidence_basis": {
+            "type": "string",
+            "const": "model_estimated_ordinal_not_calibrated",
+            "title": "Confidence Basis",
+            "default": "model_estimated_ordinal_not_calibrated"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_id",
+          "method",
+          "is_demo",
+          "note",
+          "model",
+          "model_version",
+          "prompt_version",
+          "generated_at",
+          "source_report_id",
+          "derived",
+          "author",
+          "confidence_basis"
+        ],
+        "title": "ModelProvenance"
       },
       "PollutantMeasurement": {
         "properties": {
@@ -2231,6 +2767,53 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VisualConfidence": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "title": "VisualConfidence"
+      },
+      "VisualObservation": {
+        "type": "string",
+        "enum": [
+          "Gray plume or cloud-like feature visible.",
+          "Dark plume-like feature visible.",
+          "Flame-like features visible.",
+          "Tan dust-like cloud visible.",
+          "Reduced visibility or diffuse haze visible.",
+          "Cloud or fog-like features visible.",
+          "Open ground visible.",
+          "Buildings or structures visible.",
+          "Industrial-looking structures visible.",
+          "Construction equipment or exposed earth visible.",
+          "Vehicles or roadway visible.",
+          "Vegetation visible.",
+          "Pile of material visible; composition unknown.",
+          "No clear smoke, flame or dust-like feature visible.",
+          "Indoor objects visible.",
+          "Low light limits visible detail.",
+          "Blur or low resolution limits visible detail."
+        ],
+        "title": "VisualObservation"
+      },
+      "VisualUncertainty": {
+        "type": "string",
+        "enum": [
+          "Image alone cannot establish source or pollutant type.",
+          "Material composition cannot be established visually.",
+          "Smoke, dust, cloud and fog can look similar.",
+          "Distant or obscured features limit interpretation.",
+          "Lighting, blur or resolution limits interpretation.",
+          "Citizen description is unverified context, not visual evidence.",
+          "Image alone cannot establish pollutant concentration or air quality.",
+          "No clear pollution-related event can be inferred from this image.",
+          "The image appears illustrative or synthetic; real conditions cannot be established."
+        ],
+        "title": "VisualUncertainty"
       }
     }
   }

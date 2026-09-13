@@ -36,6 +36,7 @@ class SignalType(StrEnum):
 
 
 class EvidenceStatus(StrEnum):
+    INTERPRETED = "interpreted"
     SUPPORTED = "supported"
     PARTIAL = "partial"
     UNAVAILABLE = "unavailable"
@@ -80,9 +81,14 @@ class EvidenceSignal(DomainModel):
 
     @model_validator(mode="after")
     def validate_availability(self):
+        if self.status == EvidenceStatus.INTERPRETED and self.confidence is not None:
+            raise ValueError("Interpreted visual evidence has no incident confidence")
         if self.status == EvidenceStatus.UNAVAILABLE and self.confidence is not None:
             raise ValueError("Unavailable evidence cannot carry a confidence score")
-        if self.status != EvidenceStatus.UNAVAILABLE and self.observed_at is None:
+        if (
+            self.status not in (EvidenceStatus.UNAVAILABLE, EvidenceStatus.INTERPRETED)
+            and self.observed_at is None
+        ):
             raise ValueError("Available evidence requires an observation timestamp")
         return self
 

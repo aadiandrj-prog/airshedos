@@ -6,6 +6,7 @@ annotated-types==0.8.0
     # via pydantic
 anyio==4.15.1
     # via
+    #   google-genai
     #   httpx
     #   starlette
 certifi==2026.7.22
@@ -21,6 +22,8 @@ click==8.5.0
     # via uvicorn
 cryptography==50.0.1
     # via google-auth
+distro==1.9.0
+    # via google-genai
 earthengine-api==1.7.43
     # via airshedos-api (apps/api/pyproject.toml)
 fastapi==0.141.1
@@ -40,6 +43,7 @@ google-auth==2.58.0
     #   google-auth-httplib2
     #   google-cloud-core
     #   google-cloud-storage
+    #   google-genai
 google-auth-httplib2==0.4.2
     # via
     #   earthengine-api
@@ -52,6 +56,8 @@ google-crc32c==1.8.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
+google-genai==2.23.0
+    # via airshedos-api (apps/api/pyproject.toml)
 google-resumable-media==2.10.2
     # via google-cloud-storage
 googleapis-common-protos==1.75.3
@@ -68,7 +74,9 @@ httplib2==0.32.0
     #   google-api-python-client
     #   google-auth-httplib2
 httpx==0.28.1
-    # via airshedos-api (apps/api/pyproject.toml)
+    # via
+    #   airshedos-api (apps/api/pyproject.toml)
+    #   google-genai
 idna==3.19
     # via
     #   anyio
@@ -80,6 +88,8 @@ opentelemetry-api==1.44.0
     # via google-api-core
 packaging==26.3
     # via pytest
+pillow==12.3.0
+    # via airshedos-api (apps/api/pyproject.toml)
 pluggy==1.6.0
     # via pytest
 proto-plus==1.28.4
@@ -99,6 +109,7 @@ pydantic==2.13.5
     # via
     #   airshedos-api (apps/api/pyproject.toml)
     #   fastapi
+    #   google-genai
 pydantic-core==2.46.5
     # via pydantic
 pygments==2.21.0
@@ -109,19 +120,28 @@ pytest==9.1.1
     # via airshedos-api (apps/api/pyproject.toml)
 python-dotenv==1.2.3
     # via airshedos-api (apps/api/pyproject.toml)
+python-multipart==0.0.32
+    # via airshedos-api (apps/api/pyproject.toml)
 requests==2.34.2
     # via
     #   earthengine-api
     #   google-api-core
+    #   google-auth
     #   google-cloud-storage
+    #   google-genai
 ruff==0.16.6
     # via airshedos-api (apps/api/pyproject.toml)
+sniffio==1.3.1
+    # via google-genai
 starlette==1.6.0
     # via fastapi
+tenacity==9.1.4
+    # via google-genai
 typing-extensions==4.16.0
     # via
     #   anyio
     #   fastapi
+    #   google-genai
     #   opentelemetry-api
     #   pydantic
     #   pydantic-core
@@ -136,3 +156,5 @@ urllib3==2.7.0
     # via requests
 uvicorn==0.52.4
     # via airshedos-api (apps/api/pyproject.toml)
+websockets==16.1.1
+    # via google-genai

@@ -64,6 +64,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/citizen-reports/analyze": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Analyze */
+        post: operations["analyze_api_v1_citizen_reports_analyze_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -213,6 +230,52 @@ export interface components {
             /** Pollutants */
             pollutants: components["schemas"]["PollutantMeasurement"][];
         };
+        /**
+         * AnalysisStatus
+         * @enum {string}
+         */
+        AnalysisStatus: "interpreted" | "not_configured" | "auth_error" | "model_unavailable" | "quota_limited" | "timeout" | "safety_blocked" | "invalid_response" | "error";
+        /** Body_analyze_api_v1_citizen_reports_analyze_post */
+        Body_analyze_api_v1_citizen_reports_analyze_post: {
+            /**
+             * Image
+             * @description One JPEG/PNG, maximum 5 MiB and 16 MP
+             */
+            image: string;
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+        };
+        /** CitizenAnalysisResponse */
+        CitizenAnalysisResponse: {
+            /** Request Id */
+            request_id: string;
+            status: components["schemas"]["AnalysisStatus"];
+            report: components["schemas"]["CitizenReport"];
+            analysis: components["schemas"]["GeminiEvidenceAnalysis"] | null;
+            evidence: components["schemas"]["CitizenVisualSignal"] | null;
+            /** Message */
+            message: string;
+            /** Latency Ms */
+            latency_ms: number;
+        };
+        /** CitizenInputError */
+        CitizenInputError: {
+            /**
+             * Status
+             * @default invalid_input
+             * @constant
+             */
+            status: "invalid_input";
+            /** Message */
+            message: string;
+        };
         /** CitizenReport */
         CitizenReport: {
             /** Id */
@@ -238,6 +301,37 @@ export interface components {
              * @constant
              */
             source_type: "citizen_report";
+        };
+        /** CitizenVisualSignal */
+        CitizenVisualSignal: {
+            /** Id */
+            id: string;
+            signal_type: components["schemas"]["SignalType"];
+            /** Source */
+            source: string;
+            status: components["schemas"]["EvidenceStatus"];
+            /** Confidence */
+            confidence: null;
+            /** Observed At */
+            observed_at: null;
+            /** Summary */
+            summary: string;
+            provenance: components["schemas"]["ModelProvenance"];
+            /** Raw Reference */
+            raw_reference: string | null;
+            /** Source Report Id */
+            source_report_id: string;
+            /**
+             * Derived
+             * @default true
+             * @constant
+             */
+            derived: true;
+            /**
+             * Interpretation At
+             * Format: date-time
+             */
+            interpretation_at: string;
         };
         /** EnvironmentalContext */
         EnvironmentalContext: {
@@ -330,6 +424,11 @@ export interface components {
             weather: components["schemas"]["ProviderConfiguration"];
             fires: components["schemas"]["ProviderConfiguration"];
         };
+        /**
+         * EventType
+         * @enum {string}
+         */
+        EventType: "open_burning" | "industrial_smoke" | "construction_dust" | "road_dust" | "vehicular_emissions" | "fire_or_combustion" | "haze_or_smog" | "no_visible_pollution" | "uncertain" | "other";
         /** EvidenceSignal */
         EvidenceSignal: {
             /** Id */
@@ -352,7 +451,7 @@ export interface components {
          * EvidenceStatus
          * @enum {string}
          */
-        EvidenceStatus: "supported" | "partial" | "unavailable" | "conflicting";
+        EvidenceStatus: "interpreted" | "supported" | "partial" | "unavailable" | "conflicting";
         /** FireObservation */
         FireObservation: {
             /** Latitude */
@@ -412,6 +511,60 @@ export interface components {
              */
             generated_at: string;
             provenance: components["schemas"]["Provenance"];
+        };
+        /** GeminiEvidenceAnalysis */
+        GeminiEvidenceAnalysis: {
+            event_type: components["schemas"]["EventType"];
+            event_type_confidence: components["schemas"]["VisualConfidence"];
+            /** Visible Smoke */
+            visible_smoke: boolean | null;
+            /** Visible Flames */
+            visible_flames: boolean | null;
+            /** Visible Dust */
+            visible_dust: boolean | null;
+            /** Industrial Context */
+            industrial_context: boolean | null;
+            /** Construction Context */
+            construction_context: boolean | null;
+            /** Waste Burning Context */
+            waste_burning_context: boolean | null;
+            /** Vegetation Burning Context */
+            vegetation_burning_context: boolean | null;
+            /** Traffic Context */
+            traffic_context: boolean | null;
+            /**
+             * Scene Type
+             * @enum {string}
+             */
+            scene_type: "outdoor" | "indoor" | "unclear";
+            /**
+             * Apparent Scale
+             * @enum {string}
+             */
+            apparent_scale: "localized" | "widespread_in_frame" | "unclear";
+            /** Visual Observations */
+            visual_observations: components["schemas"]["VisualObservation"][];
+            /** Uncertainty Reasons */
+            uncertainty_reasons: components["schemas"]["VisualUncertainty"][];
+            /**
+             * Insufficient Evidence
+             * @description True only when visual ambiguity prevents choosing an event category. False for a clear no_visible_pollution scene. True requires uncertain with low confidence.
+             */
+            insufficient_evidence: boolean;
+            /** Source Report Id */
+            source_report_id: string;
+            /**
+             * Analyzed At
+             * Format: date-time
+             */
+            analyzed_at: string;
+            provenance: components["schemas"]["ModelProvenance"];
+            /**
+             * Safety Note
+             * @default AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.
+             * @constant
+             */
+            safety_note: "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.";
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -501,6 +654,52 @@ export interface components {
             precipitation_qpf: components["schemas"]["Measurement"] | null;
             /** Cloud Cover Percent */
             cloud_cover_percent: number | null;
+        };
+        /** ModelProvenance */
+        ModelProvenance: {
+            /** Source Id */
+            source_id: string;
+            /** Method */
+            method: string;
+            /** Is Demo */
+            is_demo: boolean;
+            /** Note */
+            note: string;
+            /** Model */
+            model: string;
+            /** Model Version */
+            model_version: string | null;
+            /**
+             * Prompt Version
+             * @default citizen_evidence_v1
+             * @constant
+             */
+            prompt_version: "citizen_evidence_v1";
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Source Report Id */
+            source_report_id: string;
+            /**
+             * Derived
+             * @default true
+             * @constant
+             */
+            derived: true;
+            /**
+             * Author
+             * @default model
+             * @constant
+             */
+            author: "model";
+            /**
+             * Confidence Basis
+             * @default model_estimated_ordinal_not_calibrated
+             * @constant
+             */
+            confidence_basis: "model_estimated_ordinal_not_calibrated";
         };
         /** PollutantMeasurement */
         PollutantMeasurement: {
@@ -815,6 +1014,21 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /**
+         * VisualConfidence
+         * @enum {string}
+         */
+        VisualConfidence: "low" | "medium" | "high";
+        /**
+         * VisualObservation
+         * @enum {string}
+         */
+        VisualObservation: "Gray plume or cloud-like feature visible." | "Dark plume-like feature visible." | "Flame-like features visible." | "Tan dust-like cloud visible." | "Reduced visibility or diffuse haze visible." | "Cloud or fog-like features visible." | "Open ground visible." | "Buildings or structures visible." | "Industrial-looking structures visible." | "Construction equipment or exposed earth visible." | "Vehicles or roadway visible." | "Vegetation visible." | "Pile of material visible; composition unknown." | "No clear smoke, flame or dust-like feature visible." | "Indoor objects visible." | "Low light limits visible detail." | "Blur or low resolution limits visible detail.";
+        /**
+         * VisualUncertainty
+         * @enum {string}
+         */
+        VisualUncertainty: "Image alone cannot establish source or pollutant type." | "Material composition cannot be established visually." | "Smoke, dust, cloud and fog can look similar." | "Distant or obscured features limit interpretation." | "Lighting, blur or resolution limits interpretation." | "Citizen description is unverified context, not visual evidence." | "Image alone cannot establish pollutant concentration or air quality." | "No clear pollution-related event can be inferred from this image." | "The image appears illustrative or synthetic; real conditions cannot be established.";
     };
     responses: never;
     parameters: never;
@@ -910,6 +1124,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analyze_api_v1_citizen_reports_analyze_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_analyze_api_v1_citizen_reports_analyze_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CitizenAnalysisResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CitizenInputError"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CitizenInputError"];
                 };
             };
         };

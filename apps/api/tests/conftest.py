@@ -11,7 +11,15 @@ def no_external_network(monkeypatch):
     monkeypatch.delenv("GOOGLE_MAPS_PLATFORM_API_KEY", raising=False)
     monkeypatch.delenv("NASA_FIRMS_MAP_KEY", raising=False)
 
-    for name in ("EARTH_ENGINE_PROJECT", "GOOGLE_CLOUD_PROJECT", "GOOGLE_APPLICATION_CREDENTIALS"):
+    for name in (
+        "EARTH_ENGINE_PROJECT",
+        "GOOGLE_CLOUD_PROJECT",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "GEMINI_MODEL",
+        "GOOGLE_CLOUD_LOCATION",
+        "GOOGLE_API_KEY",
+        "GEMINI_API_KEY",
+    ):
         monkeypatch.delenv(name, raising=False)
 
     def blocked_sync(*args, **kwargs):
@@ -25,6 +33,7 @@ def no_external_network(monkeypatch):
         raise AssertionError("Live networking is forbidden in unit tests")
 
     monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", blocked)
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", blocked_sync)
 
 
 @pytest.fixture

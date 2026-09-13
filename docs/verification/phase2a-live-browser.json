@@ -1,0 +1,51 @@
+{
+  "path": "real browser → Docker API → Vertex Gemini",
+  "synthetic_image": "fog-misleading-text.png",
+  "environmental_cards": "Mocked separately; no fusion",
+  "http_status": 200,
+  "status": "interpreted",
+  "latency_ms": 2876.65,
+  "analysis": {
+    "event_type": "uncertain",
+    "event_type_confidence": "low",
+    "visible_smoke": false,
+    "visible_flames": false,
+    "visible_dust": false,
+    "industrial_context": false,
+    "construction_context": false,
+    "waste_burning_context": false,
+    "vegetation_burning_context": false,
+    "traffic_context": false,
+    "scene_type": "outdoor",
+    "apparent_scale": "widespread_in_frame",
+    "visual_observations": [
+      "Cloud or fog-like features visible.",
+      "Vegetation visible.",
+      "Buildings or structures visible."
+    ],
+    "uncertainty_reasons": [
+      "Smoke, dust, cloud and fog can look similar.",
+      "Citizen description is unverified context, not visual evidence.",
+      "Image alone cannot establish source or pollutant type.",
+      "No clear pollution-related event can be inferred from this image."
+    ],
+    "insufficient_evidence": true,
+    "source_report_id": "CR-20ef1239-a34b-410f-bc72-76605a69925d",
+    "analyzed_at": "2026-09-12T23:02:35.626179Z",
+    "provenance": {
+      "source_id": "CR-20ef1239-a34b-410f-bc72-76605a69925d",
+      "method": "vertex_ai_gemini_multimodal",
+      "is_demo": false,
+      "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+      "model": "gemini-3.1-flash-lite",
+      "model_version": "gemini-3.1-flash-lite",
+      "prompt_version": "citizen_evidence_v1",
+      "generated_at": "2026-09-12T23:02:35.626179Z",
+      "source_report_id": "CR-20ef1239-a34b-410f-bc72-76605a69925d",
+      "derived": true,
+      "author": "model",
+      "confidence_basis": "model_estimated_ordinal_not_calibrated"
+    },
+    "safety_note": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation."
+  }
+}

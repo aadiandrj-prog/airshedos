@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { api, type Incident } from "@/lib/api";
 import { OperationsPane } from "@/components/operations-pane";
+import { CitizenEvidencePanel } from "@/components/citizen-evidence-panel";
 import { EnvironmentPanel } from "@/components/environment-panel";
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
@@ -179,8 +180,9 @@ export default function CommandCenter() {
           </button>
         </div>
         <EnvironmentPanel />
+        <CitizenEvidencePanel />
         <div className="workspace-heading" id="incident-command">
-          <span className="eyebrow">02 / DEMO INCIDENT WORKSPACE</span>
+          <span className="eyebrow">03 / DEMO INCIDENT WORKSPACE</span>
           <h2>From evidence to action.</h2>
           <p>
             A fictional operations scenario. All incident evidence and forecast

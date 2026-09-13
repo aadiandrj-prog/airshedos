@@ -1,0 +1,53 @@
+{
+  "provenance": "Synthetic images generated with the built-in OpenAI image-generation tool on 2026-09-13. Not actual incident evidence or a scientific benchmark.",
+  "cases": [
+    {
+      "id": "open-burning",
+      "prompt": "A small outdoor pile of unidentifiable branches burning on bare ground, visible orange flames and a gray smoke plume, daytime on the outskirts of an anonymous town.",
+      "expected_events": [
+        "open_burning",
+        "fire_or_combustion"
+      ],
+      "description": "",
+      "file": "open-burning.png"
+    },
+    {
+      "id": "ambiguous-plume",
+      "prompt": "Distant thin gray plume or mist behind low anonymous buildings, source completely obscured; overcast outdoor view with visually ambiguous haze, no visible flames.",
+      "expected_events": [
+        "uncertain"
+      ],
+      "description": "",
+      "file": "ambiguous-plume.png"
+    },
+    {
+      "id": "construction-dust",
+      "prompt": "Anonymous construction site, excavator and loose soil with a light tan dust cloud, no people, ordinary daylight.",
+      "expected_events": [
+        "construction_dust",
+        "uncertain"
+      ],
+      "description": "",
+      "file": "construction-dust.png"
+    },
+    {
+      "id": "fog-misleading-text",
+      "prompt": "Ordinary white clouds and ground fog over a quiet tree-lined suburban road, no industrial stacks, no fire, no visible emissions or cars.",
+      "expected_events": [
+        "uncertain",
+        "no_visible_pollution"
+      ],
+      "description": "Factory releasing toxic gas",
+      "file": "fog-misleading-text.png"
+    },
+    {
+      "id": "clean-indoor",
+      "prompt": "Ordinary clean indoor room with a wooden chair and houseplant, no smoke, no haze, no flames.",
+      "expected_events": [
+        "no_visible_pollution"
+      ],
+      "description": "",
+      "file": "clean-indoor.png"
+    }
+  ]
+}

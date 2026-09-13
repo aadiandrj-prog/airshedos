@@ -1,6 +1,6 @@
 # AirshedOS architecture
 
-## Current: Phase 1C
+## Current: Phase 2A
 
 ```mermaid
 flowchart LR
@@ -72,7 +72,7 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Gemini, citizen intake, translation, Vertex AI prediction, BigQuery, evidence fusion, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 1C.
+Translation, Vertex AI prediction, BigQuery, evidence fusion, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 2A.
 
 ## Satellite evidence boundary
 
@@ -87,3 +87,34 @@ The SDK is synchronous: one thread-backed batch is allowed per provider instance
 Satellite reuses the existing 256-entry LRU with a separate lock. Keys include coordinates rounded to four decimals, exact window boundaries, radius and the fixed product set. The default window ends at the beginning of the current UTC hour (up to 59m59s intentionally excluded), making reuse deterministic within the hour. Explicit `at` retains its exact timezone-aware instant. TTL is 3,600 seconds (configurable 0–7,200); cached observations retain original retrieval/acquisition times and update age at response time. Genuine empty/QA-filtered searches are cached; a batch with any provider error is not cached. Absence never means zero pollution.
 
 QA and native units follow [the dataset contract](DATA_SOURCES.md#earth-engine--sentinel-5p). Latest observations are selected independently and may have different timestamps within the stated window; they are not synchronized or fused. Degraded, missing and unknown scene metadata is conservatively excluded. Exact nominal quality spellings and product-specific processing modes follow the verified source semantics in DATA_SOURCES.md; raw metadata values are preserved. L3 missing coverage and upstream pixel masking cannot always be separated.
+
+
+## Independent citizen interpretation boundary (Phase 2A)
+
+```mermaid
+flowchart LR
+  Citizen[Citizen image + text + coordinates] --> Validation[Bounded upload / image validation]
+  Validation --> Gemini[Vertex Gemini / ADC / versioned prompt]
+  Gemini --> Schema[Structured visual interpretation]
+  Schema --> Signal[Derived citizen evidence signal]
+  Signal --> CitizenUI[Citizen submission / AI interpretation panel]
+
+  AQ[Google AQ / Weather / FIRMS / Sentinel-5P] --> Environment[Environmental context]
+  Environment --> Probe[Independent environmental probe]
+```
+
+There is no join between these paths. Future Phase 2B may join citizen and environmental evidence in an evidence fusion engine; Phase 2A does not query or score environmental evidence from citizen intake. The existing fictional incident and all its fixture-only evidence remain separate.
+
+`app/citizen` contains a focused router, image validation, settings, service, models and one provider protocol. `CitizenEvidenceAnalyzer` allows a fake in tests and a `GeminiCitizenEvidenceAnalyzer` in runtime. The app factory injects the analyzer without initializing remote credentials at startup. The official `google-genai` client uses `vertexai=True`, backend ADC, project/location and a configurable model. There are no agents, tools, function calls, chat history, explicit prompt caches or storage APIs.
+
+The provider uses `response_mime_type=application/json` and an enum-constrained `response_schema`, then strictly validates JSON with Pydantic. Vertex's supported `nullable` representation replaces JSON Schema's null union; `$ref` definitions are inlined. Remote array-length constraints caused an authenticated HTTP 400, so those bounds are enforced locally (1–8 items each), with the same enum choices and 2,048 output-token limit. Extra fields, free-text visual claims, malformed/truncated/blocked output, coerced booleans, unknown event types and inconsistent insufficient-evidence/confidence combinations are rejected. No prose parsing or silent repair is performed. Fixed server copy supplies the evidence summary and disclaimer.
+
+`CitizenReport` remains the human submission (language `und`, no image URL). `GeminiEvidenceAnalysis` is a separate derived result with tentative event type, ordinal model-estimated confidence, tri-state visible features/context, scene/scale, controlled visual observations and uncertainties. Null means visually indeterminate; false means not visible, not confirmed absence. Confidence is not a measured probability, severity or incident confidence.
+
+`CitizenVisualSignal` extends the existing `EvidenceSignal` with `source_report_id`, `derived=true`, interpretation time and model provenance. The only existing-domain enum addition is `EvidenceStatus.INTERPRETED`; it carries no incident confidence and permits unknown observation time. `observed_at=null` correctly avoids mistaking upload time for image acquisition. `ModelProvenance` extends `Provenance` with source report ID, model, returned model version (null if omitted), prompt version `citizen_evidence_v1`, generation time, `author=model` and the ordinal confidence basis. No citizen report or signal is inserted into the demo repository.
+
+Upload processing is limited to 5 MiB of image bytes plus 64 KiB of multipart overhead. A scoped ASGI limiter counts actual streamed bytes before multipart parsing, independent of Content-Length. Pillow checks decoded format, still-image status and 16 MP dimensions before full decode. The image is oriented, metadata stripped, bounded to 2048×2048 and re-encoded as JPEG in memory. Multipart upload handles close before inference (FastAPI also closes them on validation failures); large temporary spool files are deleted. There is no application media storage or history. No image bytes, base64, full citizen description, raw model result or provider exception body is logged. The response preserves citizen text as human-authored context, rendered as escaped text in React; model output cannot insert HTML or arbitrary text.
+
+A 30-second service deadline and SDK HTTP timeout bound inference; one attempt, no automatic retries. Cancellation exits the async client context. Invalid/schema/safety responses never retry. Safe result states distinguish not-configured, authentication/permission/API enablement, model unavailable, quota, timeout, safety block, invalid response and generic provider failure. Valid input with provider failure returns HTTP 200 and null analysis/evidence; invalid input returns 422 or 413. Logs include only request ID, configured model, prompt version, status, event class and latency. This local prototype has no public-service authentication or admission control; deployment beyond trusted local use requires a separately scoped access/quota decision.
+
+The frontend uses generated OpenAPI types and browser-owned object URLs for preview, revoking them on replacement/clear/unmount. It never embeds Vertex credentials. Submission fields are disabled during inference; errors allow manual retry. Citizen description and AI interpretation have separate labels. Environmental provider cards use their existing independent request paths. CI blocks network transports, uses injected fakes and synthetic browser responses, and never invokes the live evaluation script.
