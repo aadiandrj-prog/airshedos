@@ -2,7 +2,7 @@ import math
 
 import pandas as pd
 
-from prediction.common import DatasetError, hourly
+from prediction.common import DatasetError, hour_grid, hour_phase, hourly
 
 
 def longest_gap(series):
@@ -12,7 +12,6 @@ def longest_gap(series):
 
 def coverage_report(aq, start, end, expected_sensors=()):
     start, end = hourly(start), hourly(end)
-    grid = pd.date_range(start, end, freq="h", inclusive="left")
     rows = []
     groups = dict(tuple(aq.groupby(["station_id", "sensor_id", "pollutant", "unit"])))
     for sensor in expected_sensors:
@@ -32,6 +31,8 @@ def coverage_report(aq, start, end, expected_sensors=()):
             ),
         )
     for (station, sensor, pollutant, unit), group in groups.items():
+        phase = hour_phase(group.timestamp)
+        grid = hour_grid(start, end, phase)
         values = group.set_index("timestamp").value.reindex(grid)
         future_count = (
             pd.concat([values.shift(-n) for n in range(1, 7)], axis=1).notna().sum(axis=1)
@@ -49,6 +50,7 @@ def coverage_report(aq, start, end, expected_sensors=()):
                     "unit": unit,
                     "month": month,
                     "expected_hours": len(block),
+                    "hour_offset_minutes": phase,
                     "valid_hours": len(valid),
                     "missing_percent": 100 * (1 - len(valid) / len(block)),
                     "longest_gap_hours": longest_gap(block),
@@ -95,6 +97,8 @@ def select_stations(locations, coverage, count=5, min_coverage=0.8, min_months=3
                 "longitude": location["coordinates"]["longitude"],
                 "timezone": location["timezone"],
                 "pm25_sensor_id": int(candidate.sensor_id),
+                "hour_offset_minutes": int(candidate.get("hour_offset_minutes", 0)),
+                "instruments": location.get("instruments"),
                 "provider": location.get("provider"),
                 "owner": location.get("owner"),
                 "licenses": location.get("licenses"),

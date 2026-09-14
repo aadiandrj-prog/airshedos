@@ -5,7 +5,8 @@ from dataclasses import asdict, dataclass
 import numpy as np
 import pandas as pd
 
-from prediction.common import ERA5_BANDS, DatasetError, hourly
+from prediction.availability import DEFAULT_AQ_BUFFER_HOURS, OPERATIONAL_V1, RESEARCH_ENRICHED_V1
+from prediction.common import ERA5_BANDS, DatasetError, hour_grid, hour_phase, hourly
 
 LAGS = (1, 2, 3, 6, 12, 24)
 ROLLS = (3, 6, 12, 24)
@@ -19,8 +20,18 @@ class FrameConfig:
     history_days: int = 30
     history_min_hours: int = 576
     future_min_hours: int = 6
+    profile: str = OPERATIONAL_V1
+    aq_availability_buffer_hours: int = DEFAULT_AQ_BUFFER_HOURS
 
     def __post_init__(self):
+        if self.profile not in {OPERATIONAL_V1, RESEARCH_ENRICHED_V1}:
+            raise DatasetError("Unknown feature profile")
+        if (
+            isinstance(self.aq_availability_buffer_hours, bool)
+            or not isinstance(self.aq_availability_buffer_hours, int)
+            or not 1 <= self.aq_availability_buffer_hours <= 168
+        ):
+            raise DatasetError("AQ availability buffer must be an integer from 1 to 168 hours")
         if hourly(self.end) <= hourly(self.start):
             raise DatasetError("Invalid dataset date range")
         if self.history_days != 30 or self.history_min_hours < 576 or self.history_min_hours > 720:
@@ -73,8 +84,9 @@ def assign_splits(frame, boundaries):
 
 def construct(aq, weather, stations, config):
     start, end = hourly(config.start), hourly(config.end)
-    warmup = start - pd.Timedelta(days=30)
-    grid = pd.date_range(warmup, end, freq="h", inclusive="left")
+    operational = config.profile == OPERATIONAL_V1
+    buffer = config.aq_availability_buffer_hours if operational else 0
+    warmup = start - pd.Timedelta(days=30, hours=buffer)
     frames, features = [], []
     for station in sorted(stations, key=lambda s: str(s["id"])):
         station_id = str(station["id"])
@@ -86,9 +98,25 @@ def construct(aq, weather, stations, config):
         pm = observations[observations.pollutant == "pm25"]
         if pm.empty or set(pm.unit) != {"µg/m³"}:
             raise DatasetError("Station PM2.5 must have compatible µg/m³ units")
-        pm = pm.set_index("timestamp").value.reindex(grid).astype(float)
+        phase = hour_phase(pm.timestamp)
+        if phase != station.get("hour_offset_minutes", 0):
+            raise DatasetError("Station hourly phase differs from measured source periods")
+        grid = hour_grid(warmup, end, phase)
+        observed_pm = pm.set_index("timestamp").value.reindex(grid).astype(float)
+        inputs = observations.copy()
+        if operational:
+            revised = inputs.quality.astype(str).str.contains("revision", case=False)
+            if "revision_detected" in inputs:
+                revised |= inputs.revision_detected.fillna(False).astype(bool)
+            if "available_at" in inputs:
+                known_release = pd.to_datetime(inputs.available_at, utc=True)
+                revised |= known_release > (inputs.timestamp + pd.Timedelta(hours=buffer))
+            inputs.loc[revised, "value"] = np.nan
+        pm_input = inputs[inputs.pollutant == "pm25"].set_index("timestamp").value.reindex(grid)
+        pm = pm_input.shift(buffer).astype(float)
         part = pd.DataFrame({"station_id": station_id, "timestamp": grid}, index=grid)
-        part["pm25_t"] = pm
+        primary = "pm25_latest_available" if operational else "pm25_t"
+        part[primary] = pm
         local = grid.tz_convert(station["timezone"])
         for name, values in {
             "hour_of_day": local.hour,
@@ -98,14 +126,20 @@ def construct(aq, weather, stations, config):
         }.items():
             part[name] = values
         for lag in LAGS:
-            part[f"pm25_lag_{lag}h"] = pm.shift(lag)
-        for window in ROLLS:
+            if not operational or lag > buffer:
+                part[f"pm25_lag_{lag}h"] = pm_input.shift(lag)
+        if operational:
+            # Keep useful older history even when the conservative buffer exceeds 24 hours.
+            for offset in (1, 2, 3, 6, 12, 24):
+                lag = buffer + offset
+                part[f"pm25_lag_{lag}h"] = pm_input.shift(lag)
+        for window in (3, 6, 12) if operational else ROLLS:
             part[f"pm25_rolling_mean_{window}h"] = pm.rolling(window, min_periods=window).mean()
-        for window in (6, 24):
+        for window in (6,) if operational else (6, 24):
             part[f"pm25_rolling_std_{window}h"] = pm.rolling(window, min_periods=window).std(ddof=0)
         part["history_count_30d"] = pm.rolling("30D", closed="right").count()
         history_valid = (part.history_count_30d >= config.history_min_hours) & (
-            grid >= warmup + pd.Timedelta(days=30)
+            grid >= warmup + pd.Timedelta(days=30, hours=buffer)
         )
         for q in (0.85, 0.90, 0.95):
             part[f"trailing_30d_p{round(q * 100)}_pm25"] = (
@@ -113,7 +147,7 @@ def construct(aq, weather, stations, config):
                 .quantile(q)
                 .where(history_valid)
             )
-        for pollutant, group in observations[observations.pollutant != "pm25"].groupby("pollutant"):
+        for pollutant, group in inputs[inputs.pollutant != "pm25"].groupby("pollutant"):
             if len(set(group.unit)) != 1:
                 raise DatasetError("Unit changes within an optional sensor")
             unit = group.unit.iloc[0]
@@ -121,33 +155,48 @@ def construct(aq, weather, stations, config):
             if suffix is None:
                 raise DatasetError("Unsupported optional pollutant unit")
             column = f"{pollutant}_{suffix}"
+            if hour_phase(group.timestamp) != phase:
+                raise DatasetError("Optional sensor hourly phase differs from PM2.5")
             values = group.set_index("timestamp").value.reindex(grid)
-            part[f"{column}_t"] = values
-            part[f"{column}_lag_1h"] = values.shift(1)
+            if operational:
+                part[f"{column}_lag_{buffer}h"] = values.shift(buffer)
+                part[f"{column}_lag_{buffer + 1}h"] = values.shift(buffer + 1)
+            else:
+                part[f"{column}_t"] = values
+                part[f"{column}_lag_1h"] = values.shift(1)
         met = (
             weather[weather.station_id.astype(str) == station_id]
-            if len(weather)
+            if len(weather) and not operational
             else pd.DataFrame()
         )
         if len(met):
             if met.duplicated("timestamp").any():
                 raise DatasetError("Duplicate meteorology hour")
-            met = met.set_index("timestamp").reindex(grid)
+            met = met.set_index("timestamp").reindex(grid.floor("h"))
+            met.index = grid
             for band in [*ERA5_BANDS, "wind_speed_mps", "wind_from_degrees"]:
                 part[f"era5_{band}"] = met[band]
-        else:
+        elif not operational:
             for band in [*ERA5_BANDS, "wind_speed_mps", "wind_from_degrees"]:
                 part[f"era5_{band}"] = np.nan
         feature_names = [c for c in part if c not in {"station_id", "timestamp"}]
         features.extend(c for c in feature_names if c not in features)
-        future = pd.concat([pm.shift(-h) for h in range(1, 7)], axis=1)
+        future = pd.concat([observed_pm.shift(-h) for h in range(1, 7)], axis=1)
         part["future_observation_count"] = future.notna().sum(axis=1)
         valid = part.future_observation_count == config.future_min_hours
         part["future_max_pm25_6h"] = future.max(axis=1).where(valid)
         part["future_mean_pm25_6h"] = future.mean(axis=1).where(valid)
-        part["regression_eligible"] = valid & part.pm25_t.notna()
+        part["regression_eligible"] = valid & part[primary].notna()
         # These distinguish observation-time correctness from as-of availability proof.
-        part["feature_observation_end"] = grid
+        part["feature_observation_end"] = grid - pd.Timedelta(hours=buffer)
+        part["aq_feature_cutoff"] = grid - pd.Timedelta(hours=buffer)
+        part["feature_profile"] = config.profile
+        part["aq_availability_buffer_hours"] = buffer
+        part["feature_complete"] = part[feature_names].notna().all(axis=1)
+        part["pm25_feature_complete"] = (
+            part[[c for c in feature_names if c.startswith("pm25_")]].notna().all(axis=1)
+        )
+        part["regression_without_buffer_eligible"] = valid & observed_pm.notna()
         part["target_window_start"] = grid + pd.Timedelta(hours=1)
         part["target_window_end"] = grid + pd.Timedelta(hours=6)
         part["publication_availability_verified"] = False
@@ -160,22 +209,30 @@ def construct(aq, weather, stations, config):
         .reset_index(drop=True)
     )
     result["split"] = assign_splits(result, split_boundaries(config))
+    result["operational_eligible"] = (
+        result.regression_eligible & result.pm25_feature_complete & result.split.ne("purged")
+        if operational
+        else False
+    )
     return result, features
 
 
 def spike_labels(frame, percentile, relative_increase):
     reference = frame[f"trailing_30d_p{percentile}_pm25"]
+    current = frame["pm25_latest_available"] if "pm25_latest_available" in frame else frame.pm25_t
     valid = frame.regression_eligible & reference.notna()
     label = (
         (frame.future_max_pm25_6h >= reference)
-        & (frame.future_max_pm25_6h >= frame.pm25_t * (1 + relative_increase))
-        & (frame.future_max_pm25_6h > frame.pm25_t)
+        & (frame.future_max_pm25_6h >= current * (1 + relative_increase))
+        & (frame.future_max_pm25_6h > current)
     )  # All-zero persistence is not worsening.
     return label.astype("Int64").where(valid)
 
 
 def freeze_spike_rule(frame):
     train = frame[frame.split == "train"]
+    if "feature_profile" in frame and frame.feature_profile.eq(OPERATIONAL_V1).all():
+        train = train[train.operational_eligible]
     candidates = []
     for percentile in (85, 90, 95):
         for increase in (0.20, 0.25, 0.30):

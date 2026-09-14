@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
-VERSION = "prediction_dataset_v1"
+VERSION = "prediction_dataset_v2"
+RAW_CACHE_VERSION = "prediction_dataset_v1"
 ERA5_COLLECTION = "ECMWF/ERA5_LAND/HOURLY"
 ERA5_BANDS = {
     "temperature_2m": "K",
@@ -63,7 +64,7 @@ class RawCache:
         self.references = {}
 
     def path(self, source, query):
-        return self.root / source / f"{digest({'version': VERSION, 'query': query})}.json"
+        return self.root / source / f"{digest({'version': RAW_CACHE_VERSION, 'query': query})}.json"
 
     def get(self, source, query):
         path = self.path(source, query)
@@ -106,3 +107,23 @@ def chunks(start, end, days=28):
         stop = min(end, start + pd.Timedelta(days=days))
         yield start, stop
         start = stop
+
+
+def hour_grid(start, end, offset_minutes=0):
+    if offset_minutes not in (0, 30):
+        raise DatasetError("Unsupported hourly phase; inspect source interval semantics")
+    start, end = utc(start), utc(end)
+    first = start.floor("h") + pd.Timedelta(minutes=offset_minutes)
+    if first < start:
+        first += pd.Timedelta(hours=1)
+    return pd.date_range(first, end, freq="h", inclusive="left")
+
+
+def hour_phase(timestamps):
+    values = pd.DatetimeIndex(timestamps)
+    if len(values) == 0:
+        return 0
+    phases = set(values.minute)
+    if len(phases) != 1 or not phases <= {0, 30} or any(values.second) or any(values.microsecond):
+        raise DatasetError("Mixed or unsupported hourly source phases; never silently round")
+    return int(next(iter(phases)))

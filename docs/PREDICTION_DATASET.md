@@ -1,38 +1,36 @@
 # Phase 2C historical prediction data contract
 
-Status: **offline implementation and synthetic verification; real extraction pending**. The user explicitly chose fixtures while `OPENAQ_API_KEY` is absent. No real station selection, historical benchmark, full annual extraction or model readiness is claimed. Runtime incident, citizen evidence, environmental context and corroboration behavior remain unchanged.
+Phase 2C provides an offline, reproducible data pipeline. Real acceptance results and remaining gates are recorded in [PHASE_2C_VERIFICATION.md](PHASE_2C_VERIFICATION.md). No model is trained, no Vertex job is submitted, and runtime environmental, citizen-evidence, corroboration and forecast UI behavior is changed.
 
-## Availability is a separate gate
+## Two explicit feature profiles
 
-`prediction_dataset_v1` builds a **retrospective research frame**, not a proven operational backtest. A measurement timestamp and a publication timestamp are different. OpenAQ hourly interval endpoints do not establish when an observation or later revision was first available. ERA5-Land is retrospective reanalysis; hour-t weather is published after hour t. ECMWF describes delayed updates, including preliminary ERA5-Land-T availability around five days behind real time; Earth Engine ingestion may add delay. We therefore cannot honestly satisfy “known at or before t” with contemporaneous ERA5. See the [ECMWF product guide](https://confluence.ecmwf.int/spaces/CKB/pages/536218894/ERA5-Land%2Bhourly%2BAnalysis%2BReady%2BCloud%2BOptimised%2BARCO%2Bdata%2Bon%2Bsingle%2Blevels%2Bfrom%2B1950%2Bto%2Bpresent%2BProduct%2BUser%2BGuide%2BPUG).
+`prediction_dataset_v2` defaults to **OPERATIONAL_V1**. It contains buffered AQ history and deterministic calendar features. **RESEARCH_ENRICHED_V1** adds unbuffered retrospective AQ and ERA5 and is labeled **NOT DEPLOYMENT-SAFE AS CURRENTLY SOURCED**. The profiles share source snapshots and caches.
 
-The builder requires `--retrospective-research`. `available_at` remains unknown, `publication_availability_verified` is false and `ready_for_operational_training` is false. Observation-time checks can pass while `--require-operational` deliberately exits 2. No release timestamps or fixed “safe” delay are invented. Resolve the as-of data contract before Phase 2D: archive actual observation availability/revisions and use weather forecasts issued before t or demonstrably available lagged weather. No such new source is implemented here.
+Observation time is not publication time. OpenAQ historical hourly intervals do not establish when the value or a revision first became available. `AQ_AVAILABILITY_BUFFER_HOURS` defaults to **72**, configurable from 1 to 168 hours through the backend environment or CLI. At forecast origin t, AQ inputs must end at or before **t−buffer**. The initial prospective snapshot on 2026-09-14 found the two gate feeds approximately **69.25 hours stale**. One- or two-hour buffers were therefore not defensible from that snapshot. Seventy-two hours is a provisional assumption based on feed freshness, not a measured historical publication-delay guarantee or an accuracy optimization.
 
-## Scope and selection
+Known revised observations and known releases later than their assumed buffered deadline are conservatively excluded from operational inputs. Unidentified historical revisions remain a risk. Every output records `publication_availability_verified=false`; retrospective retrieval time is never substituted for historical availability. A machine `deployment_safe=true` for a buffered AQ feature is explicitly **conditional**, not proof. The exporter requires the matching availability manifest and explicit `accept_conditional_availability=True`; without that acknowledgment it fails. Research features cannot pass operational export even with acknowledgment. Prospective validation and revision handling remain prerequisites for serving predictions.
 
-The study box is west/south/east/north **76.65, 28.25, 77.65, 28.90**, a core Delhi–NCR rectangle, not a legal NCR boundary. Only stationary OpenAQ monitoring locations with PM2.5 sensors qualify. Names are discovered, never hardcoded. Coordinates and timezone must be valid. Original location/provider/owner/license metadata and sensor IDs are preserved.
+ERA5-Land is retrospective reanalysis with delayed publication. The [ECMWF guide](https://confluence.ecmwf.int/spaces/CKB/pages/536218894/ERA5-Land%2Bhourly%2BAnalysis%2BReady%2BCloud%2BOptimised%2BARCO%2Bdata%2Bon%2Bsingle%2Blevels%2Bfrom%2B1950%2Bto%2Bpresent%2BProduct%2BUser%2BGuide%2BPUG) describes preliminary updates around five days behind real time; Earth Engine ingestion may add delay. No ERA5 band or derivative enters OPERATIONAL_V1. Future weather, fires, satellites and AQ are also excluded.
 
-Default candidate window: **2025-01-01 00:00 UTC through 2026-01-01 00:00 UTC, end exclusive**, the latest complete calendar year at implementation. Discovery screens sensor metadata overlap, then measures actual hourly coverage for at most 12 candidate locations by default (configurable up to 50). More overlapping metadata duration is prioritized, with deterministic location-ID ties. This budget can bias geographic coverage; omitted candidates are explicitly listed. Metadata ranges alone do not prove coverage.
+## OpenAQ and objective station selection
 
-Each selected PM2.5 sensor needs at least **80% usable hours** across the common requested period, at least **three months with 80% coverage** for the full build, and usable six-hour targets. One highest-coverage sensor per location is chosen; ties use sensor ID. First station has highest measured coverage; subsequent stations maximize minimum geographic distance to selected stations among coverage-qualified candidates. The build rechecks measured coverage before weather extraction. Feasibility selection requires one well-covered month/partial-month instead of three. Expected sensors returning no observations receive explicit 100%-missing coverage rows.
+Use official [OpenAQ v3 hourly resources](https://docs.openaq.org/resources/measurements) and [sensor metadata](https://docs.openaq.org/resources/sensors). The geographic study box is longitude **76.65–77.65**, latitude **28.25–28.90**, India, stationary monitors only. It is a core NCR study area, not an administrative boundary or exhaustive government-monitor inventory. Discovery starts with IDs and measured coverage, not preferred station names.
 
-Generate `candidate_coverage.csv` before accepting stations. It records every inspected station/sensor/pollutant/month and overall expected hours, valid hours, first/last usable times, missing percentage, longest missing gap, complete target windows and usable regression rows. `discovery_manifest.json` records available sensor ranges, request budget, evaluated locations and selection reasons. Full extraction requires 3–5 stations and at least 90 days; use approximately one year where coverage permits. If annual coverage fails, inspect monthly reports and rerun discovery for the **longest defensible common contiguous window** of at least 90 days, recording the reason in the verification report. The tool deliberately does not silently shorten dates or blend disparate station periods.
+Inventory includes location/sensor IDs, coordinates, provider, instruments, timezone and first/last timestamps. Metadata `coverage.observedCount` counts underlying measurements and is **not** an hourly count. Actual hourly counts, monthly missingness and longest gaps come from `/hours` responses. Expired replacement sensors are listed but not blended with current sensors. Select the strongest sensor at a location by actual PM2.5 coverage. Require **80% usable hours**, at least three adequately covered months for full builds, and valid complete future windows. Geographic spread is considered only after this quality gate. Select 2–5 qualifying locations. The full audit inventories all PM2.5 sensors and measures those with at least 90 days of metadata overlap; unqueried expired sensors are labeled explicitly.
 
-## Sources, units and quality
+Prefer 2025-01-01 through 2026-01-01 UTC. If it is unsupported, select a documented common period of at least 90 days, preferably six months or longer, using measured coverage. No different per-station output periods are silently mixed. A genuine two-station, 14–31-day AQ plus ERA5 feasibility artifact must pass before the full hourly audit/build. Synthetic artifacts cannot unlock it. Each gate station needs at least 24 complete operational PM feature/target rows and at least 80% hours with all six usable ERA5 bands.
 
-### Air quality
+### Timestamp, units and QA contract
 
-Use official [OpenAQ v3 `/sensors/{id}/hours`](https://docs.openaq.org/resources/measurements), the precomputed hourly mean resource. PM2.5 is the measured target, never Google Air Quality estimates. PM10, NO2, CO, O3 and SO2 are optional. Choose the coverage-selected PM2.5 sensor; optional sensors default to lowest ID and can be explicitly set using station `selected_sensor_ids`. Instruments are not blended, and an explicitly selected missing sensor fails.
+Preserve source `datetimeFrom` and `datetimeTo`, requiring exactly one hour. Real CPCB hourly endpoints occur at **:30 UTC**, corresponding to whole local hours in Asia/Kolkata. The canonical grid retains this phase; supported phases are :00 and :30, consistent within a sensor/station. Never floor, round, interpolate or silently resample AQ records. Query-window boundaries remain whole UTC hours. Station calendar features use the recorded timezone.
 
-Normalize compatible spellings of PM units to **µg/m³**, without changing values. Gases retain **ppb**, **ppm** or **µg/m³**, encoded in feature names to prevent unit mixing. Unexpected unit/product changes fail. Source interval `datetimeFrom` and `datetimeTo` must describe exactly one hour; the endpoint must be an exact timezone-aware UTC hour. No silent timestamp rounding. Non-hour-aligned source records currently fail rather than resample; check actual NCR source alignment at the live gate.
+PM2.5/PM10 retain **µg/m³** (equivalent source Unicode spellings canonicalized). Optional gases retain their actual µg/m³, ppb or ppm units in column names; no conversion is performed. Reject unexpected product/unit changes. Use only finite, nonnegative values with **75–100% hourly coverage** and no explicit `flagInfo.hasFlags=true`. Missing coverage metadata remains unusable. This completeness rule is not instrument-certification or regulatory QA. Raw rejected values stay cached; normalized values stay missing. Exact duplicates collapse; conflicting values, units, intervals or coverage fail rather than average revisions.
 
-Use finite, nonnegative values only where `coverage.percentCoverage` is **75–100%**. This is a conservative dataset completeness rule, not a claim of instrument calibration or regulatory QA. Missing coverage metadata is unusable. All failed values remain missing with quality notes; raw values remain in cache. Exact duplicates collapse, retaining earliest retrieval; conflicting values, units, interval or coverage metadata fail rather than average revisions. There is no interpolation, forward-fill, gas conversion or outlier clipping.
+The real feasibility data has recurrent 50%-coverage hours around 01:00 local time. These remain missing. They prevent complete 24-hour rolling windows, so the two 24-hour rolling features are excluded from OPERATIONAL_V1 and recorded as excluded candidates in its availability manifest. They remain visible as missing in research. No QA threshold is reduced and no gap is filled to create a feature.
 
-The API key is loaded server-side by offline scripts from ignored `.env`, never sent to the browser. Create a key using the [OpenAQ setup guide](https://docs.openaq.org/using-the-api/quick-start), then add `OPENAQ_API_KEY=` locally. Never paste or commit it. Existing secret scans compare the configured key against Git-visible files and specified artifacts.
+## ERA5 live extraction
 
-### Regional weather
-
-Official Earth Engine Python API, existing backend Application Default Credentials and `EARTH_ENGINE_PROJECT` falling back to `GOOGLE_CLOUD_PROJECT`. No frontend SDK, new OAuth flow or service-account key. Collection: [ECMWF/ERA5_LAND/HOURLY](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_HOURLY).
+Use the official Earth Engine Python API, existing backend ADC and `EARTH_ENGINE_PROJECT` falling back to `GOOGLE_CLOUD_PROJECT`. No new credentials, frontend OAuth or service-account key. Collection: [ECMWF/ERA5_LAND/HOURLY](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_HOURLY).
 
 | Band | Native unit |
 | --- | --- |
@@ -43,104 +41,75 @@ Official Earth Engine Python API, existing backend Application Default Credentia
 | u_component_of_wind_10m | m/s |
 | v_component_of_wind_10m | m/s |
 
-Sample the grid cell at each station coordinate with `Reducer.first` at **11,132 m** catalog scale. This is coarse regional context, not collocated weather-station measurement. Use Earth Engine's hourly precipitation band directly; do not difference it again. Negative precipitation packing artifacts become missing with a note; raw extraction remains cached. Wind speed is `hypot(u,v)`; meteorological wind-from direction is `degrees(atan2(-u,-v)) modulo 360`; calm direction is missing. No relative-humidity derivation is added.
+A server-side station map applies [`Image.reduceRegion`](https://developers.google.com/earth-engine/apidocs/ee-image-reduceregion) with `Reducer.first` at **11,132 m**. All stations and up to 168 hours remain batched in **one RPC per seven days**, not one RPC per row. Live diagnostics showed the earlier `reduceRegions` expression returned nulls at these point features while `reduceRegion` at the identical point/image returned six native values. The extraction-version field in the cache query distinguishes corrected results and preserves old diagnostic responses.
 
-Missing weather cells remain missing and appear in feature missingness. An entirely empty seven-day extraction chunk, malformed result or out-of-query station/hour fails, preserving cached progress. A feasibility artifact cannot authorize a larger build unless each station has at least 80% core temperature/pressure/wind coverage and 24 usable target rows.
+Research rows at 12:30 UTC join the latest ERA5 analysis at 12:00, never 13:00. This backward alignment does not resolve publication delay and does not make weather deployment-safe. Use the source hourly precipitation band directly without a second deaccumulation; negative packing artifacts become missing with a note. Wind speed = `hypot(u,v)`; wind-from direction = `degrees(atan2(-u,-v)) mod 360`; calm direction is missing. No relative humidity is inferred. Empty chunks, all-null band results, duplicate station-hours, malformed or out-of-query rows fail and preserve cached progress.
 
-### Optional sources deferred
+ERA5 is regional reanalysis, not a collocated weather instrument. Fire and Sentinel-5P features remain deferred. The proposed NOAA-20 daily raster lacks exact within-day acquisition times for safe hourly windows. The isolated exact-event helper remains tested but unused. No fire pressure is fabricated from missing extraction, and no causal source attribution is made.
 
-Historical fires are excluded from this first frame. The suggested [NASA/LANCE/NOAA20_VIIRS/C2](https://developers.google.com/earth-engine/datasets/catalog/NASA_LANCE_NOAA20_VIIRS_C2) is a daily raster; its documented bands do not supply exact within-day detection acquisition times. Treating every daily pixel as available at midnight would leak future events. An isolated, tested exact-event helper counts 25/50/100 km detections in `(t−24h,t]`, requiring both observation and known availability at or before t. It has no live extractor and is not in the feature allowlist. Missing extraction is not encoded as zero fire pressure. Fire detections would not establish causality.
+## Features and targets
 
-Sentinel-5P is deferred as an optional later ablation because of sparse asynchronous observations and publication-time alignment. No future satellite backfill, mandatory satellite completeness, satellite columns or changes to the Phase 1C provider are introduced.
+Canonical key: station ID + native UTC hourly interval end **t**. Reindex separately per station onto a complete grid. Operational extraction includes **30 days plus the AQ buffer** before the requested period (33 days at the default). Warmup rows are excluded from final output.
 
-## Frame and target definitions
+OPERATIONAL_V1 at the default 72-hour buffer includes:
 
-Canonical key: **station ID + hourly UTC interval end t**. Preserve station timezone; calendar features use station-local hour, day of week (Monday=0), month and weekend. Calendar hour is integer local hour; Indian UTC half-hour offset is retained through timezone conversion.
+- `pm25_latest_available` = measured value exactly t−72h, without forward-fill.
+- PM2.5 lags **73, 74, 75, 78, 84, 96 hours**. For another buffer, admitted existing lags must exceed the buffer, plus buffer+1/2/3/6/12/24.
+- Complete trailing means **3/6/12 hours** and population standard deviation **6 hours**, ending at t−buffer.
+- Thirty-day history count and p85/p90/p95; require at least **576 of 720 hours** and the full history duration for percentiles.
+- Station-local hour, weekday, month and weekend.
+- Available optional PM10/NO2/CO/O3/SO2 lags at buffer and buffer+1, preserving their native unit. Missing optional inputs are not imputed and do not invalidate the PM-only core population.
 
-Per station, reindex onto a complete hourly grid including **30 warmup days** before the requested output period. Never shift across station boundaries or across missing hours as though they were adjacent measurements.
+RESEARCH_ENRICHED_V1 contains PM2.5 at t, lags 1/2/3/6/12/24, complete rolling means 3/6/12/24, std 6/24, unbuffered trailing history, calendar, optional current/lag1 pollutant values, six ERA5 bands and two wind derivatives. It is separately labeled and exported.
 
-Features:
+The input buffer **does not shift targets backward**. Primary **future_max_pm25_6h** and secondary continuous **future_mean_pm25_6h** use exactly the same station's **t+1…t+6** values in µg/m³, requiring all six. `regression_eligible` requires those targets and the profile's primary PM input. `operational_eligible` additionally requires all PM core lag/rolling features and excludes purged rows. Optional covariates and missing 30-day percentiles are reported separately; a later model must explicitly select usable features. `feature_complete` reports completeness of every admitted feature, including optional ones.
 
-- `pm25_t`, `pm25_lag_{1,2,3,6,12,24}h` in µg/m³.
-- `pm25_rolling_mean_{3,6,12,24}h` and `pm25_rolling_std_{6,24}h` in µg/m³. Require every hour in `[t−(N−1)h,t]`; population standard deviation uses `ddof=0`.
-- `history_count_30d` and `trailing_30d_p{85,90,95}_pm25`, using `(t−30d,t]`. Require **576 of 720 hours (80%)** and the full warmup duration. No percentile from a handful of observations.
-- `hour_of_day`, `day_of_week`, `month`, `weekend` in station timezone.
-- Optional pollutant current and one-hour lag, with native unit in the name, e.g. `no2_ppb_t`, `no2_ppb_lag_1h`. Missing optional pollutants do not delete rows.
-- Six `era5_` source bands plus `era5_wind_speed_mps`, `era5_wind_from_degrees`. These remain retrospective and block operational eligibility.
+The secondary spike label requires future max ≥ trailing percentile, ≥ latest profile-eligible PM × (1+relative increase), and strictly greater than that PM. It requires the full trailing-history rule. Evaluate only the predefined **p85/90/95 × 20/25/30%** grid on **training data only**, using operational-eligible rows for the operational profile. Require ≥100 labels and 5–35% prevalence, choose closest to 20%, ties preferring p90 then 25%. If no rule qualifies, leave the secondary formulation unavailable; do not tune validation/test to force balance. It is an unvalidated heuristic, not a regulatory or health definition. Regression remains primary.
 
-Targets are strictly separate from the feature allowlist:
+## Splits, validation and baselines
 
-- **future_max_pm25_6h**: same-station maximum of t+1 through t+6, µg/m³.
-- **future_mean_pm25_6h**: same-station mean of those six hours, µg/m³.
-- Require **all six future observations**. `regression_eligible` also requires current PM2.5. Missing targets stay missing; do not infer a six-hour maximum from partial coverage.
-- **spike_next_6h**: future max >= trailing percentile AND >= current × (1+relative increase) AND strictly greater than current. The last guard prevents stationary zero values becoming “spikes.” Valid current/future/history are required. This is an operational heuristic, not CPCB regulation, epidemiology or a validated health threshold.
+Use aligned chronological approximately 70/15/15 splits. For ≥180 days, choose nearest month boundaries; otherwise exact-hour boundaries. Purge six origin hours at each boundary so the last target precedes the next split. No random split, learned scaler, imputer or model fitting. Earlier historical context may be used by later split rows under rolling issuance; adjacent outcomes within a split overlap and are not statistically independent.
 
-Evaluate exactly p85/p90/p95 × 20%/25%/30% increases using **training rows only**. Predeclared selection: >=100 labeled training rows, prevalence 5–35%, closest to 20%; ties prefer p90 then 25%. Freeze before validation/test evaluation. If none qualify, report insufficient labels/extreme imbalance and leave the secondary target unavailable; never tune on test prevalence to force balance. The primary regression targets remain available. Real-data rule and prevalence are pending.
+Validators check artifact/contract hashes, reconstruct the frame from normalized snapshots, compare feature lists and frozen train-only rules, and verify exact lags, rolling windows, future targets, station isolation, timestamp cutoffs and split purging. The machine availability manifest must exactly match the profile/feature columns. Operational validation rejects ERA5, unsafe/unknown features, target leakage and cutoff violations. Passing means **the conditional buffered contract is enforced**, not that historical publication/revision freedom is proven. Independent numerical and future-perturbation tests verify the reconstruction logic.
 
-## Splits, leakage checks and evaluation
+Persistence predicts the future six-hour maximum using the latest profile-eligible PM value. Recent mean uses six complete past hours ending at the same availability cutoff. Both report MAE/RMSE in µg/m³ on the same population, including per-station metrics. Operational baselines use complete operational PM feature rows. Classification reports always-negative and latest-PM ≥ frozen trailing-percentile baselines, precision/recall/F1, prevalence, confusion counts and zero-denominator flags. Empty populations remain null. These are real retrospective benchmarks only, not a prospective skill claim.
 
-Aligned chronological approximately 70/15/15 for all stations; no shuffle. For periods >=180 days choose the nearest calendar-month boundaries; otherwise use exact hours. Purge the last six origin hours in each split so the **last target timestamp precedes the next split boundary**. Final six hours of the overall window cannot have complete targets and are purged too. Adjacent six-hour outcomes overlap within a split; no claim of independent observations or confidence intervals is made.
+For ≥3 qualifying stations, the split manifest prepares a separate fixed-station holdout plan. The highest lexicographically sorted station ID is excluded from future fitting; its chronological validation/test periods are reserved. This does not replace the primary split or train a model.
 
-For a complete 2025 frame, boundaries are train `[2025-01-01,2025-09-01)`, validation `[2025-09-01,2025-11-01)`, test `[2025-11-01,2026-01-01)`, before purging. Labels may use known historical context from the preceding split; a later test row may use earlier measured test hours under rolling issuance. No scalar, imputer, station normalization or fitted model is trained in this phase. Any later learned preprocessing must fit on training only.
+## Caching, rate limits and artifacts
 
-The validator checks file and contract checksums, rebuilds the frame from normalized source snapshots, compares the exact feature allowlist and training-only rule, and checks reconstructed features/targets/splits and lineage timestamps. Independent numerical tests and future-data perturbations test the construction logic itself. File checksums detect accidental modification; they do not prove provider authenticity or historical release times. `feature_matrix` defaults to rejecting unverified operational availability. Explicit retrospective export is possible, with target columns still excluded.
+OpenAQ uses 28-day chunks, 1,000-row pages, maximum 100 pages per query, and 1,800 uncached attempts per process. Requests are at least two seconds apart, below the documented [60/minute and 2,000/hour limits](https://docs.openaq.org/using-the-api/rate-limits). Only allowlisted response quota/date headers are recorded. Stop if remaining quota falls to five or below. Do not run simultaneous OpenAQ extractors. Three bounded attempts honor Retry-After; a >60-second requested pause stops for a resumable later run. Repeated pages, pagination caps and unexpected responses fail rather than truncate.
 
-Baseline regression predicts future max with current PM2.5 (persistence) or full recent six-hour mean. Report MAE/RMSE in µg/m³ on the **same eligible rows** for fair comparison, plus total eligible counts and per-station metrics. Classification compares always-negative and current PM >= frozen trailing percentile. Report precision/recall/F1, prevalence, confusion counts and undefined-denominator flags; zero denominator scores are 0, empty populations are null. Synthetic scores validate calculations only; they say nothing about NCR predictability.
+Earth Engine uses a 60-second deadline with no automatic retries. Identical windows reuse frozen cache entries with no TTL. Raw cache identity remains `prediction_dataset_v1` to preserve compatible source snapshots across frame-version changes; corrected ERA5 queries include their extraction method. All entries record source, query, retrieval time and SHA-256 and are written atomically. Different query boundaries can require new requests. Raw AQ/weather are shared between profiles; generated profile Parquets are separate for self-contained validation.
 
-For >=3 stations prepare a station-holdout plan: fixed highest lexicographically sorted station ID, excluded from training and all fitting, evaluated separately on its chronological validation/test periods. This plan does not change the primary all-station split or train a model.
+Generated artifacts remain under ignored `data/`:
 
-## Bounded extraction and reproducibility
+- `prediction_frame.parquet`, `normalized_aq.parquet`, `normalized_era5.parquet` in the operational output, with research equivalents under `research_enriched_v1/`.
+- `feature_availability_manifest.json`: every included feature and excluded candidate, source, historical/assumed availability, buffer, deployment-safe boolean, conditional flag, reason and revision risk.
+- `dataset_manifest.json`: code/version, source IDs, native units, feature/target definitions, counts, missingness, exact boundaries, timings and checksums.
+- `source_manifest.json`, `station_coverage.csv`, `row_attrition.json`, `split_manifest.json`, `target_analysis.json`, `baseline_metrics.json`, `leakage_report.json`.
+- Full discovery audit: `candidate_inventory.json`, per-sensor normalized snapshots, monthly `candidate_coverage.csv`, selection and request statistics. Metadata-only candidates are explicitly distinguished from measured ones.
 
-OpenAQ uses 28-day chunks, pages of 1,000, at most 100 pages per query and 1,800 uncached HTTP attempts per process. Requests are at least two seconds apart (30/minute), below the documented [60/minute, 2,000/hour limits](https://docs.openaq.org/using-the-api/rate-limits). Run one extractor at a time; budgets are process-local, not coordinated across processes. Retry at most three attempts, honoring `Retry-After`; a requested pause >60 seconds stops for a resumable later run. HTTP timeouts are 45 seconds. Repeated pages or reaching a page cap fail instead of truncating silently. Metadata `found` values such as `>1000` are not treated as exact totals.
+Attrition categories overlap and are not added as if mutually exclusive. Buffer losses and recoveries compare target+primary-input eligibility at zero versus configured buffer, holding targets fixed. Feature completeness and purging are separate counts.
 
-Earth Engine batches **all selected stations per seven-day chunk**, at most 168 hourly images per RPC, 60-second deadline and no automatic client retries. Restart resumes from successful cache entries. A 12-month build plus 30 warmup days requires approximately 57 such weather RPCs, not one per row. Actual RPCs/runtime remain pending. Logs summarize source, station, chunk, rows, cache and elapsed time; no credentials or full responses.
+## Prospective diagnostic and commands
 
-`data/` is Git-ignored. Cache entries use source + version + canonical query (IDs, coordinates, bands, range) hash, store original response, retrieval timestamp and SHA-256, and are atomically written. Frozen historical snapshots have **no TTL**; changing source/query creates a separate entry. Rerunning an identical build reuses cache. Intentionally refresh into a new cache directory to preserve prior revisions. Overlapping but differently bounded queries may need new requests. A failure never silently substitutes data.
-
-Generated artifacts:
-
-- `normalized_aq.parquet`, `normalized_era5.parquet`, `prediction_frame.parquet`.
-- `dataset_manifest.json`: version, Git commit/dirty flag, build time, source/station/sensor identities, coordinates, feature/target definitions, native units, row counts, missingness, exact splits, artifact/contract hashes, timing and limitations.
-- `source_manifest.json`: source queries, retrieval times and cache checksums; no key/header storage.
-- `station_coverage.csv`, `split_manifest.json` including holdout plan, `target_analysis.json`, `baseline_metrics.json`, `leakage_report.json`.
-- Discovery separately emits `candidate_coverage.csv`, `discovery_manifest.json`, `selected_stations.json`. Failures write sanitized `last_failure.json`; successful reruns should be judged by current manifests/exit status, not an older failure file.
-
-Offline dependencies live in `requirements-dataset.lock`; they are not installed into API Docker images or imported by FastAPI. CI installs them for deterministic tests and forbids live networking.
-
-## Commands
-
-Run from the repository root:
+`probe_openaq_availability.py` performs one fresh, bounded poll for selected sensors. It saves first-seen time/value, hourly interval, lag upper bound, prior-poll lower bound only where supported, and later revisions. First sightings on the initial poll are left-censored: old records could have been available much earlier. A fresh poll cache prevents historical cache hits being misrepresented as current availability. No recurring job or days-long study is started automatically.
 
 ```sh
+# Install offline-only dependencies; never imported by FastAPI or API Docker images.
 uv pip install --python apps/api/.venv/bin/python -r apps/api/requirements-dataset.lock
+# Synthetic smoke evidence only; never unlocks the live feasibility gate.
 apps/api/.venv/bin/python apps/api/scripts/build_prediction_fixture.py
-apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/fixture_v1
-apps/api/.venv/bin/python apps/api/scripts/evaluate_prediction_baselines.py --output data/processed/fixture_v1
-# Expected failure: a retrospective fixture is not operationally available at t.
-apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/fixture_v1 --require-operational
+# Inspect real candidates and choose two for the bounded gate.
+apps/api/.venv/bin/python apps/api/scripts/discover_prediction_stations.py --start 2025-10-01T00:00:00Z --end 2025-10-29T00:00:00Z --feasibility --count 2 --output data/processed/live_acceptance/discovery_gate
+apps/api/.venv/bin/python apps/api/scripts/build_prediction_dataset.py --start 2025-10-01T00:00:00Z --end 2025-10-29T00:00:00Z --feasibility --stations data/processed/live_acceptance/discovery_gate/selected_stations.json --retrospective-research --output data/processed/live_acceptance/real_gate
+# Refuses to query full-period hours until the real gate passes.
+apps/api/.venv/bin/python apps/api/scripts/audit_prediction_coverage.py --gate-directory data/processed/live_acceptance/real_gate
+# Use the measured final selection and documented common start/end for a full build.
+# --retrospective-research adds the separate research profile to default OPERATIONAL_V1.
+apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/live_acceptance/real_gate --require-operational
+apps/api/.venv/bin/python apps/api/scripts/probe_openaq_availability.py --stations data/processed/live_acceptance/discovery_gate/selected_stations.json
 ```
 
-The fixture command marks all artifacts synthetic, generates three explicitly synthetic locations and makes **zero remote calls**. It cannot satisfy the real feasibility gate.
-
-After OpenAQ configuration, execute a real 28-day gate first. The following dates are an explicit reproducible example within the intended annual window, not a claim of coverage:
-
-```sh
-apps/api/.venv/bin/python apps/api/scripts/discover_prediction_stations.py --start 2025-10-01T00:00:00Z --end 2025-10-29T00:00:00Z --feasibility --count 2 --output data/processed/discovery_gate
-apps/api/.venv/bin/python apps/api/scripts/build_prediction_dataset.py --start 2025-10-01T00:00:00Z --end 2025-10-29T00:00:00Z --feasibility --stations data/processed/discovery_gate/selected_stations.json --retrospective-research --output data/processed/real_gate
-apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/real_gate
-```
-
-Then inspect the candidate coverage report and record final station reasons before full extraction:
-
-```sh
-apps/api/.venv/bin/python apps/api/scripts/discover_prediction_stations.py --count 5 --output data/processed/discovery_full
-apps/api/.venv/bin/python apps/api/scripts/build_prediction_dataset.py --stations data/processed/discovery_full/selected_stations.json --gate-directory data/processed/real_gate --retrospective-research --output data/processed/prediction_v1
-apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/prediction_v1
-apps/api/.venv/bin/python apps/api/scripts/evaluate_prediction_baselines.py --output data/processed/prediction_v1
-```
-
-If using a fallback range, pass identical explicit `--start`/`--end` to discovery and build, preserve the annual discovery report, and document the common-period evidence. Review source licensing before redistribution; datasets remain local and ignored. Never commit raw responses, `.env`, ADC files or tokens.
-
-## Phase 2D decision
-
-Do not begin training yet. First complete real multi-week extraction, coverage-based annual/common-period selection, final artifacts/benchmarks and the operational availability design. NCR monitors do not represent every street; ERA5 is regional reanalysis; optional fire and satellite observations cannot establish pollution sources. This is not a health-risk or regulatory model. Any future forecast requires prospective validation. No Vertex training job, prediction endpoint, forecast UI or corroboration change is included.
+Keep OPENAQ_API_KEY and ADC server-side in ignored local configuration. Never commit keys, ADC caches or tokens. CI uses sanitized fakes only and never makes live OpenAQ/Earth Engine requests. Phase 2D remains a separate decision.

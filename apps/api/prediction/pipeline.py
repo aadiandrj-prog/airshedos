@@ -2,11 +2,13 @@ import json
 import logging
 import subprocess
 import time
+from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
 
+from prediction.availability import OPERATIONAL_V1, RESEARCH_ENRICHED_V1, availability_manifest
 from prediction.common import (
     ERA5_BANDS,
     ERA5_COLLECTION,
@@ -118,9 +120,10 @@ def discover(api, start, end, output, max_candidates=12, count=5, feasibility=Fa
             ],
             "openaq_requests": api.requests,
             "cache_hits": api.cache.hits,
+            "response_metadata": api.response_metadata,
         },
     )
-    if len(selected) < (2 if feasibility else 3):
+    if len(selected) < 2:
         raise DatasetError(
             "Too few stations meet measured common-period coverage; inspect "
             "the report and choose a documented fallback window"
@@ -130,14 +133,15 @@ def discover(api, start, end, output, max_candidates=12, count=5, feasibility=Fa
 
 
 def build(api, era5, stations, config, output, retrospective=False, synthetic=False):
-    if not retrospective:
+    if config.profile == RESEARCH_ENRICHED_V1 and not retrospective:
         raise DatasetError(
             "ERA5 at t is not known at t. Use --retrospective-research for a "
             "clearly labeled research frame; strict operational readiness "
             "remains blocked."
         )
     started = time.monotonic()
-    start = hourly(config.start) - pd.Timedelta(days=30)
+    buffer = config.aq_availability_buffer_hours if config.profile == OPERATIONAL_V1 else 0
+    start = hourly(config.start) - pd.Timedelta(days=30, hours=buffer)
     end = hourly(config.end)
     if not stations or len({str(s["id"]) for s in stations}) != len(stations):
         raise DatasetError("Selected station IDs must be nonempty and unique")
@@ -159,6 +163,29 @@ def build(api, era5, stations, config, output, retrospective=False, synthetic=Fa
                 s["id"] == selected_ids[pollutant] for s in choices
             ):
                 raise DatasetError("Selected sensor is absent from station metadata")
+            if pollutant != "pm25" and pollutant not in selected_ids:
+                ranked = []
+                for candidate in choices:
+                    metadata = api.sensor(candidate["id"])
+                    first, last = metadata.get("datetimeFirst"), metadata.get("datetimeLast")
+                    if first and last:
+                        overlap = min(pd.Timestamp(last["utc"]), end) - max(
+                            pd.Timestamp(first["utc"]), start
+                        )
+                        if overlap > pd.Timedelta(0):
+                            ranked.append(
+                                (overlap.total_seconds(), -int(candidate["id"]), metadata)
+                            )
+                if not ranked:
+                    sensor_manifest.append(
+                        {
+                            "station_id": str(station["id"]),
+                            "pollutant": pollutant,
+                            "status": "no_sensor_metadata_overlap",
+                        }
+                    )
+                    continue
+                choices = [max(ranked, key=lambda item: item[:2])[2]]
             choice = next(
                 (s for s in choices if s["id"] == selected_ids.get(pollutant)), choices[0]
             )
@@ -166,7 +193,7 @@ def build(api, era5, stations, config, output, retrospective=False, synthetic=Fa
                 {
                     "station_id": str(station["id"]),
                     "sensor": choice,
-                    "selection": "coverage-selected PM2.5; lowest-ID optional sensor; no blending",
+                    "selection": "PM2.5 coverage; optional sensor overlap; no blending",
                 }
             )
             frames.append(api.hours(station["id"], choice, start, end))
@@ -187,7 +214,7 @@ def build(api, era5, stations, config, output, retrospective=False, synthetic=Fa
         coverage.to_csv(Path(output) / "station_coverage.csv", index=False)
         raise DatasetError("Selected stations fail measured coverage in requested build window")
     weather = era5.extract(stations, start, end)
-    return write_artifacts(
+    manifest = write_artifacts(
         aq,
         weather,
         stations,
@@ -198,10 +225,26 @@ def build(api, era5, stations, config, output, retrospective=False, synthetic=Fa
         stats={
             "openaq_requests": api.requests,
             "earth_engine_rpcs": era5.requests,
+            "source_cache_hits": api.cache.hits,
+            "source_cache_misses": api.cache.misses,
+            "response_metadata": api.response_metadata,
             "elapsed_seconds": time.monotonic() - started,
         },
         synthetic=synthetic,
     )
+    if config.profile == OPERATIONAL_V1 and retrospective:
+        write_artifacts(
+            aq,
+            weather,
+            stations,
+            replace(config, profile=RESEARCH_ENRICHED_V1),
+            Path(output) / "research_enriched_v1",
+            sensor_manifest,
+            cache=api.cache,
+            stats={"remote_requests": 0, "shared_source_snapshots": True},
+            synthetic=synthetic,
+        )
+    return manifest
 
 
 def write_artifacts(
@@ -213,7 +256,11 @@ def write_artifacts(
     frame, features = construct(aq, weather, stations, config)
     frozen = freeze_spike_rule(frame)
     frame = apply_spike_rule(frame, frozen)
-    leakage = validate(frame, aq, weather, stations, config, features, frozen)
+    availability = availability_manifest(features, config)
+    leakage = validate(
+        frame, aq, weather, stations, config, features, frozen, feature_availability=availability
+    )
+    write_json(output / "feature_availability_manifest.json", availability)
     try:
         commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
         dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], text=True).strip())
@@ -224,7 +271,15 @@ def write_artifacts(
         "build_timestamp": datetime.now(UTC).isoformat(),
         "dataset_mode": leakage["dataset_mode"],
         "synthetic": synthetic,
-        "ready_for_operational_training": False,
+        "ready_for_operational_training": (
+            not synthetic
+            and config.profile == OPERATIONAL_V1
+            and (hourly(config.end) - hourly(config.start)).days >= 90
+            and len(stations) >= 2
+            and frame.groupby("station_id").operational_eligible.sum().ge(24).all()
+        ),
+        "operational_readiness_condition": availability["deployment_label"],
+        "profile": config.profile,
         "config": config.to_dict(),
         "stations": stations,
         "sensors": sensors,
@@ -235,15 +290,18 @@ def write_artifacts(
         "features": features,
         "feature_definitions": {
             "canonical_key": "station_id + UTC interval-end timestamp",
-            "pm25_t": "hour ending at t; µg/m³; >=75% source hourly coverage",
+            "pm25_t": "research-only hour ending at t; µg/m³; >=75% coverage",
+            "pm25_latest_available": "hour ending at t-buffer; µg/m³; no forward-fill",
+            "aq_window_end": "t-buffer operational; t research",
+            "timestamp_phase": "native hourly interval end in UTC; station offset 0 or 30 minutes",
             "pm25_lag_Nh": "same-station value exactly t-N hours; µg/m³",
-            "pm25_rolling_mean_Nh": "all N hours [t-(N-1),t]; µg/m³; missing if incomplete",
+            "pm25_rolling_mean_Nh": "complete N hours ending at aq_window_end; µg/m³",
             "pm25_rolling_std_Nh": "population std ddof=0 over same full window; µg/m³",
-            "trailing_30d_pXX_pm25": "quantile over (t-30d,t]; >=576/720 hours; µg/m³",
-            "history_count_30d": "observed usable hours in (t-30d,t]",
+            "trailing_30d_pXX_pm25": "30d quantile ending at aq_window_end; >=576/720 hours; µg/m³",
+            "history_count_30d": "usable hours in 30d ending at aq_window_end",
             "calendar": "hour_of_day/day_of_week/month/weekend in recorded station timezone",
-            "optional_pollutant": "current and lag_1h; unit encoded in column; no conversion",
-            "era5": "source bands at t; native units below; retrospective publication",
+            "optional_pollutant": "lag buffer/buffer+1 operational; t/lag1 research; native units",
+            "era5": "latest UTC analysis hour <= t; native units; retrospective publication",
             "era5_wind_speed_mps": "hypot(u10,v10); m/s",
             "era5_wind_from_degrees": "atan2(-u10,-v10) modulo 360; calm is missing",
         },
@@ -255,6 +313,7 @@ def write_artifacts(
         "rows": len(frame),
         "raw_aq_rows": len(aq),
         "raw_usable_pm25_rows": int(((aq.pollutant == "pm25") & aq.value.notna()).sum()),
+        "operational_eligible_rows": int(frame.operational_eligible.sum()),
         "regression_eligible_rows": int(
             (frame.regression_eligible & (frame.split != "purged")).sum()
         ),
@@ -263,7 +322,7 @@ def write_artifacts(
         "code_git_commit": commit,
         "code_worktree_dirty": dirty,
         "runtime": {**(stats or {}), "frame_seconds": time.monotonic() - started},
-        "limitations": leakage["operational_blockers"]
+        "limitations": leakage["publication_limitations"]
         + [
             "NCR-specific; monitors do not represent every street.",
             "ERA5 is coarse regional reanalysis, not a collocated weather station.",
@@ -281,7 +340,12 @@ def write_artifacts(
 
     manifest["artifact_sha256"] = {
         name: hashlib.sha256((output / name).read_bytes()).hexdigest()
-        for name in ("normalized_aq.parquet", "normalized_era5.parquet", "prediction_frame.parquet")
+        for name in (
+            "normalized_aq.parquet",
+            "normalized_era5.parquet",
+            "prediction_frame.parquet",
+            "feature_availability_manifest.json",
+        )
     }
     manifest["contract_sha256"] = digest(
         {
@@ -310,6 +374,38 @@ def write_artifacts(
         output / "baseline_metrics.json", {"synthetic": synthetic, **baselines(frame, frozen)}
     )
     write_json(output / "leakage_report.json", leakage)
+    attrition = []
+    for station_id, rows in frame.groupby("station_id"):
+        primary = "pm25_latest_available" if config.profile == OPERATIONAL_V1 else "pm25_t"
+        eligible = rows.regression_eligible & rows.pm25_feature_complete & (rows.split != "purged")
+        attrition.append(
+            {
+                "station_id": str(station_id),
+                "expected_output_hours": len(rows),
+                "latest_input_observed_slots": int(rows[primary].notna().sum()),
+                "missing_latest_input_percent": float(rows[primary].isna().mean() * 100),
+                "valid_pm_feature_rows": int(rows.pm25_feature_complete.sum()),
+                "valid_six_hour_target_rows": int((rows.future_observation_count == 6).sum()),
+                "warmup_hours_excluded_from_output": 720
+                + (config.aq_availability_buffer_hours if config.profile == OPERATIONAL_V1 else 0),
+                "rows_without_trailing_history": int(rows.trailing_30d_p90_pm25.isna().sum()),
+                "rows_lost_to_missing_future_target": int(
+                    (rows.future_observation_count < 6).sum()
+                ),
+                "additional_rows_lost_to_buffer": int(
+                    (rows.regression_without_buffer_eligible & ~rows.regression_eligible).sum()
+                ),
+                "rows_recovered_by_buffer": int(
+                    (~rows.regression_without_buffer_eligible & rows.regression_eligible).sum()
+                ),
+                "purged_rows": int(rows.split.eq("purged").sum()),
+                "final_usable_operational_rows": int(eligible.sum())
+                if config.profile == OPERATIONAL_V1
+                else None,
+                "counts_overlap_not_additive": True,
+            }
+        )
+    write_json(output / "row_attrition.json", attrition)
     return manifest
 
 
@@ -318,7 +414,12 @@ def load_artifacts(directory):
     manifest = json.loads((path / "dataset_manifest.json").read_text())
     import hashlib
 
-    for name in ("normalized_aq.parquet", "normalized_era5.parquet", "prediction_frame.parquet"):
+    for name in (
+        "normalized_aq.parquet",
+        "normalized_era5.parquet",
+        "prediction_frame.parquet",
+        "feature_availability_manifest.json",
+    ):
         actual = hashlib.sha256((path / name).read_bytes()).hexdigest()
         if actual != manifest["artifact_sha256"].get(name):
             raise DatasetError("Artifact checksum mismatch; rebuild or restore snapshot")
@@ -336,3 +437,48 @@ def load_artifacts(directory):
         pd.read_parquet(path / "normalized_aq.parquet"),
         pd.read_parquet(path / "normalized_era5.parquet"),
     )
+
+
+def verify_real_feasibility(directory):
+    """Shared fail-closed prerequisite for expensive real extraction; no network calls."""
+    from prediction.frame import FrameConfig
+
+    manifest, frame, aq, weather = load_artifacts(directory)
+    config = FrameConfig(**manifest["config"])
+    days = (hourly(config.end) - hourly(config.start)).total_seconds() / 86400
+    if manifest["synthetic"] or config.profile != OPERATIONAL_V1 or not 14 <= days <= 31:
+        raise DatasetError("Gate must be a real multi-station 2–4 week operational-profile build")
+    if len(manifest["stations"]) < 2 or weather.empty:
+        raise DatasetError("Gate must contain two real stations and ERA5")
+    validate(
+        frame,
+        aq,
+        weather,
+        manifest["stations"],
+        config,
+        manifest["features"],
+        manifest["targets"]["spike_next_6h"],
+        require_operational=True,
+        feature_availability=json.loads(
+            (Path(directory) / "feature_availability_manifest.json").read_text()
+        ),
+    )
+    research, _ = construct(
+        aq, weather, manifest["stations"], replace(config, profile=RESEARCH_ENRICHED_V1)
+    )
+    core_weather = [f"era5_{band}" for band in ERA5_BANDS]
+    for station in manifest["stations"]:
+        operational = frame[frame.station_id == str(station["id"])]
+        met = research[research.station_id == str(station["id"])]
+        if operational.operational_eligible.sum() < 24:
+            raise DatasetError(
+                "Feasibility needs at least 24 complete operational rows per station"
+            )
+        if met[core_weather].notna().all(axis=1).mean() < 0.8:
+            raise DatasetError("Feasibility needs >=80% complete ERA5 bands per station")
+    return {
+        "status": "pass",
+        "stations": len(manifest["stations"]),
+        "operational_rows": int(frame.operational_eligible.sum()),
+        "availability": "conditional buffered assumption, not historical publication proof",
+    }

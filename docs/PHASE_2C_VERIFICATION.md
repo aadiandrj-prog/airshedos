@@ -1,31 +1,49 @@
-# Phase 2C verification — implementation complete, live gates pending
+# Phase 2C live data acceptance
 
-Verified 2026-09-14. User decision: **“Proceed with fixtures; live extraction stays pending.”** This report records synthetic verification, not historical NCR results. Phase 2C cannot yet be marked fully accepted or ready for Phase 2D.
+Verified work in progress on **2026-09-14**. The latest user instruction authorizes real OpenAQ extraction using the backend key. The earlier fixture-only decision is superseded. **Live feasibility passes; the 60-sensor coverage audit is complete and common-period artifact acceptance is running. No Phase 2D training has begun.**
 
-## Real-data acceptance status
+## Real NCR evidence
 
-| Requirement | Result |
-| --- | --- |
-| Geographic scope | Core Delhi–NCR study box; objective discovery implemented |
-| OpenAQ authentication/live hourly extraction | Pending; OPENAQ_API_KEY not configured |
-| Real candidate locations inspected | 0; pending live discovery |
-| Real selected stations and reasons | Pending measured common-period coverage; none invented |
-| Intended historical range | Complete 2025 UTC calendar year, or documented common range >=90 days after coverage inspection |
-| Real raw PM2.5 observations / usable rows / missingness | Pending extraction |
-| ERA5 source implementation | Six native bands and wind derivatives; batched adapter verified with fakes, not a live Phase 2C query |
-| Multi-week two-station feasibility gate | Pending; synthetic artifacts cannot unlock full CLI build |
-| Full practical dataset build | Pending real feasibility and station-selection gates |
-| Real spike rule, class prevalence and baseline metrics | Pending; synthetic figures below are not estimates |
-| As-of publication availability | Explicitly fails: current-hour ERA5 was released later; OpenAQ first availability/revision history unverified |
-| Vertex training / deployed predictions | Not started |
+OpenAQ v3 authentication passed (HTTP 200). The NCR study-box inventory returned **95 stationary PM2.5 monitor locations and 146 PM2.5 sensors**. Sixty sensors have at least 90 days of metadata overlap with 2025 and were assessed using actual hourly resources; expired duplicates are recorded separately and not blended. Metadata counters are not hourly counts. A bounded pagination test returned **50 + 45 distinct locations**, with no duplicate IDs. Response quota headers were inspected without recording request credentials.
 
-No OpenAQ or ERA5 remote extraction request was made for this fixture verification. Previous Earth Engine authentication verification does not prove this new historical extractor works against real source payloads. The live gate must check interval alignment, metadata, QA coverage and ERA5 extraction expression before making that claim.
+Authentication took 1.533 seconds and one request. Sensor inventory and the separate pagination check used 148 requests over 294.784 seconds. Initial response headers reported limit 60, remaining 59, used 1, reset 60. Full candidate and normalized coverage artifacts are under ignored `data/processed/live_acceptance/` and `coverage_2025/`.
 
-## Offline implementation
+### Genuine two-station feasibility
 
-OpenAQ v3 hourly means, bounded pagination/retries, source/query caches, duplicate checks and native units; measured coverage reports and geographic spread after coverage qualification; seven-day all-station ERA5 batching; station-isolated exact-hour lags and trailing windows; complete six-hour targets; training-only spike selection; chronological splits with target purging; naive baselines; checksummed Parquet and manifests. See [the complete data contract](PREDICTION_DATASET.md) for source documentation, feature definitions, setup and reproduction commands.
+The 28-day window is **2025-10-01T00:00:00Z through 2025-10-29T00:00:00Z**, plus 33 days of operational warmup. Twelve locations were measured for the bounded selection; coverage qualification precedes geographic spread. These are gate stations, not a predetermined final NCR selection.
 
-Historical fires are explicitly deferred: the proposed NOAA-20 daily raster lacks exact within-day acquisition times for safe hourly windows. A separate exact-event window helper is tested but unused by the frame. Sentinel-5P is deferred as an asynchronous optional ablation. Existing environmental, satellite, citizen and corroboration runtime files are unchanged.
+| Gate station | Location / PM2.5 sensor | Coordinates | Usable PM hours in requested window | Complete operational rows |
+| --- | --- | --- | ---: | ---: |
+| Sirifort, Delhi - CPCB | 5586 / 12234769 | 28.5504249, 77.2159377 | 89.29% | 87 |
+| Burari Crossing, New Delhi - IMD | 5541 / 12234684 | 28.7256504, 77.2011573 | 85.57% | 50 |
+
+Both use Asia/Kolkata and Government Monitor metadata; provider is CPCB. Their nearest separation is about 19.5 km. The resulting frame has **1,344 station-hour origins, 699 minimal regression-eligible rows after purge, and 137 complete operational PM feature/target rows**. These counts are deliberately distinct. The latter excludes missing PM lags/rolling inputs and purged rows; optional covariate completeness and percentile history are separate diagnostics.
+
+The original AQ extraction used **46 OpenAQ requests**. The corrected weather extraction used **9 Earth Engine RPCs**, 46 AQ cache hits, 129.043 seconds of source/build preparation plus 0.160 seconds of frame work. It returned **2,928 weather station-hours** including warmup. All temperature/dewpoint/pressure/wind values were present; each station retained **98.019% precipitation values** after rejecting negative packing artifacts. Wind derivatives are computed from the actual native u/v values. The successful repeat used **55 cache hits, zero OpenAQ requests, zero Earth Engine RPCs**, 1.674 seconds of preparation and 0.122 seconds of frame work. Both profiles reused identical source snapshots.
+
+### Problems discovered and resolved before full extraction
+
+1. Actual CPCB hourly intervals end at **:30 UTC**. The old top-of-UTC-hour assumption would reject valid local-hour observations. The grid now preserves their exact interval end and consistent phase. A research row at 12:30 uses ERA5 at 12:00; it never joins a future weather analysis.
+2. The source reports recurrent **50% coverage** at 19:30 UTC / 01:00 local time. For example, Sirifort values 34.0, 20.8 and 56.9 µg/m³ at that hour on October 1, 2 and 3 remain unusable under the unchanged ≥75% rule. Neither gate series has a complete valid 24-hour run. The operational profile excludes its unavailable 24-hour mean/std candidates; research preserves their missingness. No QA was weakened, and no interpolation was added.
+3. The original ERA5 `reduceRegions` point expression returned rows containing IDs/timestamps but **no band values**. Thus the first extraction was not a valid weather gate, despite successful authentication. Direct same-image/same-point diagnostics showed `reduceRegion` returned all six native values. Mapping that reducer server-side fixed extraction while retaining one RPC per multi-station seven-day batch. Explicit CRS and native-transform tests did not fix the original expression. Old null responses remain in the diagnostic cache; the corrected method has a distinct cache query version. An all-null extraction now fails, and full extraction requires real band completeness.
+
+Sanitized expression diagnostics are `era5_expression_diagnostic.json` and `era5_expression_alternatives.json`. At Sirifort on **2025-10-01T00:00Z**, the verified native sample is temperature **297.5831298828125 K**, dewpoint **297.0349578857422 K**, pressure **97713.16015625 Pa**, hourly precipitation **4.470348358154297e-07 m**, u **−0.8878936767578125 m/s**, v **−0.8720283508300781 m/s**. It is regional reanalysis, not a ground weather measurement. See the [official collection](https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_LAND_HOURLY) and [reduction API](https://developers.google.com/earth-engine/apidocs/ee-image-reduceregion).
+
+### Availability contract
+
+**OPERATIONAL_V1** excludes ERA5 and uses AQ no later than t−buffer. **RESEARCH_ENRICHED_V1** is marked **NOT DEPLOYMENT-SAFE AS CURRENTLY SOURCED**. Every profile has a checksummed feature-availability manifest. Safe AQ flags are explicitly conditional; operational export requires deliberate acknowledgment. Known revisions/late publication are excluded from inputs; unknown revisions remain a limitation.
+
+The initial prospective poll at **2026-09-14T07:44:46.035948Z** found both gate feeds latest at **2026-09-11T10:30Z**, age **69.246121 hours**. The default configurable buffer is **72 hours**, chosen from observed staleness rather than predictive accuracy. A 1h/2h guarantee was not supported. Two fresh requests recorded 96 hourly rows per station. No revisions were observed in this single poll, which cannot prove absence of revisions. First-seen time is a left-censored upper bound, not historical publication time. Follow-up prospective validation remains necessary before serving; no days-long study or automation was started.
+
+Targets stay anchored at forecast origin **t+1…t+6** despite the 72-hour input buffer. All six observed PM hours are mandatory. Chronological splits, purging, future-perturbation invariance, manifest consistency and availability-cutoff checks pass for the real gate. Passing availability means enforcement of the stated conditional assumption, not proof of historical release timing.
+
+### Remaining live acceptance work
+
+The completed audit used **841 requests, 147 cache hits and 1,798.870 seconds**. Only AirNow location 8118 qualifies for the full calendar year. The earliest supported common start within the audited year is **2025-02-19T00:00Z**, ending **2026-01-01T00:00Z** (316 days). Five stations qualify: 8118 New Delhi (97.18%), 6978 Knowledge Park III (83.32%), 10488 Najafgarh (84.55%), 10485 Narela (87.65%) and 10919 Sanjay Nagar (82.36%). Quality qualification precedes geographic spread. Real full-period attrition, the train-only spike rule, prevalence, baselines and station holdout remain pending the full build. No synthetic figures below are substituted for these results. Full year extraction was held until the corrected feasibility gate passed.
+
+## Automated verification
+
+Current local checks: **366 backend tests passed**, 2 existing dependency warnings, 18.51 seconds; **26 browser tests passed**, 29.0 seconds. Frontend lint/typecheck/production build passed. OpenAPI export and generated frontend types have no diff. Docker build/start/health passed with the existing read-only ADC override and loopback bindings. Final checks and secret scan will be repeated after remaining code/artifact work; remote CI still refers to the previous committed offline baseline until this update is pushed.
 
 ## Synthetic smoke artifacts — not monitoring data
 
@@ -35,7 +53,7 @@ Artifacts remain under ignored `data/processed/fixture_v1/`: all three Parquet f
 
 Frame construction and validation timing recorded in this run: **0.159 seconds**, excluding artifact serialization. Live build duration/cost is unknown. The fixture command made **0 OpenAQ requests and 0 Earth Engine RPCs**. A separate full pipeline test exercised fake discovery, ingestion and 18 simulated weather batches; a repeat made no additional simulated requests.
 
-### Targets and features
+### Synthetic research targets and features
 
 Primary targets are same-station future max and mean PM2.5 over t+1…t+6, requiring all six hours, in µg/m³. PM2.5 current/lags 1,2,3,6,12,24; trailing means 3,6,12,24 and population std 6,24; 30-day history count/percentiles; station-local calendar; six ERA5 bands plus wind speed/direction. Optional pollutant current/lag columns preserve gas units. There are no fire or satellite input columns in this version.
 
@@ -77,26 +95,6 @@ Always-negative precision/recall/F1 are 0 in all splits; zero precision denomina
 | validation | 0.092199 | 0.069149 | 0.079027 |
 | test | 0.072464 | 0.057143 | 0.063898 |
 
-## Verification results
+## Git and decision
 
-- Dataset tests: **62 passed** (including ingestion-to-artifact fake-source integration and cache reuse).
-- Full backend regression: **341 passed, 2 pre-existing dependency warnings**, 15.81 seconds; includes all 279 prior product tests.
-- Python lint/format: **pass**, 56 Python files formatted.
-- Frontend lint/typecheck/production build: **pass**.
-- OpenAPI export + frontend type generation: **pass, no diff**.
-- Dataset fixture build, validation and baseline CLI: **pass**. Source hashes and artifact round-trip validated.
-- Strict `--require-operational`: **expected failure**, exit 2. Availability is not waived or fabricated.
-- Browser: **26 passed in 29.1 seconds** after resuming Docker and starting the app.
-- Docker: **build/start/health passed**; API and web healthy on loopback ports 8000/3000, frontend HTTP 200, existing ADC mount confirmed read-only.
-- Secret scan: **pass, 0 findings** across Git-visible files, compiled frontend and all generated fixture artifacts; **1,714 files scanned**.
-- GitHub CI: current per-commit checks are linked from [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5). CI is fixture-only and does not satisfy the live-data gate.
-
-Leakage tests cover independent numerical lag/rolling/future-target expectations, future-input perturbation invariance, station isolation, missing future hours, minimum trailing history, training-only sensitivity selection, explicit target exclusion, chronological alignment/purge, exact fire acquisition/availability windows, deliberate feature/target corruption and checksum tampering. No live calls are permitted in CI.
-
-First browser attempts encountered `ERR_CONNECTION_REFUSED`: Docker Desktop had been manually paused. No product change was made in response. The resumed run passed all 26 tests. PyArrow emitted harmless sandbox CPU-cache-probe messages during local artifact reads; validation and baseline commands exited successfully. Pinning NumPy below 2.4 avoids pandas 2.x timedelta deprecation noise; no warning suppression was added.
-
-## Git and remaining gates
-
-Branch: `codex/phase-2c-prediction-dataset`, based on verified Phase 2B `fdfb79300c05576df93b1ae7a4f0cb25526f4893`. Phase 2A PR #3 and Phase 2B PR #4 remain open; this change is stacked against the Phase 2B branch. No automatic merge is performed. Implementation commit: `547b53c`; [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5). The fixture artifacts were regenerated from this clean implementation commit; subsequent documentation commits do not change their data contract.
-
-**Recommendation: do not start Phase 2D yet.** Complete OpenAQ setup, real 2–4-week two-station feasibility, real measured station selection, full practical common-period dataset and real baselines. Separately resolve operational publication availability with an as-of source design and prospective validation. Scientific limits remain: NCR specificity, monitors are not every street, coarse reanalysis, no causal source attribution, and a heuristic spike label that is neither regulatory nor epidemiological. No production training, forecast service/UI, new Gemini pass, database or warehouse was added.
+Branch `codex/phase-2c-prediction-dataset`, [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5), stacked on Phase 2B. No automatic merge. **NOT READY FOR PHASE 2D while full real-data acceptance remains incomplete.** No model fitting, Vertex jobs, new source, forecast service or forecast UI changes have been made.

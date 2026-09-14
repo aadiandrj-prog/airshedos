@@ -6,11 +6,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from prediction.availability import DEFAULT_AQ_BUFFER_HOURS, OPERATIONAL_V1, RESEARCH_ENRICHED_V1
 from prediction.common import DatasetError, RawCache, hourly, write_json
 from prediction.evaluation import baselines, validate
 from prediction.frame import FrameConfig
 from prediction.openaq import OpenAQ
-from prediction.pipeline import build, discover, load_artifacts
+from prediction.pipeline import build, discover, load_artifacts, verify_real_feasibility
 from prediction.weather import ERA5
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -29,6 +30,10 @@ def main(action):
         parser.add_argument("--count", type=int, default=5)
     if action == "build":
         parser.add_argument("--stations", type=Path, required=True)
+        parser.add_argument(
+            "--profile", choices=[OPERATIONAL_V1, RESEARCH_ENRICHED_V1], default=OPERATIONAL_V1
+        )
+        parser.add_argument("--aq-availability-buffer-hours", type=int)
         parser.add_argument("--retrospective-research", action="store_true")
         parser.add_argument("--gate-directory", type=Path)
     if action == "validate":
@@ -66,7 +71,12 @@ def main(action):
                 )
             )
         elif action == "build":
-            config = FrameConfig(args.start, args.end)
+            buffer = args.aq_availability_buffer_hours
+            if buffer is None:
+                buffer = int(os.getenv("AQ_AVAILABILITY_BUFFER_HOURS", DEFAULT_AQ_BUFFER_HOURS))
+            config = FrameConfig(
+                args.start, args.end, profile=args.profile, aq_availability_buffer_hours=buffer
+            )
             stations = json.loads(args.stations.read_text())
             if not isinstance(stations, list) or not 2 <= len(stations) <= 5:
                 raise DatasetError("Build requires 2–5 selected stations")
@@ -79,47 +89,10 @@ def main(action):
                         "Full build requires --gate-directory from a real multi-week, two-"
                         "station feasibility build"
                     )
-                gate, gate_frame, aq, weather = load_artifacts(args.gate_directory)
-                if (
-                    gate.get("synthetic") is not False
-                    or len(gate["stations"]) < 2
-                    or gate["regression_eligible_rows"] < 24
-                    or weather.empty
-                    or set(weather.station_id.astype(str))
-                    != {str(s["id"]) for s in gate["stations"]}
-                ):
+                verify_real_feasibility(args.gate_directory)
+                if (hourly(config.end) - hourly(config.start)).days < 90 or len(stations) < 2:
                     raise DatasetError(
-                        "Feasibility gate must contain real multi-station data and usable targets"
-                    )
-                days = (hourly(gate["config"]["end"]) - hourly(gate["config"]["start"])).days
-                if not 14 <= days <= 31:
-                    raise DatasetError("Feasibility gate must cover 2–4 weeks")
-                validate(
-                    gate_frame,
-                    aq,
-                    weather,
-                    gate["stations"],
-                    FrameConfig(**gate["config"]),
-                    gate["features"],
-                    gate["targets"]["spike_next_6h"],
-                )
-                core = [
-                    "era5_temperature_2m",
-                    "era5_surface_pressure",
-                    "era5_u_component_of_wind_10m",
-                    "era5_v_component_of_wind_10m",
-                ]
-                for _, group in gate_frame.groupby("station_id"):
-                    if (
-                        group[core].notna().all(axis=1).mean() < 0.8
-                        or group.regression_eligible.sum() < 24
-                    ):
-                        raise DatasetError(
-                            "Feasibility needs >=80% core weather and targets per station"
-                        )
-                if (hourly(config.end) - hourly(config.start)).days < 90 or len(stations) < 3:
-                    raise DatasetError(
-                        "Full frame needs at least 90 days and three coverage-selected stations"
+                        "Full frame needs at least 90 days and two coverage-selected stations"
                     )
             era5 = ERA5(
                 os.getenv("EARTH_ENGINE_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT"), cache
@@ -148,6 +121,9 @@ def main(action):
                 manifest["features"],
                 frozen,
                 require_operational=action == "validate" and args.require_operational,
+                feature_availability=json.loads(
+                    (args.output / "feature_availability_manifest.json").read_text()
+                ),
             )
             if action == "validate":
                 write_json(args.output / "leakage_report.json", report)

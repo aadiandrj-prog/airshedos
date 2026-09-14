@@ -104,8 +104,8 @@ def test_gas_units_preserved(unit):
         },
         {
             "period": {
-                "datetimeFrom": {"utc": "2025-01-01T00:30Z"},
-                "datetimeTo": {"utc": "2025-01-01T01:30Z"},
+                "datetimeFrom": {"utc": "2025-01-01T00:15Z"},
+                "datetimeTo": {"utc": "2025-01-01T01:15Z"},
             }
         },
         {"period": {}},

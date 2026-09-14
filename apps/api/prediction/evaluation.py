@@ -1,8 +1,14 @@
 import math
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
 
+from prediction.availability import (
+    OPERATIONAL_V1,
+    availability_manifest,
+    validate_availability_manifest,
+)
 from prediction.common import DatasetError
 from prediction.frame import (
     TARGETS,
@@ -13,12 +19,25 @@ from prediction.frame import (
 )
 
 
-def validate(frame, aq, weather, stations, config, features, frozen, require_operational=False):
+def validate(
+    frame,
+    aq,
+    weather,
+    stations,
+    config,
+    features,
+    frozen,
+    require_operational=False,
+    feature_availability=None,
+):
     if any(
         c in TARGETS or c.startswith("future_") or c in {"split", "regression_eligible"}
         for c in features
     ):
         raise DatasetError("Target/split leakage into feature matrix")
+    availability = feature_availability or availability_manifest(features, config)
+    validate_availability_manifest(availability, features, config)
+    operational = config.profile == OPERATIONAL_V1
     expected, allowed_features = construct(aq, weather, stations, config)
     if features != allowed_features:
         raise DatasetError("Feature manifest is not the explicit builder allowlist")
@@ -46,6 +65,8 @@ def validate(frame, aq, weather, stations, config, features, frozen, require_ope
         raise DatasetError("Target start is not t+1")
     if not (frame.target_window_end == frame.timestamp + pd.Timedelta(hours=6)).all():
         raise DatasetError("Target end is not t+6")
+    if operational and not (frame.feature_observation_end <= frame.aq_feature_cutoff).all():
+        raise DatasetError("AQ input timestamp exceeds availability cutoff")
     report = {
         "observation_time_checks_pass": True,
         "checks": [
@@ -62,8 +83,12 @@ def validate(frame, aq, weather, stations, config, features, frozen, require_ope
             "six_hour_boundary_purge",
             "no_fitted_scaler_or_imputer",
         ],
-        "operational_availability_pass": False,
-        "operational_blockers": [
+        "operational_availability_pass": operational,
+        "availability_assumption_verified_prospectively": False,
+        "availability_status": "conditional_buffer_contract" if operational else "research_only",
+        "feature_profile": config.profile,
+        "aq_availability_buffer_hours": config.aq_availability_buffer_hours if operational else 0,
+        "publication_limitations": [
             "OpenAQ hourly data does not establish historical publication/revision availability.",
             (
                 "ERA5-Land reanalysis at t was released after t; do not use it as "
@@ -72,9 +97,12 @@ def validate(frame, aq, weather, stations, config, features, frozen, require_ope
         ],
         "optional_fire": "deferred; exact event/availability contract tested separately",
         "optional_satellite": "deferred; no satellite predictor columns",
-        "dataset_mode": "retrospective_research_not_operational_backtest",
+        "dataset_mode": "conditional_operational_backtest"
+        if operational
+        else "retrospective_research_not_operational_backtest",
     }
-    if require_operational:
+    report["operational_blockers"] = [] if operational else report["publication_limitations"]
+    if require_operational and not operational:
         raise DatasetError(
             "Operational availability leakage gate FAILED: historical "
             "publication times are unverified and ERA5 at t is retrospective"
@@ -82,11 +110,43 @@ def validate(frame, aq, weather, stations, config, features, frozen, require_ope
     return report
 
 
-def feature_matrix(frame, features, require_operational=True):
+def feature_matrix(
+    frame,
+    features,
+    require_operational=True,
+    feature_availability=None,
+    accept_conditional_availability=False,
+):
     if any(c in TARGETS or c.startswith("future_") for c in features):
         raise DatasetError("Targets cannot enter features")
-    if require_operational and not frame.publication_availability_verified.all():
-        raise DatasetError("Cannot export operational features without as-of availability proof")
+    if require_operational:
+        if feature_availability is None:
+            raise DatasetError("Feature availability manifest required for operational export")
+        if feature_availability["profile"] != OPERATIONAL_V1:
+            raise DatasetError("Research availability is not deployment-safe")
+        buffer = feature_availability["aq_availability_buffer_hours"]
+        validate_availability_manifest(
+            feature_availability,
+            features,
+            SimpleNamespace(profile=OPERATIONAL_V1, aq_availability_buffer_hours=buffer),
+        )
+        if not frame.aq_availability_buffer_hours.eq(buffer).all():
+            raise DatasetError("Frame buffer differs from availability manifest")
+        if not (
+            frame.feature_observation_end <= frame.timestamp - pd.Timedelta(hours=buffer)
+        ).all():
+            raise DatasetError("Input exceeds operational availability cutoff")
+        entries = feature_availability["features"]
+        if [item["feature_name"] for item in entries] != features:
+            raise DatasetError("Feature manifest and actual columns disagree")
+        if any(not item["deployment_safe"] for item in entries) or any(
+            c.startswith("era5_") for c in features
+        ):
+            raise DatasetError("Unsafe feature in operational export")
+        if not frame.feature_profile.eq(OPERATIONAL_V1).all():
+            raise DatasetError("Frame profile differs from operational manifest")
+        if not accept_conditional_availability:
+            raise DatasetError("Explicit acknowledgment of conditional availability is required")
     return frame.loc[:, features].copy()
 
 
@@ -133,25 +193,29 @@ def baselines(frame, frozen):
             "not verified. Not a prospective skill claim."
         ),
         "target": "future_max_pm25_6h",
+        "profile": frame.feature_profile.iloc[0],
         "unit": "µg/m³",
         "splits": {},
     }
     selected = frozen.get("selected")
     for split in ("train", "validation", "test"):
         group = frame[frame.split == split]
+        if frame.feature_profile.eq(OPERATIONAL_V1).all():
+            group = group[group.operational_eligible]
 
         def metrics(rows):
+            primary = "pm25_latest_available" if "pm25_latest_available" in rows else "pm25_t"
             shared = rows[rows.regression_eligible & rows.pm25_rolling_mean_6h.notna()]
             labels = rows[rows.spike_next_6h.notna()]
             high = (
-                (labels.pm25_t >= labels[f"trailing_30d_p{selected['percentile']}_pm25"])
+                (labels[primary] >= labels[f"trailing_30d_p{selected['percentile']}_pm25"])
                 if selected
                 else []
             )
             return {
                 "all_regression_eligible_n": int(rows.regression_eligible.sum()),
-                "comparison_population": "same rows: current PM and complete six-hour rolling mean",
-                "persistence": regression(shared.future_max_pm25_6h, shared.pm25_t),
+                "comparison_population": "same rows: eligible PM and complete trailing mean",
+                "persistence": regression(shared.future_max_pm25_6h, shared[primary]),
                 "recent_mean_6h": regression(
                     shared.future_max_pm25_6h, shared.pm25_rolling_mean_6h
                 ),
@@ -171,7 +235,10 @@ def baselines(frame, frozen):
 def target_analysis(frame, frozen):
     result = {**frozen, "prevalence_after_freeze": {}}
     for split in ("train", "validation", "test"):
-        labels = frame.loc[frame.split == split, "spike_next_6h"].dropna()
+        mask = frame.split == split
+        if frame.feature_profile.eq(OPERATIONAL_V1).all():
+            mask &= frame.operational_eligible
+        labels = frame.loc[mask, "spike_next_6h"].dropna()
         result["prevalence_after_freeze"][split] = {
             "n": len(labels),
             "positive_rate": float(labels.mean()) if len(labels) else None,

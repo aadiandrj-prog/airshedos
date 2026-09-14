@@ -82,9 +82,21 @@ class ERA5:
 
         def extract(raw):
             image = ee.Image(raw)
-            return image.reduceRegions(
-                collection=points, reducer=ee.Reducer.first(), scale=11132
-            ).map(lambda f: f.set("time_ms", image.get("system:time_start")).setGeometry(None))
+
+            # The live ERA5 point probe returned null from reduceRegions, while
+            # reduceRegion at the identical point returned all six native bands.
+            # Map server-side: still one RPC per seven-day, multi-station batch.
+            def at_station(feature):
+                values = image.reduceRegion(
+                    reducer=ee.Reducer.first(), geometry=feature.geometry(), scale=11132
+                )
+                return (
+                    ee.Feature(None, values)
+                    .set("station_id", feature.get("station_id"))
+                    .set("time_ms", image.get("system:time_start"))
+                )
+
+            return points.map(at_station)
 
         # One RPC for all stations and up to seven days, never one RPC per final row.
         table = ee.FeatureCollection(images.toList(7 * 24).map(extract)).flatten()
@@ -97,6 +109,7 @@ class ERA5:
                 "collection": ERA5_COLLECTION,
                 "bands": list(ERA5_BANDS),
                 "scale_m": 11132,
+                "extraction": "mapped_point_reduce_region_v2",
                 "stations": [
                     {"id": str(s["id"]), "latitude": s["latitude"], "longitude": s["longitude"]}
                     for s in stations
@@ -123,6 +136,10 @@ class ERA5:
             if frame.empty:
                 raise DatasetError(
                     "ERA5 returned no rows for a requested chunk; do not substitute weather"
+                )
+            if frame[list(ERA5_BANDS)].isna().all(axis=None):
+                raise DatasetError(
+                    "ERA5 returned rows but no usable band values; diagnose extraction"
                 )
             expected_ids = {str(s["id"]) for s in stations}
             if (

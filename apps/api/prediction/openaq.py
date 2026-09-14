@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 import httpx
 import pandas as pd
 
-from prediction.common import NCR_BBOX, DatasetError, chunks, digest, hourly, utc
+from prediction.common import NCR_BBOX, DatasetError, chunks, digest, hour_phase, utc
 
 logger = logging.getLogger(__name__)
 PM_UNITS = {"µg/m³", "μg/m³", "ug/m3", "µg/m3", "μg/m3"}
@@ -47,6 +47,8 @@ class OpenAQ:
         self.interval, self.max_requests = min_interval_seconds, max_requests
         self.requests = 0
         self.last_request = None
+        self.response_metadata = []
+        self.remaining = None
 
     def close(self):
         self.client.close()
@@ -59,6 +61,8 @@ class OpenAQ:
         if not self.key:
             raise DatasetError("OPENAQ_API_KEY is not configured; live extraction is blocked")
         for attempt in range(3):
+            if self.remaining is not None and self.remaining <= 5:
+                raise DatasetError("OpenAQ remaining quota is low; resume after the reset")
             if self.requests >= self.max_requests:
                 raise DatasetError("OpenAQ request budget reached; cached progress is resumable")
             if self.last_request is not None:
@@ -76,6 +80,18 @@ class OpenAQ:
                     raise DatasetError("OpenAQ transport failed after bounded retries") from None
                 self.sleep(2**attempt)
                 continue
+            safe_headers = {
+                k: v
+                for k, v in response.headers.items()
+                if k.lower().startswith("x-ratelimit") or k.lower() in {"date", "retry-after"}
+            }
+            self.response_metadata.append(
+                {"path": path, "status": response.status_code, "headers": safe_headers}
+            )
+            try:
+                self.remaining = int(response.headers["x-ratelimit-remaining"])
+            except (KeyError, ValueError):
+                self.remaining = None
             if response.status_code in {401, 403}:
                 raise DatasetError("OpenAQ authentication/permission failed; check the backend key")
             if response.status_code == 429 or response.status_code >= 500:
@@ -174,7 +190,11 @@ class OpenAQ:
             params = {"datetime_from": begin.isoformat(), "datetime_to": stop.isoformat()}
             for payload, retrieved in self.pages(f"sensors/{int(sensor['id'])}/hours", params):
                 rows.extend(normalize_hours(payload, station_id, sensor, retrieved))
-            frame = pd.DataFrame(rows, columns=AQ_COLUMNS)
+            frame = pd.DataFrame(rows, columns=AQ_COLUMNS).astype(
+                {"value": "float64", "coverage_percent": "float64", "sensor_id": "int64"}
+            )
+            for column in ("timestamp", "period_start", "retrieved_at", "available_at"):
+                frame[column] = pd.to_datetime(frame[column], utc=True)
             if len(frame):
                 frame = frame[(frame.timestamp >= begin) & (frame.timestamp < stop)]
             frames.append(frame)
@@ -204,7 +224,8 @@ def normalize_hours(rows, station_id, sensor, retrieved_at):
             if unit not in accepted:
                 raise DatasetError(f"Unsupported {pollutant} unit; no silent conversion")
             unit = "µg/m³" if unit in PM_UNITS else unit
-            start, end = utc(period["datetimeFrom"]["utc"]), hourly(period["datetimeTo"]["utc"])
+            start, end = utc(period["datetimeFrom"]["utc"]), utc(period["datetimeTo"]["utc"])
+            hour_phase([end])
             if end - start != pd.Timedelta(hours=1):
                 raise DatasetError("OpenAQ record does not describe exactly one hour")
             raw = row["value"]
@@ -216,6 +237,7 @@ def normalize_hours(rows, station_id, sensor, retrieved_at):
                 and value >= 0
                 and isinstance(coverage, (float, int))
                 and 75 <= coverage <= 100
+                and not (row.get("flagInfo") or {}).get("hasFlags", False)
             )
             output.append(
                 {
@@ -227,7 +249,7 @@ def normalize_hours(rows, station_id, sensor, retrieved_at):
                     "timestamp": end,
                     "period_start": start,
                     "coverage_percent": coverage,
-                    "quality": "usable" if valid else "missing_negative_nonfinite_or_low_coverage",
+                    "quality": "usable" if valid else "unusable_value_coverage_or_source_flag",
                     "retrieved_at": utc(retrieved_at),
                     # API aggregation timestamps are not historical publication timestamps.
                     "available_at": pd.NaT,

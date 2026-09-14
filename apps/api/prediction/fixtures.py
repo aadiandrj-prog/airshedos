@@ -9,7 +9,9 @@ from prediction.openaq import AQ_COLUMNS
 
 
 def synthetic_inputs():
-    config = FrameConfig("2025-01-01T00:00:00Z", "2025-04-01T00:00:00Z")
+    config = FrameConfig(
+        "2025-01-01T00:00:00Z", "2025-04-01T00:00:00Z", profile="RESEARCH_ENRICHED_V1"
+    )
     times = pd.date_range(
         hourly(config.start) - pd.Timedelta(days=30),
         hourly(config.end),
