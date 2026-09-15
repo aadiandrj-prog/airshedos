@@ -1,0 +1,6 @@
+# Offline Phase 2D only; never installed in the product API container.
+-r requirements-dataset.lock
+scikit-learn>=1.7,<1.10
+xgboost>=3.1,<4
+joblib>=1.5,<2
+threadpoolctl>=3.6,<4

@@ -1,0 +1,51 @@
+{
+  "version": "prediction_model_v1",
+  "dataset_version": "prediction_dataset_v2",
+  "profile": "OPERATIONAL_V1",
+  "target": "future_max_pm25_6h",
+  "availability_buffer_hours": 72,
+  "seed": 42,
+  "stability_seeds": [42, 1729, 2026],
+  "threads": 1,
+  "folds": [
+    {"fit_start": "2025-02-19T00:00:00Z", "fit_end": "2025-06-01T00:00:00Z", "score_end": "2025-07-01T00:00:00Z"},
+    {"fit_start": "2025-02-19T00:00:00Z", "fit_end": "2025-07-01T00:00:00Z", "score_end": "2025-08-01T00:00:00Z"},
+    {"fit_start": "2025-02-19T00:00:00Z", "fit_end": "2025-08-01T00:00:00Z", "score_end": "2025-10-01T00:00:00Z"}
+  ],
+  "purge_hours": 6,
+  "feature_subsets": ["CORE_PM", "OPERATIONAL_EXTENDED"],
+  "weighting": ["unweighted", "station_balanced"],
+  "target_transforms": ["raw", "log1p"],
+  "families": {
+    "ridge": [{"alpha": 10.0}, {"alpha": 100.0}],
+    "hist_gradient_boosting": [
+      {"max_iter": 150, "learning_rate": 0.05, "max_leaf_nodes": 7, "min_samples_leaf": 30, "l2_regularization": 10.0},
+      {"max_iter": 150, "learning_rate": 0.05, "max_leaf_nodes": 15, "min_samples_leaf": 30, "l2_regularization": 10.0}
+    ],
+    "xgboost": [
+      {"n_estimators": 150, "learning_rate": 0.05, "max_depth": 2, "min_child_weight": 10, "reg_lambda": 10.0, "subsample": 0.8, "colsample_bytree": 0.8},
+      {"n_estimators": 150, "learning_rate": 0.05, "max_depth": 4, "min_child_weight": 10, "reg_lambda": 10.0, "subsample": 0.8, "colsample_bytree": 0.8}
+    ]
+  },
+  "postprocessing": "max(0, prediction); no positive cap",
+  "high_target_quantile": 0.9,
+  "slice_quantiles": [0.5, 0.9, 0.99],
+  "selection": {
+    "primary": "macro_station_mae",
+    "cv_policy": "mean of three fold macro-station MAEs; choose parameters and transform within each family/subset/weight policy",
+    "validation_policy": "macro-station MAE, pooled MAE, simplicity within equivalence margin",
+    "practical_equivalence_absolute": 0.25,
+    "minimum_macro_improvement_fraction": 0.02,
+    "maximum_pooled_worsening_fraction": 0.02,
+    "station_catastrophe_ratio": 1.25,
+    "station_catastrophe_allowance": 2.0,
+    "minimum_fraction_stations_improved": 0.6,
+    "baseline": "lower macro-station MAE of persistence and recent mean on same rows",
+    "final_test_policy": "same predeclared gates; rejection does not permit retuning"
+  },
+  "fit_policy": "train only, never refit on October; no early stopping; seed 42 is fixed, not selected",
+  "holdout": {"station_id": "8118", "score_split": "validation", "tuning": false},
+  "research_ablation": "selected family/config on identical operational train/validation row keys; research features replace operational features; no test access",
+  "vertex_parity": {"relative_metric_tolerance": 0.01, "absolute_metric_tolerance": 0.01},
+  "limitations": ["72-hour publication buffer is provisional", "AirNow dominates", "CPCB hour eligibility is biased", "overlapping targets are not independent", "no prospective skill or calibrated probabilities"]
+}
