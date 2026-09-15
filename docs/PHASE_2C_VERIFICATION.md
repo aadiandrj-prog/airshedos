@@ -119,7 +119,7 @@ The successful resumed build used **0 OpenAQ requests, 10 Earth Engine RPCs, 405
 
 Both profiles pass reconstruction, station isolation, native-hour alignment, train-only label selection, chronological ordering and split-purge checks. Strict operational validation passes the 72-hour cutoff and feature-availability contract. Research reports `operational_availability_pass=false` by design. An independent deterministic sample of **500 real rows** checked buffered PM against source snapshots and recomputed all six future targets; all passed. Weather uniqueness, UTC-hour phase and wind-speed reconstruction also passed. Historical publication verification remains false.
 
-The authoritative local artifacts are `data/processed/live_acceptance/full_dataset/`, with research under `research_enriched_v1/`. Both contain Parquets, availability/source/dataset manifests, coverage, attrition, target analysis, split/holdout plan, baselines and validation. Monthly per-station/pollutant coverage is retained. A clean-commit cache-only rebuild and final CI are recorded below once completed.
+The authoritative local artifacts are `data/processed/live_acceptance/full_dataset/`, with research under `research_enriched_v1/`. Both contain Parquets, availability/source/dataset manifests, coverage, attrition, target analysis, split/holdout plan, baselines and validation. Monthly per-station/pollutant coverage is retained. The cache-only repeat on clean implementation commit `f27ce7b3e8f7a1ec71bbfe6187d7a9a5f03ac6c7` passed with **415 hits, zero misses, zero OpenAQ requests, zero Earth Engine RPCs and 48.723 s total**. Both profiles' normalized source Parquets, prediction-frame Parquets and feature-availability manifest SHA-256 hashes are identical to the completed extraction. `cache_reproduction.json` records the comparison; dataset manifests record a clean source tree. Documentation-only commits may follow without changing artifact-generating code.
 
 ## Completed NCR candidate audit
 
@@ -194,7 +194,7 @@ The common-window selection keeps the earliest fully supported day within the pr
 
 ## Automated verification
 
-Current local checks: **368 backend tests passed**, 2 existing dependency warnings, 19.89 seconds; **26 browser tests passed**, 29.0 seconds. Frontend lint/typecheck/production build passed. OpenAPI export and generated frontend types have no diff. Docker build/start/health passed with the existing read-only ADC override and loopback bindings. Final checks and secret scan will be repeated after remaining code/artifact work; remote CI still refers to the previous committed offline baseline until this update is pushed.
+Current local checks: **368 backend tests passed**, 2 existing dependency warnings, 19.89 seconds; **26 browser tests passed**, 29.0 seconds. Frontend lint/typecheck/production build passed. OpenAPI export and generated frontend types have no diff. Docker build/start/health passed with the existing read-only ADC override and loopback bindings. Ruff passes for all 61 Python files, and the final diff has no whitespace errors. On September 16 local time, both Docker services remain healthy. The final source, compiled-frontend and generated-data secret scan passed: **3,386 files, zero findings**. Large source/data artifacts remain ignored. GitHub CI runs backend, frontend, browser/Docker and secret checks on push and PR events; the exact final-head results are attached to [PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5/checks), and must remain green before merge. CI receives no provider credentials and uses fakes only.
 
 ## Synthetic smoke artifacts — not monitoring data
 
@@ -248,4 +248,12 @@ Always-negative precision/recall/F1 are 0 in all splits; zero precision denomina
 
 ## Git and decision
 
-Branch `codex/phase-2c-prediction-dataset`, [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5), stacked on Phase 2B. No automatic merge. **NOT READY FOR PHASE 2D while full real-data acceptance remains incomplete.** No model fitting, Vertex jobs, new source, forecast service or forecast UI changes have been made.
+Branch `codex/phase-2c-prediction-dataset`, [draft PR #5](https://github.com/aadiandrj-prog/airshedos/pull/5), stacked on Phase 2B. No automatic merge. **READY FOR PHASE 2D** for controlled offline regression work under the documented conditional availability contract, subject to green final-head CI. This is not authorization to begin training in this task or evidence of readiness to serve predictions. No model fitting, Vertex jobs, new source, forecast service or forecast UI changes have been made.
+
+## Remaining limitations and next-phase recommendation
+
+Before any serving decision, validate publication lag and revisions prospectively, enforce live stale/missing-input behavior, and review the conditional feature manifest. Historical observations cannot prove what was published at issuance. The single September 14 first-seen snapshot does not establish a stable 72-hour guarantee. No newly requested multi-day probe was run during resumption.
+
+A separate Phase 2D should begin with the operational PM-only regression population and explicit station/hour-stratified evaluation, comparing against the recorded baselines. Review AirNow dominance, CPCB afternoon-only eligibility, overlapping outcomes, autumn/winter error and class-prevalence shift before interpreting pooled scores. Keep retrospective ERA5 ablations isolated. Missing optional inputs require an explicit later feature policy. The holdout plan is available but not evaluated. Exact OpenAQ attempt accounting for the initial interrupted extraction remains unavailable; successful-response and resumed-run counts are reported honestly above.
+
+No source was added to fill coverage, no QA was lowered, no synthetic values filled real gaps, and no Phase 2D model, Vertex job, endpoint or forecast UI change was introduced.
