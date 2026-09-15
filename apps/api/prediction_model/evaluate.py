@@ -19,12 +19,12 @@ from prediction_model.train import save_predictions
 def frozen_decision(output):
     output = Path(output)
     verify_inputs(output)
+    decision = read_json(output / "model_selection_decision.json")
+    if decision["status"] != "FROZEN_FOR_SINGLE_TEST":
+        raise DatasetError("No eligible frozen candidate; test access forbidden")
     for name, expected in read_json(output / "freeze_hashes.json").items():
         if sha(output / name) != expected:
             raise DatasetError("Frozen model artifact changed: " + name)
-    decision = read_json(output / "model_selection_decision.json")
-    if decision["status"] != "FROZEN_FOR_SINGLE_TEST":
-        raise DatasetError("No eligible frozen candidate")
     return decision
 
 

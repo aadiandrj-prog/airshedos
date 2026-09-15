@@ -258,3 +258,18 @@ def test_go_gate_detects_low_volume_station_failure(rows):
     assert not qualifies(candidate, baseline, policy)["eligible"]
     perfect = evaluate(rows, rows[TARGET].to_numpy(), [50, 100, 120])
     assert qualifies(perfect, baseline, policy)["eligible"]
+
+
+def test_no_model_decision_blocks_test_before_any_test_artifact_read(tmp_path, monkeypatch):
+    from prediction_model.evaluate import final_test
+
+    write_json(tmp_path / "input_hashes.json", {})
+    write_json(tmp_path / "model_selection_decision.json", {"status": "NO_MODEL_ACCEPTED"})
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Rejected candidate must never load test data")
+
+    monkeypatch.setattr(pd, "read_parquet", forbidden)
+    with pytest.raises(DatasetError, match="test access forbidden"):
+        final_test(tmp_path / "dataset", tmp_path)
+    assert not (tmp_path / "dataset" / "phase2d_test_access.json").exists()
