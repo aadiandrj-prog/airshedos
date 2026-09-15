@@ -1,6 +1,6 @@
 # Phase 2C historical prediction data contract
 
-Phase 2C provides an offline, reproducible data pipeline. Real acceptance results and remaining gates are recorded in [PHASE_2C_VERIFICATION.md](PHASE_2C_VERIFICATION.md). No model is trained, no Vertex job is submitted, and runtime environmental, citizen-evidence, corroboration and forecast UI behavior is changed.
+Phase 2C provides an offline, reproducible data pipeline. Real acceptance results and acceptance checks are recorded in [PHASE_2C_VERIFICATION.md](PHASE_2C_VERIFICATION.md). No model is trained, no Vertex job is submitted, and no runtime environmental, citizen-evidence, corroboration or forecast UI behavior is changed.
 
 ## Two explicit feature profiles
 
@@ -62,7 +62,7 @@ OPERATIONAL_V1 at the default 72-hour buffer includes:
 
 RESEARCH_ENRICHED_V1 contains PM2.5 at t, lags 1/2/3/6/12/24, complete rolling means 3/6/12/24, std 6/24, unbuffered trailing history, calendar, optional current/lag1 pollutant values, six ERA5 bands and two wind derivatives. It is separately labeled and exported.
 
-The input buffer **does not shift targets backward**. Primary **future_max_pm25_6h** and secondary continuous **future_mean_pm25_6h** use exactly the same station's **t+1…t+6** values in µg/m³, requiring all six. `regression_eligible` requires those targets and the profile's primary PM input. `operational_eligible` additionally requires all PM core lag/rolling features and excludes purged rows. Optional covariates and missing 30-day percentiles are reported separately; a later model must explicitly select usable features. `feature_complete` reports completeness of every admitted feature, including optional ones.
+The input buffer **does not shift targets backward**. At the 72-hour default, t+1…t+6 is 73–78 hours after the latest input measurement. Primary **future_max_pm25_6h** and secondary continuous **future_mean_pm25_6h** use exactly the same station's **t+1…t+6** values in µg/m³, requiring all six. `regression_eligible` requires those targets and the profile's primary PM input. `operational_eligible` additionally requires all PM core lag/rolling features and excludes purged rows. Optional covariates and missing 30-day percentiles are reported separately; a later model must explicitly select usable features. `feature_complete` reports completeness of every admitted feature, including optional ones.
 
 The secondary spike label requires future max ≥ trailing percentile, ≥ latest profile-eligible PM × (1+relative increase), and strictly greater than that PM. It requires the full trailing-history rule. Evaluate only the predefined **p85/90/95 × 20/25/30%** grid on **training data only**, using operational-eligible rows for the operational profile. Require ≥100 labels and 5–35% prevalence, choose closest to 20%, ties preferring p90 then 25%. If no rule qualifies, leave the secondary formulation unavailable; do not tune validation/test to force balance. It is an unvalidated heuristic, not a regulatory or health definition. Regression remains primary.
 
@@ -74,13 +74,15 @@ Validators check artifact/contract hashes, reconstruct the frame from normalized
 
 Persistence predicts the future six-hour maximum using the latest profile-eligible PM value. Recent mean uses six complete past hours ending at the same availability cutoff. Both report MAE/RMSE in µg/m³ on the same population, including per-station metrics. Operational baselines use complete operational PM feature rows. Classification reports always-negative and latest-PM ≥ frozen trailing-percentile baselines, precision/recall/F1, prevalence, confusion counts and zero-denominator flags. Empty populations remain null. These are real retrospective benchmarks only, not a prospective skill claim.
 
-For ≥3 qualifying stations, the split manifest prepares a separate fixed-station holdout plan. The highest lexicographically sorted station ID is excluded from future fitting; its chronological validation/test periods are reserved. This does not replace the primary split or train a model.
+For ≥3 qualifying stations, the split manifest prepares a separate fixed-station holdout plan. The highest lexicographically sorted station ID is excluded from future fitting; its chronological validation/test periods are reserved. Any data-dependent spike rule must be refrozen using only the remaining training stations, rather than reusing the primary pooled rule. This does not replace the primary split or train a model.
 
 ## Caching, rate limits and artifacts
 
 OpenAQ uses 28-day chunks, 1,000-row pages, maximum 100 pages per query, and 1,800 uncached attempts per process. Requests are at least two seconds apart, below the documented [60/minute and 2,000/hour limits](https://docs.openaq.org/using-the-api/rate-limits). Only allowlisted response quota/date headers are recorded. Stop if remaining quota falls to five or below. Do not run simultaneous OpenAQ extractors. Three bounded attempts honor Retry-After; a >60-second requested pause stops for a resumable later run. Repeated pages, pagination caps and unexpected responses fail rather than truncate.
 
 Earth Engine uses a 60-second deadline with no automatic retries. Identical windows reuse frozen cache entries with no TTL. Raw cache identity remains `prediction_dataset_v1` to preserve compatible source snapshots across frame-version changes; corrected ERA5 queries include their extraction method. All entries record source, query, retrieval time and SHA-256 and are written atomically. Different query boundaries can require new requests. Raw AQ/weather are shared between profiles; generated profile Parquets are separate for self-contained validation.
+
+Each CLI run persists unique timestamped `runs/*.json` counters, status and sanitized quota metadata, including failures. Earlier interrupted runs without these counters must not have request totals inferred from successful cache writes.
 
 Generated artifacts remain under ignored `data/`:
 
@@ -108,6 +110,8 @@ apps/api/.venv/bin/python apps/api/scripts/build_prediction_dataset.py --start 2
 apps/api/.venv/bin/python apps/api/scripts/audit_prediction_coverage.py --gate-directory data/processed/live_acceptance/real_gate
 # Use the measured final selection and documented common start/end for a full build.
 # --retrospective-research adds the separate research profile to default OPERATIONAL_V1.
+apps/api/.venv/bin/python apps/api/scripts/build_prediction_dataset.py --start 2025-02-19T00:00:00Z --end 2026-01-01T00:00:00Z --stations data/processed/live_acceptance/final_selection/selected_stations.json --gate-directory data/processed/live_acceptance/real_gate_repeat --aq-availability-buffer-hours 72 --retrospective-research --output data/processed/live_acceptance/full_dataset
+apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/live_acceptance/full_dataset --require-operational
 apps/api/.venv/bin/python apps/api/scripts/validate_prediction_dataset.py --output data/processed/live_acceptance/real_gate --require-operational
 apps/api/.venv/bin/python apps/api/scripts/probe_openaq_availability.py --stations data/processed/live_acceptance/discovery_gate/selected_stations.json
 ```

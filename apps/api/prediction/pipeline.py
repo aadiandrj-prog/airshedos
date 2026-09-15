@@ -276,7 +276,7 @@ def write_artifacts(
             and config.profile == OPERATIONAL_V1
             and (hourly(config.end) - hourly(config.start)).days >= 90
             and len(stations) >= 2
-            and frame.groupby("station_id").operational_eligible.sum().ge(24).all()
+            and bool(frame.groupby("station_id").operational_eligible.sum().ge(24).all())
         ),
         "operational_readiness_condition": availability["deployment_label"],
         "profile": config.profile,

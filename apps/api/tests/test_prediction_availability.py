@@ -422,3 +422,35 @@ def test_empty_month_chunks_keep_typed_hours_without_concat_warning(tmp_path):
     assert result.timestamp.iloc[0] == pd.Timestamp("2025-02-01T01:30Z")
     assert not [w for w in recorded if issubclass(w.category, FutureWarning)]
     api.close()
+
+
+def test_operational_readiness_is_a_json_boolean_and_remains_conditional(inputs, tmp_path):
+    import json
+
+    from prediction.pipeline import write_artifacts
+
+    aq, weather, stations, config = inputs
+    config = replace(config, profile=OPERATIONAL_V1)
+    write_artifacts(aq, weather, stations, config, tmp_path, [], synthetic=False)
+    manifest = json.loads((tmp_path / "dataset_manifest.json").read_text())
+    assert manifest["ready_for_operational_training"] is True
+    assert manifest["operational_readiness_condition"].startswith("CONDITIONAL:")
+
+
+def test_failed_cli_keeps_unique_request_accounting_across_resumption(tmp_path, monkeypatch):
+    import json
+
+    from prediction.cli import main
+
+    def failed(api, *_):
+        api.requests = 3
+        raise DatasetError("Simulated interrupted source extraction")
+
+    monkeypatch.setattr("prediction.cli.discover", failed)
+    monkeypatch.setattr("sys.argv", ["discover", "--output", str(tmp_path)])
+    assert main("discover") == 2
+    assert main("discover") == 2
+    runs = [json.loads(p.read_text()) for p in (tmp_path / "runs").glob("*.json")]
+    assert len(runs) == 2
+    assert all(r["status"] == "failed" and r["openaq_requests"] == 3 for r in runs)
+    assert all(r["elapsed_seconds"] >= 0 for r in runs)

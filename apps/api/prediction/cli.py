@@ -2,6 +2,8 @@ import argparse
 import json
 import logging
 import os
+import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -45,6 +47,9 @@ def main(action):
     logging.getLogger("httpx").setLevel(logging.WARNING)
     cache = RawCache(args.cache)
     api = None
+    era5 = None
+    started_at, started = datetime.now(UTC), time.monotonic()
+    succeeded = False
     try:
         if action in {"discover", "build"}:
             api = OpenAQ(os.getenv("OPENAQ_API_KEY", ""), cache)
@@ -132,6 +137,7 @@ def main(action):
                 metrics = {"synthetic": manifest["synthetic"], **baselines(frame, frozen)}
                 write_json(args.output / "baseline_metrics.json", metrics)
                 print(json.dumps(metrics))
+        succeeded = True
     except (DatasetError, OSError, ValueError) as exc:
         # DatasetError messages are deliberately sanitized; other failures can include paths only.
         message = (
@@ -146,6 +152,20 @@ def main(action):
         print(json.dumps({"status": "blocked", "message": message}))
         return 2
     finally:
+        write_json(
+            args.output / "runs" / f"{action}-{started_at.strftime('%Y%m%dT%H%M%S%f')}.json",
+            {
+                "action": action,
+                "started_at": started_at.isoformat(),
+                "status": "pass" if succeeded else "failed",
+                "elapsed_seconds": time.monotonic() - started,
+                "openaq_requests": api.requests if api else 0,
+                "earth_engine_rpcs": era5.requests if era5 else 0,
+                "source_cache_hits": cache.hits,
+                "source_cache_misses": cache.misses,
+                "response_metadata": api.response_metadata if api else [],
+            },
+        )
         if api:
             api.close()
     return 0

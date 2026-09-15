@@ -258,6 +258,10 @@ def holdout_plan(stations, config):
             "not chosen by test scores."
         ),
         "boundaries": split_boundaries(config),
+        "spike_rule_policy": (
+            "Refreeze any data-dependent spike rule using remaining training stations only; "
+            "do not reuse the primary pooled rule for holdout evaluation."
+        ),
         "policy": (
             "Exclude held-out station from training and all fitting; use "
             "training periods on remaining stations. Evaluate its "
