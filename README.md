@@ -1,10 +1,12 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 2B transparent evidence corroboration.**
+**AI Pollution Incident Command — Phase 2B runtime; Phase 2C offline dataset tooling.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
 The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. An explicit corroboration step now joins the server-owned interpretation with environmental context through a deterministic checklist. It creates an advisory assessment, not an incident. Real notifications remain unimplemented.
+
+Phase 2C adds a separate historical dataset pipeline for OpenAQ and ERA5-Land. **Real acceptance built five coverage-selected stations over 316 days, with 8,926 complete operational rows and a separate research frame.** Its default operational profile uses a configurable AQ availability buffer and excludes ERA5. A separate research profile is explicitly not deployment-safe. Historical publication times and revisions remain unverified; buffered availability is a conditional contract. No predictive model has been trained. See [the data contract](docs/PREDICTION_DATASET.md) and [verification report](docs/PHASE_2C_VERIFICATION.md).
 
 ## Current architecture
 
@@ -22,6 +24,7 @@ The Python API owns incident data and behavior. Pydantic generates OpenAPI; fron
 apps/
   api/
     app/                  # Models, fictional fixture, repository, routes, environment adapters
+    prediction/           # Offline historical research frame; never imported by FastAPI
     tests/                # Endpoint, schema, state, and concurrency tests
     scripts/              # OpenAPI export, manual verification and synthetic image evaluation
     openapi.json          # Generated API contract
@@ -43,6 +46,8 @@ docs/
   PHASE_1C_VERIFICATION.md
   PHASE_2A_VERIFICATION.md
   PHASE_2B_VERIFICATION.md
+  PHASE_2C_VERIFICATION.md
+  PREDICTION_DATASET.md
   CORROBORATION_RULES.md
   DATA_SOURCES.md
   screenshots/
@@ -61,7 +66,7 @@ Terminal 1, from the repository root:
 cd apps/api
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements-dev.lock
+python -m pip install -r requirements-dev.lock -r requirements-dataset.lock
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 

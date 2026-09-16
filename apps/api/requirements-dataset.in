@@ -1,0 +1,5 @@
+# Offline Phase 2C tools/tests only; do not install in the runtime Docker image.
+pandas>=2.2,<3
+pyarrow>=20,<24
+# pandas 2.x currently emits deprecated timedelta operations with NumPy 2.5.
+numpy>=2,<2.4

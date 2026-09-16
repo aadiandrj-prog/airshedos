@@ -39,7 +39,11 @@ def main():
     if env_file.exists():
         for line in env_file.read_text().splitlines():
             key, _, value = line.partition("=")
-            if key.strip() in ("GOOGLE_MAPS_PLATFORM_API_KEY", "NASA_FIRMS_MAP_KEY"):
+            if key.strip() in (
+                "GOOGLE_MAPS_PLATFORM_API_KEY",
+                "NASA_FIRMS_MAP_KEY",
+                "OPENAQ_API_KEY",
+            ):
                 value = value.strip().strip("\"'")
                 if len(value) > 12:
                     exact.append(value.encode())

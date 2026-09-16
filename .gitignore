@@ -20,3 +20,6 @@ application_default_credentials.json
 *service-account*.json
 *service_account*.json
 credentials.json
+
+# Generated historical datasets and source caches (never commit large data).
+/data/
