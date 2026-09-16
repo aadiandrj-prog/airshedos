@@ -64,6 +64,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/environment/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Forecast Context
+         * @description Google provider outlook. Never independent corroboration or an AirshedOS prediction.
+         */
+        get: operations["forecast_context_api_v1_environment_forecast_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/citizen-reports/analyze": {
         parameters: {
             query?: never;
@@ -204,6 +224,65 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AirQualityForecastContext */
+        AirQualityForecastContext: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /**
+             * Requested Horizon Hours
+             * @enum {integer}
+             */
+            requested_horizon_hours: 6 | 12 | 24;
+            /**
+             * Provider
+             * @default google_air_quality_forecast
+             * @constant
+             */
+            provider: "google_air_quality_forecast";
+            provider_status: components["schemas"]["EnvironmentalSourceStatus"];
+            window: components["schemas"]["ForecastWindow"];
+            /** Retrieved At */
+            retrieved_at: string | null;
+            /** Issued At */
+            issued_at: string | null;
+            /** Region Code */
+            region_code: string | null;
+            /** Hourly Forecasts */
+            hourly_forecasts: components["schemas"]["HourlyAirQualityForecast"][];
+            /** Summaries */
+            summaries: components["schemas"]["ForecastSummary"][];
+            current_air_quality: components["schemas"]["AirQualityObservation"] | null;
+            current_source_status: components["schemas"]["EnvironmentalSourceStatus"];
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            /**
+             * Independence Note
+             * @default Google current AQ and forecast AQ share a provider/model ecosystem. Forecast is an operational outlook, not an independent corroboration source; it does not change corroboration support.
+             */
+            independence_note: string;
+            /**
+             * Temporal Note
+             * @default Hourly forecast valid times, starting next UTC hour. Retrieval time is not issuance time. Summaries describe available forecast points, not measured future outcomes.
+             */
+            temporal_note: string;
+            /**
+             * Policy Version
+             * @default provider_forecast_v1
+             * @constant
+             */
+            policy_version: "provider_forecast_v1";
+        };
         /** AirQualityIndex */
         AirQualityIndex: {
             /** Code */
@@ -390,6 +469,7 @@ export interface components {
             /** Limitations */
             limitations: string[];
             provenance: components["schemas"]["Provenance"];
+            forecast_outlook: components["schemas"]["AirQualityForecastContext"] | null;
             /**
              * Policy Version
              * @default corroboration_v1
@@ -620,6 +700,69 @@ export interface components {
             generated_at: string;
             provenance: components["schemas"]["Provenance"];
         };
+        /** ForecastSummary */
+        ForecastSummary: {
+            /**
+             * Horizon Hours
+             * @enum {integer}
+             */
+            horizon_hours: 6 | 12 | 24;
+            window: components["schemas"]["ForecastWindow"];
+            /** Available Hours */
+            available_hours: number;
+            /** Pm25 Hours */
+            pm25_hours: number;
+            /** Cpcb Hours */
+            cpcb_hours: number;
+            /**
+             * Coverage
+             * @enum {string}
+             */
+            coverage: "complete" | "partial" | "none";
+            /** Max Cpcb Aqi */
+            max_cpcb_aqi: number | null;
+            max_pm25: components["schemas"]["Measurement"] | null;
+            max_pm10: components["schemas"]["Measurement"] | null;
+            /** Worst Category */
+            worst_category: string | null;
+            /** Peak At */
+            peak_at: string | null;
+            /** Peak Basis */
+            peak_basis: ("pm25" | "ind_cpcb") | null;
+            /** Cpcb Peak At */
+            cpcb_peak_at: string | null;
+            /** Pm10 Peak At */
+            pm10_peak_at: string | null;
+            delta_pm25_vs_current: components["schemas"]["Measurement"] | null;
+            /** Relative Pm25 Change Percent */
+            relative_pm25_change_percent: number | null;
+            /**
+             * Outlook
+             * @enum {string}
+             */
+            outlook: "IMPROVING" | "STABLE" | "WORSENING" | "SHARPLY_WORSENING" | "UNAVAILABLE";
+            /** Comparison Note */
+            comparison_note: string;
+        };
+        /** ForecastWindow */
+        ForecastWindow: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /**
+             * End Inclusive
+             * @default true
+             * @constant
+             */
+            end_inclusive: true;
+        };
         /** GeminiEvidenceAnalysis */
         GeminiEvidenceAnalysis: {
             event_type: components["schemas"]["EventType"];
@@ -678,6 +821,20 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HourlyAirQualityForecast */
+        HourlyAirQualityForecast: {
+            /**
+             * Forecast At
+             * Format: date-time
+             */
+            forecast_at: string;
+            /** Indexes */
+            indexes: components["schemas"]["AirQualityIndex"][];
+            /** Pollutants */
+            pollutants: components["schemas"]["PollutantMeasurement"][];
+            /** Dominant Pollutant */
+            dominant_pollutant: string | null;
         };
         /** IncidentAction */
         IncidentAction: {
@@ -1256,6 +1413,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SatelliteAtmosphericContext"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    forecast_context_api_v1_environment_forecast_get: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+                /** @description 6, 12 or 24 hours; default includes all summaries */
+                horizon_hours?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AirQualityForecastContext"];
                 };
             };
             /** @description Validation Error */

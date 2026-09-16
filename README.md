@@ -1,12 +1,14 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 2B runtime; Phase 2C data and Phase 2D offline model evaluation.**
+**AI Pollution Incident Command — Phase 2E Google operational forecast; Phase 2D custom model rejected.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
 The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. An explicit corroboration step now joins the server-owned interpretation with environmental context through a deterministic checklist. It creates an advisory assessment, not an incident. Real notifications remain unimplemented.
 
 Phase 2C adds a separate historical dataset pipeline for OpenAQ and ERA5-Land. **Real acceptance built five coverage-selected stations over 316 days, with 8,926 complete operational rows and a separate research frame.** Its default operational profile uses a configurable AQ availability buffer and excludes ERA5. A separate research profile is explicitly not deployment-safe. Historical publication times and revisions remain unverified; buffered availability is a conditional contract. Phase 2D evaluated Ridge, histogram gradient boosting and XGBoost, but **MODEL_NOT_ACCEPTED**: none passed the October baseline gate. The final test period remains untouched by candidate evaluation; no model is integrated or deployed. See [the model protocol](docs/PREDICTION_MODEL.md) and [Phase 2D results](docs/PHASE_2D_VERIFICATION.md). See [the data contract](docs/PREDICTION_DATASET.md) and [verification report](docs/PHASE_2C_VERIFICATION.md).
+
+Phase 2E adds a separately labelled **Google Air Quality forecast outlook** for the next 6, 12 and 24 hours, both in the coordinate probe and after citizen corroboration. It preserves CPCB index identity, native pollutant units and provenance. Forecast values never increase corroboration support. The custom model remains rejected and undeployed. See [forecast rules and API](docs/FORECASTING.md) and [Phase 2E verification](docs/PHASE_2E_VERIFICATION.md).
 
 ## Current architecture
 

@@ -1,24 +1,23 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./test";
 import citizen from "./fixtures/citizen.test.json";
 import fixture from "./fixtures/corroboration.test.json";
 import environment from "./fixtures/environment.test.json";
 import satellite from "./fixtures/satellite.test.json";
+import outlook from "./fixtures/forecast.test.json";
 
 const endpoint = "**/api/v1/citizen-reports/*/corroborate";
 const button = "Corroborate with environmental data";
 let analysisCalls = 0;
 async function analyze(page: Page) {
   await page.goto("/");
-  await page
-    .getByLabel("Field image")
-    .setInputFiles({
-      name: "field.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aL1sAAAAASUVORK5CYII=",
-        "base64",
-      ),
-    });
+  await page.getByLabel("Field image").setInputFiles({
+    name: "field.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aL1sAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
   await page.getByLabel("Field latitude").fill("28.4595");
   await page.getByLabel("Field longitude").fill("77.0266");
   await page
@@ -113,14 +112,12 @@ test("partial provider failure remains visible", async ({ page }) => {
   await page.route(endpoint, (route) => route.fulfill({ json: partial }));
   await analyze(page);
   await page.getByRole("button", { name: button }).click();
-  const aq = page
-    .locator(".fusion-row")
-    .filter({
-      has: page.getByRole("heading", {
-        name: "Current air quality",
-        exact: true,
-      }),
-    });
+  const aq = page.locator(".fusion-row").filter({
+    has: page.getByRole("heading", {
+      name: "Current air quality",
+      exact: true,
+    }),
+  });
   await expect(aq).toContainText("UNAVAILABLE");
   await expect(aq).toContainText("Source: error");
   await expect(page.locator(".fusion-card")).toContainText("STRONG SUPPORT");
@@ -202,4 +199,33 @@ test("clearing submission discards an in-flight corroboration result", async ({
     page.getByRole("region", { name: "Evidence corroboration" }),
   ).toHaveCount(0);
   await expect(page.locator(".fusion-card")).toHaveCount(0);
+});
+
+test("forecast outlook is separate and cannot change displayed support", async ({
+  page,
+}) => {
+  const body = structuredClone(outlook);
+  body.summaries.forEach((s) => {
+    s.outlook = "SHARPLY_WORSENING";
+    s.max_pm25.value = 900;
+  });
+  await page.route(endpoint, (route) =>
+    route.fulfill({ json: { ...fixture, forecast_outlook: body } }),
+  );
+  await analyze(page);
+  await page.getByRole("button", { name: button }).click();
+  const card = page
+    .getByRole("article")
+    .filter({ hasText: "EVIDENCE FUSION CARD" });
+  await expect(card).toContainText("STRONG SUPPORT");
+  const outlookPanel = card.getByRole("region", {
+    name: "Forecast outlook",
+    exact: true,
+  });
+  await expect(outlookPanel).toContainText("SHARPLY WORSENING");
+  await expect(outlookPanel).toContainText("900 µg/m³");
+  await expect(outlookPanel).toContainText(
+    "does not change corroboration support",
+  );
+  await expect(card).toContainText("FIELD VERIFICATION");
 });

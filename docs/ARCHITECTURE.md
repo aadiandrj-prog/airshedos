@@ -72,7 +72,7 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Translation, Vertex AI prediction, BigQuery, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Stop after Phase 2B.
+Translation, Vertex AI prediction, BigQuery, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Phase 2E adds only the separate provider outlook described below; Phase 3 remains unimplemented.
 
 ## Satellite evidence boundary
 
@@ -149,3 +149,14 @@ The generated OpenAPI contract owns frontend types. The keyed CorroborationCard 
 The selection path is source/contract hash verification → filtered training/October snapshots → three purged training-only CV folds → twelve serious validation candidates → immutable go/no-go decision. October macro-station MAE is primary; preprocessing and station weights use fitting rows only. A distinct guarded evaluator can reserve one final test access only after a qualifying decision and matching artifact hashes. Research inputs are prohibited in the primary feature allowlist.
 
 The actual Phase 2D outcome is **MODEL_NOT_ACCEPTED**. The pipeline stopped after all candidates failed October baseline gates. No candidate test evaluation, final model bundle, Vertex training job, online endpoint or forecast UI change followed. Read-only cloud preflight confirmed Vertex access but found no GCS bucket and a disabled Artifact Registry API; it created no resources. The runtime diagram and its existing demo forecast remain unchanged. See [PREDICTION_MODEL.md](PREDICTION_MODEL.md) for the conditional availability contract and [PHASE_2D_VERIFICATION.md](PHASE_2D_VERIFICATION.md) for negative results and deferred downstream gates.
+
+
+## Google operational outlook (Phase 2E)
+
+The `GoogleAirQualityForecastProvider` uses the existing backend key and HTTP transport. `AirQualityForecastContext` holds hourly valid times, native pollutant/index values, 6/12/24-hour summaries, current comparison, explicit source state and provenance. `GET /api/v1/environment/forecast` is independent of the existing context route. The current endpoint and its three ground-source status keys remain unchanged; satellite remains independently available.
+
+Citizen → Gemini → structured citizen evidence → deterministic environmental corroboration → assessment → **Google AQ operational forecast / separate outlook** → officer decision support. The route attaches optional `forecast_outlook` only after `assess()` completes, reusing its current AQ result. The rules, contributing source IDs, support and recommended next step never consume the forecast. No independent vote is created for Google's second related output.
+
+The existing cache stores one canonical 24-hour forecast batch for 900 seconds, keyed by coordinates, UTC window and API options. The forecast endpoint can serve all three horizons from that batch. Current AQ and forecast execute concurrently in the standalone endpoint; the UI fetches forecast separately so current cards can render first. Existing source/provider failure handling is retained; forecast failures return a typed absent outlook. No queue, database, new dependencies, model imports or frontend credentials were introduced.
+
+`ForecastOutlook` is shared by the Evidence Fusion Card and standalone coordinate panel. It shows attributed provider results, coverage, a transparent peak/current category and native-unit/CPCB comparisons. Backend UTC is preserved; displayed times are labelled IST. Source provenance and exact thresholds are expandable. No charts, map overlays or product redesign. See [FORECASTING.md](FORECASTING.md) for the complete contract, restrictions and policy. Phase 2D's rejected research remains untouched.

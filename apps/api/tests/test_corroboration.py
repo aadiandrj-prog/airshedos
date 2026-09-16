@@ -357,6 +357,9 @@ async def test_idle_expiry_timer_removes_record():
 
 
 class FakeEnvironment:
+    async def forecast_context(self, *args, **kwargs):
+        return None
+
     def __init__(self):
         self.calls = []
 

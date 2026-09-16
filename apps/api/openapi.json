@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 2B. Transparent deterministic evidence corroboration. No causal attribution. Demo incident sharing is simulated.",
-    "version": "0.5.0"
+    "description": "Phase 2E. Provider forecast outlook separate from evidence corroboration. No causal attribution. Demo incident sharing is simulated.",
+    "version": "0.6.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -205,6 +205,74 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SatelliteAtmosphericContext"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/environment/forecast": {
+      "get": {
+        "tags": [
+          "Environmental context"
+        ],
+        "summary": "Forecast Context",
+        "description": "Google provider outlook. Never independent corroboration or an AirshedOS prediction.",
+        "operationId": "forecast_context_api_v1_environment_forecast_get",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 90,
+              "minimum": -90,
+              "title": "Lat"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 180,
+              "minimum": -180,
+              "title": "Lng"
+            }
+          },
+          {
+            "name": "horizon_hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "6, 12 or 24 hours; default includes all summaries",
+              "default": 24,
+              "title": "Horizon Hours"
+            },
+            "description": "6, 12 or 24 hours; default includes all summaries"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AirQualityForecastContext"
                 }
               }
             }
@@ -539,6 +607,158 @@
   },
   "components": {
     "schemas": {
+      "AirQualityForecastContext": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Requested At"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "requested_horizon_hours": {
+            "type": "integer",
+            "enum": [
+              6,
+              12,
+              24
+            ],
+            "title": "Requested Horizon Hours"
+          },
+          "provider": {
+            "type": "string",
+            "const": "google_air_quality_forecast",
+            "title": "Provider",
+            "default": "google_air_quality_forecast"
+          },
+          "provider_status": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          },
+          "window": {
+            "$ref": "#/components/schemas/ForecastWindow"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          },
+          "issued_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued At"
+          },
+          "region_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Code"
+          },
+          "hourly_forecasts": {
+            "items": {
+              "$ref": "#/components/schemas/HourlyAirQualityForecast"
+            },
+            "type": "array",
+            "title": "Hourly Forecasts"
+          },
+          "summaries": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastSummary"
+            },
+            "type": "array",
+            "title": "Summaries"
+          },
+          "current_air_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AirQualityObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "current_source_status": {
+            "$ref": "#/components/schemas/EnvironmentalSourceStatus"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "independence_note": {
+            "type": "string",
+            "title": "Independence Note",
+            "default": "Google current AQ and forecast AQ share a provider/model ecosystem. Forecast is an operational outlook, not an independent corroboration source; it does not change corroboration support."
+          },
+          "temporal_note": {
+            "type": "string",
+            "title": "Temporal Note",
+            "default": "Hourly forecast valid times, starting next UTC hour. Retrieval time is not issuance time. Summaries describe available forecast points, not measured future outcomes."
+          },
+          "policy_version": {
+            "type": "string",
+            "const": "provider_forecast_v1",
+            "title": "Policy Version",
+            "default": "provider_forecast_v1"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "requested_at",
+          "generated_at",
+          "requested_horizon_hours",
+          "provider",
+          "provider_status",
+          "window",
+          "retrieved_at",
+          "issued_at",
+          "region_code",
+          "hourly_forecasts",
+          "summaries",
+          "current_air_quality",
+          "current_source_status",
+          "provenance",
+          "independence_note",
+          "temporal_note",
+          "policy_version"
+        ],
+        "title": "AirQualityForecastContext"
+      },
       "AirQualityIndex": {
         "properties": {
           "code": {
@@ -1033,6 +1253,16 @@
           "provenance": {
             "$ref": "#/components/schemas/Provenance"
           },
+          "forecast_outlook": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AirQualityForecastContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "policy_version": {
             "type": "string",
             "const": "corroboration_v1",
@@ -1059,6 +1289,7 @@
           "environmental_context",
           "limitations",
           "provenance",
+          "forecast_outlook",
           "policy_version"
         ],
         "title": "CorroborationAssessment"
@@ -1742,6 +1973,226 @@
         ],
         "title": "ForecastRisk"
       },
+      "ForecastSummary": {
+        "properties": {
+          "horizon_hours": {
+            "type": "integer",
+            "enum": [
+              6,
+              12,
+              24
+            ],
+            "title": "Horizon Hours"
+          },
+          "window": {
+            "$ref": "#/components/schemas/ForecastWindow"
+          },
+          "available_hours": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Available Hours"
+          },
+          "pm25_hours": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Pm25 Hours"
+          },
+          "cpcb_hours": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Cpcb Hours"
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "none"
+            ],
+            "title": "Coverage"
+          },
+          "max_cpcb_aqi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Cpcb Aqi"
+          },
+          "max_pm25": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max_pm10": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "worst_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Category"
+          },
+          "peak_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak At"
+          },
+          "peak_basis": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pm25",
+                  "ind_cpcb"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak Basis"
+          },
+          "cpcb_peak_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpcb Peak At"
+          },
+          "pm10_peak_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pm10 Peak At"
+          },
+          "delta_pm25_vs_current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measurement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "relative_pm25_change_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relative Pm25 Change Percent"
+          },
+          "outlook": {
+            "type": "string",
+            "enum": [
+              "IMPROVING",
+              "STABLE",
+              "WORSENING",
+              "SHARPLY_WORSENING",
+              "UNAVAILABLE"
+            ],
+            "title": "Outlook"
+          },
+          "comparison_note": {
+            "type": "string",
+            "title": "Comparison Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "horizon_hours",
+          "window",
+          "available_hours",
+          "pm25_hours",
+          "cpcb_hours",
+          "coverage",
+          "max_cpcb_aqi",
+          "max_pm25",
+          "max_pm10",
+          "worst_category",
+          "peak_at",
+          "peak_basis",
+          "cpcb_peak_at",
+          "pm10_peak_at",
+          "delta_pm25_vs_current",
+          "relative_pm25_change_percent",
+          "outlook",
+          "comparison_note"
+        ],
+        "title": "ForecastSummary"
+      },
+      "ForecastWindow": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End"
+          },
+          "end_inclusive": {
+            "type": "boolean",
+            "const": true,
+            "title": "End Inclusive",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "end_inclusive"
+        ],
+        "title": "ForecastWindow"
+      },
       "GeminiEvidenceAnalysis": {
         "properties": {
           "event_type": {
@@ -1935,6 +2386,49 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HourlyAirQualityForecast": {
+        "properties": {
+          "forecast_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Forecast At"
+          },
+          "indexes": {
+            "items": {
+              "$ref": "#/components/schemas/AirQualityIndex"
+            },
+            "type": "array",
+            "title": "Indexes"
+          },
+          "pollutants": {
+            "items": {
+              "$ref": "#/components/schemas/PollutantMeasurement"
+            },
+            "type": "array",
+            "title": "Pollutants"
+          },
+          "dominant_pollutant": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dominant Pollutant"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "forecast_at",
+          "indexes",
+          "pollutants",
+          "dominant_pollutant"
+        ],
+        "title": "HourlyAirQualityForecast"
       },
       "IncidentAction": {
         "properties": {

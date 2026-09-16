@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 import ground from "./fixtures/environment.test.json";
 import satellite from "./fixtures/satellite.test.json";
 

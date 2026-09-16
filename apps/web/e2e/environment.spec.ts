@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./test";
 import fixture from "./fixtures/environment.test.json";
 
 // Synthetic normalized fixture, intercepted only in tests. Never used by the app.
@@ -81,7 +81,7 @@ test("provider readings, source times, units, and cached states render", async (
   await expect(panel.getByText("3 of 3 sources available")).toBeVisible();
   await expect(panel.getByText("31.4 °C", { exact: false })).toBeVisible();
   await expect(panel.getByText("225° · southwest")).toBeVisible();
-  await expect(panel.getByText("µg/m³", { exact: false })).toBeVisible();
+  await expect(panel.getByText("40.2 µg/m³", { exact: true })).toBeVisible();
   await expect(panel.getByText("ppb", { exact: false })).toBeVisible();
   await expect(panel.getByText("Closest detection: 1.11 km")).toBeVisible();
   await expect(panel.getByText("Google Maps", { exact: true })).toHaveCount(2);

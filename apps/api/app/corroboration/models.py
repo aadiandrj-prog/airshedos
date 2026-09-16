@@ -9,6 +9,7 @@ from app.citizen.models import (
     GeminiEvidenceAnalysis,
     ModelProvenance,
 )
+from app.environment.forecast_models import AirQualityForecastContext
 from app.environment.models import EnvironmentalContext, EnvironmentalProvenance, SourceState
 from app.models import CitizenReport, DomainModel, Provenance
 
@@ -111,6 +112,7 @@ class CorroborationAssessment(DomainModel):
     environmental_context: EnvironmentalContext
     limitations: list[str]
     provenance: Provenance
+    forecast_outlook: AirQualityForecastContext | None = None
     policy_version: Literal["corroboration_v1"] = "corroboration_v1"
 
 
