@@ -72,11 +72,11 @@ The established `verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gat
 - Backend Ruff lint/format: **PASS**.
 - Frontend lint, typecheck and production build: **PASS**.
 - OpenAPI export and generated frontend types: **PASS**, byte-for-byte reproducible after regeneration.
-- Docker API and web build/start/health: **PASS**, preserving the existing read-only ADC mount. No model-training dependencies added to the runtime image.
-- Secret scan: **PASS**, 1,766 source/build/artifact files scanned, zero findings. The root environment file and normalized live verification artifacts remain Git-ignored.
+- Docker API and web build/start/health: **PASS**, preserving the existing read-only ADC mount. No model-training dependencies added to the runtime image. A real HTTP check against the rebuilt Docker forecast endpoint returned 24 live hours, then cached 6h and 12h responses retaining the same retrieval timestamp (`2026-09-16T10:55:09.107916Z`).
+- Secret scan: **PASS**, 1,767 source/build/artifact files scanned, zero findings. The root environment file and normalized live verification artifacts remain Git-ignored.
 - Desktop and 390px mobile forecast screenshots visually inspected: source attribution, readable comparison fields, IST timestamps, separate outlook and no horizontal overflow. Screenshots are synthetic test output, not the live result above.
 - Git whitespace validation: **PASS**. Phase 2D prediction/model code and result documents have no diff from baseline `6ef32b3`.
-- GitHub CI: pending branch publication; final status will be recorded in the completion report.
+- GitHub push CI for implementation commit `e1d6eab`: **4/4 checks passed** (backend, browser, frontend, secrets), [run 35087399053](https://github.com/aadiandrj-prog/airshedos/actions/runs/35087399053). Final PR-head status is reported at completion.
 
 Fixtures cover Google normalization, native units, CPCB identity/absence, all three horizons, earliest-tie peaks, threshold boundaries, zero/stale/future current readings, incompatible units, incomplete coverage, malformed payloads, pagination/cycle bounds, timeouts, authentication failures, source independence, concurrent request coalescing, cache expiry/copy isolation/horizon reuse, endpoint validation and provenance. The corroboration endpoint test changes forecast to an extreme value and then removes it, verifying every non-forecast assessment field remains identical.
 
@@ -87,3 +87,5 @@ The 15-minute cache is process-local. New UTC hours create a new forecast window
 The thresholds describe changes in the forecast peak versus current conditions, not regulation, temporal slope or incident risk. The advisory support result stays unchanged. No optional priority score or persistence was added. The rejected custom model is not exposed as a product feature and remains undeployed.
 
 Next-phase recommendation: validate the officer review workflow and design a prospective provider-forecast evaluation protocol before alerts or automated action. This is a recommendation only; Phase 3A was not started.
+
+Review: [draft PR #7](https://github.com/aadiandrj-prog/airshedos/pull/7), stacked on the existing Phase 2D branch. Implementation commit: `e1d6eab34cabb349a780b932d6bfa425410ccff0`. No PR was merged.
