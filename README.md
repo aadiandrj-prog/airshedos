@@ -1,6 +1,6 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 2E Google operational forecast; Phase 2D custom model rejected.**
+**AI Pollution Incident Command — Phase 3A spatial officer workflow; Phase 2D custom model rejected.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
@@ -9,6 +9,8 @@ The command center preserves **one fictional Delhi–Gurugram-border incident**,
 Phase 2C adds a separate historical dataset pipeline for OpenAQ and ERA5-Land. **Real acceptance built five coverage-selected stations over 316 days, with 8,926 complete operational rows and a separate research frame.** Its default operational profile uses a configurable AQ availability buffer and excludes ERA5. A separate research profile is explicitly not deployment-safe. Historical publication times and revisions remain unverified; buffered availability is a conditional contract. Phase 2D evaluated Ridge, histogram gradient boosting and XGBoost, but **MODEL_NOT_ACCEPTED**: none passed the October baseline gate. The final test period remains untouched by candidate evaluation; no model is integrated or deployed. See [the model protocol](docs/PREDICTION_MODEL.md) and [Phase 2D results](docs/PHASE_2D_VERIFICATION.md). See [the data contract](docs/PREDICTION_DATASET.md) and [verification report](docs/PHASE_2C_VERIFICATION.md).
 
 Phase 2E adds a separately labelled **Google Air Quality forecast outlook** for the next 6, 12 and 24 hours, both in the coordinate probe and after citizen corroboration. It preserves CPCB index identity, native pollutant units and provenance. Forecast values never increase corroboration support. The custom model remains rejected and undeployed. See [forecast rules and API](docs/FORECASTING.md) and [Phase 2E verification](docs/PHASE_2E_VERIFICATION.md).
+
+Phase 3A adds a selected-case Google Map, a deterministic case queue, prototype jurisdiction labels and ephemeral manual officer review. Evidence, corroboration and Google forecast snapshots cannot be edited by review actions. A separate restricted browser key enables Maps; map failure leaves the textual workflow usable. See [the command-center guide](docs/COMMAND_CENTER.md) and [Phase 3A verification](docs/PHASE_3A_VERIFICATION.md).
 
 ## Current architecture
 
@@ -35,7 +37,7 @@ apps/
     Dockerfile
   web/
     src/app/              # Single command-center page and responsive styles
-    src/components/       # Replaceable geographic schematic
+    src/components/       # Operational map, evidence, forecast and officer review
     src/lib/              # API client and generated domain types
     e2e/                  # Browser checks against the running API
     package.json
@@ -180,7 +182,7 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 - The fictional incident’s satellite evidence remains unavailable. The independent satellite probe can retrieve real regional observations; it never changes the demo incident or assigns confidence.
 - State resets when the API restarts, including on development reload. A single process is required; there is no persistence or multi-worker coordination.
 - Acknowledgment is stored locally. Sharing records a simulation and sends nothing externally.
-- The geographic pane is a schematic, not a navigable map or reliable geographic boundary. Possible transport is illustrative; it is not a dispersion model.
+- The selected-workflow map shows coordinates and returned FIRMS detections, not pollution causality. Prototype jurisdiction areas are not official boundaries.
 - Environmental providers are independent of incident evidence. They do not alter demo confidence, forecasts, or actions. The probe fetches on page load and on **Check conditions**; there is no background monitoring.
 - Provider outages and missing credentials are expected. FIRMS `null` means unavailable; an empty list means a valid query returned zero nearby detections.
 - Optional timezone-aware `at` remains reference metadata for AQ/weather/FIRMS, which still query current conditions. For satellite only, it specifies the exclusive search-window end.
@@ -188,9 +190,9 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 
 ## Planned architecture (not implemented)
 
-Phase 2B now joins structured citizen and environmental evidence through transparent deterministic rules. Prediction, persistence, mapping and real jurisdiction workflows require separate later phases.
+Phase 3A provides spatial presentation and temporary manual review. Durable records, accounts and real jurisdiction interoperability require separate later phases.
 
-Current: Google AQ, Weather, FIRMS, Sentinel-5P atmospheric evidence, **Gemini citizen visual interpretation**, and **deterministic evidence corroboration**. Planned: Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Gemini interpretation alone is not corroboration. No source attribution is implemented. Stop after Phase 2B.
+Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps and ephemeral officer review. Future concepts: jurisdiction interoperability, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Stop after Phase 3A.
 
 See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 

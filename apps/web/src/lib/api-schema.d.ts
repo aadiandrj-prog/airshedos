@@ -118,6 +118,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/review/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cases */
+        get: operations["cases_api_v1_review_cases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/review/cases/{case_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Case */
+        get: operations["case_api_v1_review_cases__case_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/review/cases/{case_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review */
+        post: operations["review_api_v1_review_cases__case_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -347,6 +398,47 @@ export interface components {
              * @default
              */
             description: string;
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean;
+        };
+        /** CaseSnapshot */
+        CaseSnapshot: {
+            record: components["schemas"]["StructuredReport"];
+            assessment: components["schemas"]["CorroborationAssessment"];
+            jurisdiction: components["schemas"]["JurisdictionResolution"];
+            /** Evidence Sha256 */
+            evidence_sha256: string;
+        };
+        /** CaseSummary */
+        CaseSummary: {
+            /** Id */
+            id: string;
+            /** Report Id */
+            report_id: string;
+            /** Event Type */
+            event_type: string;
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Is Synthetic */
+            is_synthetic: boolean;
+            jurisdiction: components["schemas"]["JurisdictionResolution"];
+            support_level: components["schemas"]["SupportLevel"];
+            review: components["schemas"]["OfficerReview"];
         };
         /** CitizenAnalysisResponse */
         CitizenAnalysisResponse: {
@@ -376,6 +468,11 @@ export interface components {
         };
         /** CitizenReport */
         CitizenReport: {
+            /**
+             * Is Synthetic
+             * @default false
+             */
+            is_synthetic: boolean;
             /** Id */
             id: string;
             /**
@@ -876,6 +973,33 @@ export interface components {
             /** Authority Type */
             authority_type: string;
         };
+        /** JurisdictionResolution */
+        JurisdictionResolution: {
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "Delhi" | "Haryana" | "Uttar Pradesh" | "Unknown";
+            /** Area */
+            area: string | null;
+            /**
+             * Method
+             * @default prototype_lookup_area_v1
+             * @constant
+             */
+            method: "prototype_lookup_area_v1";
+            /**
+             * Authoritative
+             * @default false
+             * @constant
+             */
+            authoritative: false;
+            /**
+             * Note
+             * @default Configuration-backed prototype area, not an official administrative boundary. Informational only; verify jurisdiction independently. No authority routing.
+             */
+            note: string;
+        };
         /** Measurement */
         Measurement: {
             /** Value */
@@ -972,6 +1096,43 @@ export interface components {
          * @enum {string}
          */
         NextStep: "FIELD_VERIFICATION" | "MONITOR" | "REVIEW" | "NO_ACTION_FROM_CURRENT_EVIDENCE";
+        /** OfficerCase */
+        OfficerCase: {
+            /** Id */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            snapshot: components["schemas"]["CaseSnapshot"];
+            review: components["schemas"]["OfficerReview"];
+            /**
+             * Storage
+             * @default ephemeral_process_local
+             * @constant
+             */
+            storage: "ephemeral_process_local";
+        };
+        /** OfficerReview */
+        OfficerReview: {
+            /** @default NEW */
+            state: components["schemas"]["ReviewState"];
+            /**
+             * Revision
+             * @default 0
+             */
+            revision: number;
+            /** Action At */
+            action_at: string | null;
+            /** Allowed Transitions */
+            allowed_transitions: components["schemas"]["ReviewState"][];
+        };
         /** PollutantMeasurement */
         PollutantMeasurement: {
             /** Code */
@@ -1065,6 +1226,17 @@ export interface components {
              */
             detail: string;
         };
+        /** ReviewRequest */
+        ReviewRequest: {
+            state: components["schemas"]["ReviewState"];
+            /** Expected Revision */
+            expected_revision: number;
+        };
+        /**
+         * ReviewState
+         * @enum {string}
+         */
+        ReviewState: "NEW" | "UNDER_REVIEW" | "ACKNOWLEDGED" | "MONITORING" | "CLOSED_NO_ACTION";
         /**
          * RiskLevel
          * @enum {string}
@@ -1288,6 +1460,12 @@ export interface components {
             verdict: components["schemas"]["Verdict"];
             /** Message */
             message: string;
+        };
+        /** StructuredReport */
+        StructuredReport: {
+            report: components["schemas"]["CitizenReport"];
+            analysis: components["schemas"]["GeminiEvidenceAnalysis"];
+            evidence: components["schemas"]["CitizenVisualSignal"];
         };
         /**
          * SupportLevel
@@ -1529,6 +1707,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReportUnavailable"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cases_api_v1_review_cases_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseSummary"][];
+                };
+            };
+        };
+    };
+    case_api_v1_review_cases__case_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfficerCase"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_api_v1_review_cases__case_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfficerCase"];
                 };
             };
             /** @description Validation Error */

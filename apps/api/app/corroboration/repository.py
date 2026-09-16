@@ -46,6 +46,10 @@ class EphemeralReportRepository:
         self._entries.move_to_end(report_id)
         return record.model_copy(deep=True)
 
+    def remaining_ttl(self, report_id: str) -> float:
+        entry = self._entries.get(report_id)
+        return max(0.0, entry[0] - self.clock()) if entry else 0.0
+
     def clear(self):
         for report_id in list(self._entries):
             self._remove(report_id)

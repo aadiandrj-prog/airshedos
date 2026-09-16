@@ -479,3 +479,16 @@ def test_unknown_multipart_field_rejected(client, analyzer):
     response = submit(client, data={"latitude": 1, "longitude": 1, "unexpected": "unused"})
     assert response.status_code == 422
     assert not analyzer.calls
+
+
+def test_explicit_synthetic_input_label_persists_without_relabeling_provider(client, analyzer):
+    response = submit(
+        client, data={"latitude": "28.4595", "longitude": "77.0266", "is_synthetic": "true"}
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["report"]["is_synthetic"] is True
+    assert body["analysis"]["provenance"]["is_demo"] is False
+    record = client.app.state.structured_reports.get(body["report"]["id"])
+    assert record.report.is_synthetic is True
+    assert len(analyzer.calls) == 1

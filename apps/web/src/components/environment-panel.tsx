@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import {
   api,
   type EnvironmentalContext,
@@ -147,9 +147,6 @@ export function EnvironmentPanel() {
         (s) => s.status === "live" || s.status === "cached",
       ).length
     : 0;
-  const aq = context?.air_quality;
-  const weather = context?.weather;
-  const fires = context?.fires;
 
   return (
     <section
@@ -227,7 +224,20 @@ export function EnvironmentPanel() {
           {error}
         </p>
       )}
-      {context && (
+      {context && <EnvironmentReadings context={context} />}
+      <ForecastPanel key={`forecast-${point.sequence}`} lat={point.lat} lng={point.lng} />
+      <SatellitePanel key={point.sequence} lat={point.lat} lng={point.lng} />
+    </section>
+  );
+}
+
+export function EnvironmentReadings({ context }: { context: EnvironmentalContext }) {
+  const instanceId = useId();
+  const aq = context.air_quality;
+  const weather = context.weather;
+  const fires = context.fires;
+
+  return (
         <>
           <div className="context-meta">
             <span>
@@ -241,7 +251,7 @@ export function EnvironmentPanel() {
           <div className="environment-grid">
             <article
               className="source-card"
-              aria-labelledby="air-quality-title"
+              aria-labelledby={`${instanceId}-air-quality-title`}
             >
               <div className="section-label">
                 <span className="source-icon" aria-hidden="true">
@@ -249,7 +259,7 @@ export function EnvironmentPanel() {
                 </span>
                 <State source={context.source_statuses.air_quality} />
               </div>
-              <h3 id="air-quality-title">Air quality</h3>
+              <h3 id={`${instanceId}-air-quality-title`}>Air quality</h3>
               {aq ? (
                 <>
                   <div className="metric-value">
@@ -315,14 +325,14 @@ export function EnvironmentPanel() {
                 Google Air Quality ↗
               </a>
             </article>
-            <article className="source-card" aria-labelledby="weather-title">
+            <article className="source-card" aria-labelledby={`${instanceId}-weather-title`}>
               <div className="section-label">
                 <span className="source-icon" aria-hidden="true">
                   ↗
                 </span>
                 <State source={context.source_statuses.weather} />
               </div>
-              <h3 id="weather-title">Weather</h3>
+              <h3 id={`${instanceId}-weather-title`}>Weather</h3>
               {weather ? (
                 <>
                   <div className="metric-value">
@@ -409,14 +419,14 @@ export function EnvironmentPanel() {
                 Google Weather ↗
               </a>
             </article>
-            <article className="source-card" aria-labelledby="fires-title">
+            <article className="source-card" aria-labelledby={`${instanceId}-fires-title`}>
               <div className="section-label">
                 <span className="source-icon" aria-hidden="true">
                   ◈
                 </span>
                 <State source={context.source_statuses.fires} />
               </div>
-              <h3 id="fires-title">Nearby fire detections</h3>
+              <h3 id={`${instanceId}-fires-title`}>Nearby fire detections</h3>
               {fires ? (
                 <>
                   <div className="metric-value">
@@ -496,9 +506,6 @@ export function EnvironmentPanel() {
             </p>
           </div>
         </>
-      )}
-      <ForecastPanel key={`forecast-${point.sequence}`} lat={point.lat} lng={point.lng} />
-      <SatellitePanel key={point.sequence} lat={point.lat} lng={point.lng} />
-    </section>
+
   );
 }

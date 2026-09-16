@@ -41,4 +41,7 @@ async def corroborate(report_id: str, request: Request):
         record.report.longitude,
         current_result=ProviderResult(context.air_quality, context.source_statuses.air_quality),
     )
+    request.app.state.officer_cases.add(
+        record, assessment, request.app.state.structured_reports.remaining_ttl(report_id)
+    )
     return assessment

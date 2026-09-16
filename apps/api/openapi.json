@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 2E. Provider forecast outlook separate from evidence corroboration. No causal attribution. Demo incident sharing is simulated.",
-    "version": "0.6.0"
+    "description": "Phase 3A. Spatial command center and ephemeral officer review. No causal attribution. Demo incident sharing is simulated.",
+    "version": "0.7.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -379,6 +379,125 @@
               }
             },
             "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review/cases": {
+      "get": {
+        "tags": [
+          "Officer review"
+        ],
+        "summary": "Cases",
+        "operationId": "cases_api_v1_review_cases_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CaseSummary"
+                  },
+                  "type": "array",
+                  "title": "Response Cases Api V1 Review Cases Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review/cases/{case_id}": {
+      "get": {
+        "tags": [
+          "Officer review"
+        ],
+        "summary": "Case",
+        "operationId": "case_api_v1_review_cases__case_id__get",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficerCase"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review/cases/{case_id}/review": {
+      "post": {
+        "tags": [
+          "Officer review"
+        ],
+        "summary": "Review",
+        "operationId": "review_api_v1_review_cases__case_id__review_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficerCase"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -938,6 +1057,11 @@
             "maxLength": 2000,
             "title": "Description",
             "default": ""
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic",
+            "default": false
           }
         },
         "type": "object",
@@ -947,6 +1071,99 @@
           "longitude"
         ],
         "title": "Body_analyze_api_v1_citizen_reports_analyze_post"
+      },
+      "CaseSnapshot": {
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/StructuredReport"
+          },
+          "assessment": {
+            "$ref": "#/components/schemas/CorroborationAssessment"
+          },
+          "jurisdiction": {
+            "$ref": "#/components/schemas/JurisdictionResolution"
+          },
+          "evidence_sha256": {
+            "type": "string",
+            "title": "Evidence Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "record",
+          "assessment",
+          "jurisdiction",
+          "evidence_sha256"
+        ],
+        "title": "CaseSnapshot"
+      },
+      "CaseSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "report_id": {
+            "type": "string",
+            "title": "Report Id"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Submitted At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic"
+          },
+          "jurisdiction": {
+            "$ref": "#/components/schemas/JurisdictionResolution"
+          },
+          "support_level": {
+            "$ref": "#/components/schemas/SupportLevel"
+          },
+          "review": {
+            "$ref": "#/components/schemas/OfficerReview"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "report_id",
+          "event_type",
+          "latitude",
+          "longitude",
+          "submitted_at",
+          "expires_at",
+          "is_synthetic",
+          "jurisdiction",
+          "support_level",
+          "review"
+        ],
+        "title": "CaseSummary"
       },
       "CitizenAnalysisResponse": {
         "properties": {
@@ -1040,6 +1257,11 @@
       },
       "CitizenReport": {
         "properties": {
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic",
+            "default": false
+          },
           "id": {
             "type": "string",
             "title": "Id"
@@ -1090,6 +1312,7 @@
         "additionalProperties": false,
         "type": "object",
         "required": [
+          "is_synthetic",
           "id",
           "created_at",
           "latitude",
@@ -2522,6 +2745,58 @@
         ],
         "title": "Jurisdiction"
       },
+      "JurisdictionResolution": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "Delhi",
+              "Haryana",
+              "Uttar Pradesh",
+              "Unknown"
+            ],
+            "title": "State"
+          },
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "method": {
+            "type": "string",
+            "const": "prototype_lookup_area_v1",
+            "title": "Method",
+            "default": "prototype_lookup_area_v1"
+          },
+          "authoritative": {
+            "type": "boolean",
+            "const": false,
+            "title": "Authoritative",
+            "default": false
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": "Configuration-backed prototype area, not an official administrative boundary. Informational only; verify jurisdiction independently. No authority routing."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state",
+          "area",
+          "method",
+          "authoritative",
+          "note"
+        ],
+        "title": "JurisdictionResolution"
+      },
       "Measurement": {
         "properties": {
           "value": {
@@ -2797,6 +3072,89 @@
         ],
         "title": "NextStep"
       },
+      "OfficerCase": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/CaseSnapshot"
+          },
+          "review": {
+            "$ref": "#/components/schemas/OfficerReview"
+          },
+          "storage": {
+            "type": "string",
+            "const": "ephemeral_process_local",
+            "title": "Storage",
+            "default": "ephemeral_process_local"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "expires_at",
+          "snapshot",
+          "review",
+          "storage"
+        ],
+        "title": "OfficerCase"
+      },
+      "OfficerReview": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/ReviewState",
+            "default": "NEW"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Revision",
+            "default": 0
+          },
+          "action_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action At"
+          },
+          "allowed_transitions": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewState"
+            },
+            "type": "array",
+            "title": "Allowed Transitions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state",
+          "revision",
+          "action_at",
+          "allowed_transitions"
+        ],
+        "title": "OfficerReview"
+      },
       "PollutantMeasurement": {
         "properties": {
           "code": {
@@ -3055,6 +3413,36 @@
           "detail"
         ],
         "title": "ReportUnavailable"
+      },
+      "ReviewRequest": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state",
+          "expected_revision"
+        ],
+        "title": "ReviewRequest"
+      },
+      "ReviewState": {
+        "type": "string",
+        "enum": [
+          "NEW",
+          "UNDER_REVIEW",
+          "ACKNOWLEDGED",
+          "MONITORING",
+          "CLOSED_NO_ACTION"
+        ],
+        "title": "ReviewState"
       },
       "RiskLevel": {
         "type": "string",
@@ -3579,6 +3967,27 @@
           "message"
         ],
         "title": "SourceSummary"
+      },
+      "StructuredReport": {
+        "properties": {
+          "report": {
+            "$ref": "#/components/schemas/CitizenReport"
+          },
+          "analysis": {
+            "$ref": "#/components/schemas/GeminiEvidenceAnalysis"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/CitizenVisualSignal"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "report",
+          "analysis",
+          "evidence"
+        ],
+        "title": "StructuredReport"
       },
       "SupportLevel": {
         "type": "string",

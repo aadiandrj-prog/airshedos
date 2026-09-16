@@ -51,6 +51,7 @@ class Jurisdiction(DomainModel):
 
 
 class CitizenReport(DomainModel):
+    is_synthetic: bool = False
     id: str
     created_at: AwareDatetime
     latitude: Latitude

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { api, type SatelliteContext } from "@/lib/api";
 
 const labels = { no2: "NO₂", co: "CO", aerosol_index: "UV Aerosol Index" };
@@ -62,12 +62,17 @@ export function SatellitePanel({ lat, lng }: { lat: number; lng: number }) {
     };
   }, [lat, lng]);
 
+  return <SatelliteReadings context={context} error={error} />;
+}
+
+export function SatelliteReadings({ context, error = false }: { context: SatelliteContext | null; error?: boolean }) {
+  const titleId = useId();
   return (
-    <section className="satellite-panel" aria-labelledby="satellite-title">
+    <section className="satellite-panel" aria-labelledby={titleId}>
       <div className="environment-heading">
         <div>
           <span className="eyebrow">SATELLITE ATMOSPHERIC EVIDENCE</span>
-          <h3 id="satellite-title">Latest usable satellite observations</h3>
+          <h3 id={titleId}>Latest usable satellite observations</h3>
           <p>Sentinel-5P / TROPOMI · Regional atmospheric context</p>
         </div>
         {context && (

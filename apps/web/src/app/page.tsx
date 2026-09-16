@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type Incident } from "@/lib/api";
-import { OperationsPane } from "@/components/operations-pane";
+import { api, type Incident, type OfficerCase, type CorroborationAssessment } from "@/lib/api";
+import { OfficerCommandCenter } from "@/components/officer-command-center";
 import { CitizenEvidencePanel } from "@/components/citizen-evidence-panel";
 import { EnvironmentPanel } from "@/components/environment-panel";
 
@@ -20,6 +20,11 @@ const timestamp = (value: string) =>
   }).format(new Date(value)) + " IST";
 
 export default function CommandCenter() {
+  const [officerCase, setOfficerCase] = useState<OfficerCase | null>(null);
+  async function enterQueue(assessment: CorroborationAssessment, signal: AbortSignal) {
+    try { const item = await api.case(assessment.id); if (signal.aborted) return false; setOfficerCase(item); return true; }
+    catch { return false; }
+  }
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -179,8 +184,9 @@ export default function CommandCenter() {
             ↻ Refresh
           </button>
         </div>
+        <OfficerCommandCenter incident={selected ?? null} selectedCase={officerCase} onCase={setOfficerCase} />
         <EnvironmentPanel />
-        <CitizenEvidencePanel />
+        <CitizenEvidencePanel onCorroborated={enterQueue} />
         <div className="workspace-heading" id="incident-command">
           <span className="eyebrow">03 / DEMO INCIDENT WORKSPACE</span>
           <h2>From evidence to action.</h2>
@@ -245,7 +251,7 @@ export default function CommandCenter() {
               <>
                 <div className="command-grid">
                   <div className="geography-column">
-                    <OperationsPane incident={selected} />
+
                     <section
                       className="forecast-card"
                       aria-labelledby="forecast-title"

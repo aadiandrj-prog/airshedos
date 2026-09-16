@@ -1,5 +1,9 @@
 import type { components } from "./api-schema";
 
+export type OfficerCase = components["schemas"]["OfficerCase"];
+export type CaseSummary = components["schemas"]["CaseSummary"];
+export type ReviewState = components["schemas"]["ReviewState"];
+
 export type ForecastContext =
   components["schemas"]["AirQualityForecastContext"];
 
@@ -41,6 +45,18 @@ async function request<T>(
 }
 
 export const api = {
+  cases: () => request<CaseSummary[]>("/api/v1/review/cases"),
+  case: (id: string) => request<OfficerCase>(`/api/v1/review/cases/${encodeURIComponent(id)}`),
+  review: async (id: string, state: ReviewState, revision: number): Promise<OfficerCase> => {
+    const response = await fetch(`${API_BASE}/api/v1/review/cases/${encodeURIComponent(id)}/review`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state, expected_revision: revision }), signal: AbortSignal.timeout(10000),
+    });
+    if (response.status === 409) throw new Error("Review changed or transition is no longer allowed. Refresh the case.");
+    if (response.status === 404) throw new Error("Case expired or unavailable. Submit and corroborate a new report.");
+    if (!response.ok) throw new Error("Review could not be saved. Please retry.");
+    return response.json() as Promise<OfficerCase>;
+  },
   forecast: async (
     lat: number,
     lng: number,

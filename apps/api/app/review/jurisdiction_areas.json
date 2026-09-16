@@ -1,0 +1,5 @@
+[
+  {"state": "Haryana", "area": "Gurugram prototype interior", "south": 28.40, "north": 28.53, "west": 76.97, "east": 77.07},
+  {"state": "Delhi", "area": "Central Delhi prototype interior", "south": 28.58, "north": 28.68, "west": 77.16, "east": 77.25},
+  {"state": "Uttar Pradesh", "area": "Noida prototype interior", "south": 28.52, "north": 28.60, "west": 77.35, "east": 77.41}
+]
