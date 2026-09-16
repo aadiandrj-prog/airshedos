@@ -1,3 +1,5 @@
+import os
+
 import ee
 import httplib2
 import httpx
@@ -21,6 +23,10 @@ def no_external_network(monkeypatch):
         "GEMINI_API_KEY",
     ):
         monkeypatch.delenv(name, raising=False)
+
+    for name in tuple(os.environ):
+        if name.startswith("CORROBORATION_"):
+            monkeypatch.delenv(name)
 
     def blocked_sync(*args, **kwargs):
         raise AssertionError("Live Earth Engine networking is forbidden in unit tests")

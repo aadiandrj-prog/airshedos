@@ -1,5 +1,8 @@
 import type { components } from "./api-schema";
 
+export type CorroborationAssessment =
+  components["schemas"]["CorroborationAssessment"];
+
 export type CitizenAnalysis = components["schemas"]["CitizenAnalysisResponse"];
 
 export type Incident = components["schemas"]["PollutionIncident"];
@@ -35,6 +38,28 @@ async function request<T>(
 }
 
 export const api = {
+  corroborate: async (
+    reportId: string,
+    signal: AbortSignal,
+  ): Promise<CorroborationAssessment> => {
+    const response = await fetch(
+      `${API_BASE}/api/v1/citizen-reports/${encodeURIComponent(reportId)}/corroborate`,
+      {
+        method: "POST",
+        cache: "no-store",
+        signal: AbortSignal.any([signal, AbortSignal.timeout(70000)]),
+      },
+    );
+    if (response.status === 404 || response.status === 410)
+      throw new Error(
+        "Report expired or unavailable. Analyze the image again to corroborate it.",
+      );
+    if (!response.ok)
+      throw new Error(
+        "Environmental corroboration could not complete. Please try again.",
+      );
+    return response.json() as Promise<CorroborationAssessment>;
+  },
   analyzeCitizen: async (data: FormData): Promise<CitizenAnalysis> => {
     const response = await fetch(`${API_BASE}/api/v1/citizen-reports/analyze`, {
       method: "POST",

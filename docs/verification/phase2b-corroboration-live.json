@@ -1,0 +1,922 @@
+{
+  "generated_at": "2026-09-13T06:48:12.595151+00:00",
+  "note": "Image-location pairing is synthetic; this verifies pipeline behavior, not event truth.",
+  "mode": "full",
+  "latitude": 28.4595,
+  "longitude": 77.0266,
+  "image": "synthetic open-burning.png; see citizen-evaluation/README.md",
+  "authentication": "backend Vertex / Earth Engine ADC; existing ground provider keys",
+  "gemini_wall_latency_ms": 4389.17,
+  "citizen": {
+    "request_id": "f90c8ec9-0118-40aa-a7d2-b32c672ff9f2",
+    "status": "interpreted",
+    "report": {
+      "id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+      "created_at": "2026-09-13T06:48:12.723646Z",
+      "latitude": 28.4595,
+      "longitude": 77.0266,
+      "description": "",
+      "language": "und",
+      "image_url": null,
+      "source_type": "citizen_report"
+    },
+    "analysis": {
+      "event_type": "open_burning",
+      "event_type_confidence": "high",
+      "visible_smoke": true,
+      "visible_flames": true,
+      "visible_dust": false,
+      "industrial_context": false,
+      "construction_context": false,
+      "waste_burning_context": false,
+      "vegetation_burning_context": true,
+      "traffic_context": false,
+      "scene_type": "outdoor",
+      "apparent_scale": "localized",
+      "visual_observations": [
+        "Gray plume or cloud-like feature visible.",
+        "Flame-like features visible.",
+        "Open ground visible.",
+        "Vegetation visible."
+      ],
+      "uncertainty_reasons": [
+        "Image alone cannot establish source or pollutant type.",
+        "Material composition cannot be established visually.",
+        "Image alone cannot establish pollutant concentration or air quality."
+      ],
+      "insufficient_evidence": false,
+      "source_report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+      "analyzed_at": "2026-09-13T06:48:17.047467Z",
+      "provenance": {
+        "source_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+        "method": "vertex_ai_gemini_multimodal",
+        "is_demo": false,
+        "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+        "model": "gemini-3.1-flash-lite",
+        "model_version": "gemini-3.1-flash-lite",
+        "prompt_version": "citizen_evidence_v1",
+        "generated_at": "2026-09-13T06:48:17.047467Z",
+        "source_report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+        "derived": true,
+        "author": "model",
+        "confidence_basis": "model_estimated_ordinal_not_calibrated"
+      },
+      "safety_note": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation."
+    },
+    "evidence": {
+      "id": "CE-f95202b4-662c-4976-951e-f5ec313e3fa2",
+      "signal_type": "citizen_report",
+      "source": "gemini_multimodal",
+      "status": "interpreted",
+      "confidence": null,
+      "observed_at": null,
+      "summary": "Possible event type: open burning. Visual evidence only; requires environmental corroboration.",
+      "provenance": {
+        "source_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+        "method": "vertex_ai_gemini_multimodal",
+        "is_demo": false,
+        "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+        "model": "gemini-3.1-flash-lite",
+        "model_version": "gemini-3.1-flash-lite",
+        "prompt_version": "citizen_evidence_v1",
+        "generated_at": "2026-09-13T06:48:17.047467Z",
+        "source_report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+        "derived": true,
+        "author": "model",
+        "confidence_basis": "model_estimated_ordinal_not_calibrated"
+      },
+      "raw_reference": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+      "source_report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+      "derived": true,
+      "interpretation_at": "2026-09-13T06:48:17.047467Z"
+    },
+    "message": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+    "latency_ms": 4324.08,
+    "structured_report_ttl_seconds": 1800
+  },
+  "gemini_http_status": 200,
+  "corroboration_wall_latency_ms": 11684.32,
+  "corroboration_http_status": 200,
+  "assessment": {
+    "id": "CA-b58e7e7f9d4c066b6ef339b3",
+    "report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+    "generated_at": "2026-09-13T06:48:28.730541Z",
+    "event_type": "open_burning",
+    "event_family": "COMBUSTION",
+    "support_level": "WEAK",
+    "recommended_next_step": "MONITOR",
+    "temporal_basis": "submission_time_proxy",
+    "submission_time": "2026-09-13T06:48:12.723646Z",
+    "rules": [
+      {
+        "rule_id": "CITIZEN.VISUAL.v1",
+        "source": "Citizen visual",
+        "verdict": "SUPPORTS",
+        "summary": "High ordinal visual support for a possible event.",
+        "inputs_used": {
+          "event_type": "open_burning",
+          "ordinal_confidence": "high",
+          "visible_smoke": true,
+          "visible_flames": true,
+          "visible_dust": false,
+          "visual_observations": [
+            "Gray plume or cloud-like feature visible.",
+            "Flame-like features visible.",
+            "Open ground visible.",
+            "Vegetation visible."
+          ],
+          "capture_time_known": false,
+          "citizen_text_contributes": false
+        },
+        "evidence_references": [
+          {
+            "source_id": "CE-f95202b4-662c-4976-951e-f5ec313e3fa2",
+            "observed_at": null,
+            "retrieved_at": "2026-09-13T06:48:17.047467Z",
+            "age_seconds": null,
+            "submission_offset_seconds": null,
+            "provenance": {
+              "source_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+              "method": "vertex_ai_gemini_multimodal",
+              "is_demo": false,
+              "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+              "model": "gemini-3.1-flash-lite",
+              "model_version": "gemini-3.1-flash-lite",
+              "prompt_version": "citizen_evidence_v1",
+              "generated_at": "2026-09-13T06:48:17.047467Z",
+              "source_report_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+              "derived": true,
+              "author": "model",
+              "confidence_basis": "model_estimated_ordinal_not_calibrated"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "AQ.CPCB.v1",
+        "source": "Current air quality",
+        "verdict": "NEUTRAL",
+        "summary": "CPCB AQI 65 adds no regional particulate support.",
+        "inputs_used": {
+          "provider_status": "live",
+          "index_required": "ind_cpcb",
+          "max_age_hours": 2,
+          "neutral_max": 100,
+          "weak_max": 200,
+          "valid_max": 500,
+          "age_seconds": 2908.730541,
+          "cpcb_aqi": 65.0,
+          "dominant_pollutant": "pm10",
+          "eligible_dominant_pollutants": [
+            "pm10",
+            "pm25"
+          ]
+        },
+        "evidence_references": [
+          {
+            "source_id": "google_air_quality",
+            "observed_at": "2026-09-13T06:00:00Z",
+            "retrieved_at": "2026-09-13T06:48:18.788278Z",
+            "age_seconds": 2908.730541,
+            "submission_offset_seconds": -2892.723646,
+            "provenance": {
+              "source_id": "google_air_quality",
+              "method": "Google currentConditions lookup",
+              "is_demo": false,
+              "note": "Provider estimates; not a new regulatory monitoring station. Index scales and source units are preserved.",
+              "documentation_url": "https://developers.google.com/maps/documentation/air-quality/current-conditions"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "FIRMS.PROXIMITY.v1",
+        "source": "Nearby fire",
+        "verdict": "NEUTRAL",
+        "summary": "No eligible nearby recent fire detection adds support; absence does not rule out combustion.",
+        "inputs_used": {
+          "provider_status": "live",
+          "very_near_km": 5,
+          "near_km": 15,
+          "regional_km": 25,
+          "max_age_hours": 24,
+          "strong_age_hours": 6,
+          "accepted_confidence": [
+            "n",
+            "h"
+          ],
+          "candidates": [
+            {
+              "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.37236:77.22545",
+              "distance_km": 21.72733344932966,
+              "age_seconds": 36868.730541,
+              "confidence": "n",
+              "eligibility": "regional_only"
+            },
+            {
+              "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.34751:77.22929",
+              "distance_km": 23.41153810813014,
+              "age_seconds": 36868.730541,
+              "confidence": "n",
+              "eligibility": "regional_only"
+            }
+          ]
+        },
+        "evidence_references": [
+          {
+            "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.37236:77.22545",
+            "observed_at": "2026-09-12T20:34:00Z",
+            "retrieved_at": "2026-09-13T06:48:18.499750Z",
+            "age_seconds": 36868.730541,
+            "submission_offset_seconds": -36852.723646,
+            "provenance": {
+              "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.37236:77.22545",
+              "method": "VIIRS_NOAA20_NRT; bounding box then radius filter",
+              "is_demo": false,
+              "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+              "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+            }
+          },
+          {
+            "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.34751:77.22929",
+            "observed_at": "2026-09-12T20:34:00Z",
+            "retrieved_at": "2026-09-13T06:48:18.499750Z",
+            "age_seconds": 36868.730541,
+            "submission_offset_seconds": -36852.723646,
+            "provenance": {
+              "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.34751:77.22929",
+              "method": "VIIRS_NOAA20_NRT; bounding box then radius filter",
+              "is_demo": false,
+              "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+              "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "WEATHER.WIND.v1",
+        "source": "Wind consistency",
+        "verdict": "NEUTRAL",
+        "summary": "No eligible recent fire candidate for wind comparison.",
+        "inputs_used": {
+          "provider_status": "live",
+          "max_age_hours": 1,
+          "tolerance_degrees": 45,
+          "min_speed_mps": 1,
+          "max_fire_time_gap_hours": 1,
+          "near_km": 15,
+          "fire_max_age_hours": 6,
+          "age_seconds": 10.343763
+        },
+        "evidence_references": [
+          {
+            "source_id": "google_weather",
+            "observed_at": "2026-09-13T06:48:18.386778Z",
+            "retrieved_at": "2026-09-13T06:48:18.537211Z",
+            "age_seconds": 10.343763,
+            "submission_offset_seconds": 5.663132,
+            "provenance": {
+              "source_id": "google_weather",
+              "method": "Google currentConditions lookup",
+              "is_demo": false,
+              "note": "Wind degrees indicate origin, clockwise from north; 360 is normalized to 0. QPF is provider precipitation estimate.",
+              "documentation_url": "https://developers.google.com/maps/documentation/weather/current-conditions"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "SATELLITE.NO2.v1",
+        "source": "Sentinel-5P no2",
+        "verdict": "NEUTRAL",
+        "summary": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality.",
+        "inputs_used": {
+          "product": "no2",
+          "provider_status": "live",
+          "availability": "available",
+          "max_age_hours": 24,
+          "contributes_to_support": false,
+          "value": 5.351062752739593e-05,
+          "unit": "mol/m²",
+          "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+          "band": "tropospheric_NO2_column_number_density",
+          "quality": "usable",
+          "age_seconds": 82638.730541
+        },
+        "evidence_references": [
+          {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+            "observed_at": "2026-09-12T07:51:10Z",
+            "retrieved_at": "2026-09-13T06:48:26.360834Z",
+            "age_seconds": 82638.730541,
+            "submission_offset_seconds": -82622.723646,
+            "provenance": {
+              "source_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+              "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+              "is_demo": false,
+              "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+              "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_NO2"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "SATELLITE.CO.v1",
+        "source": "Sentinel-5P co",
+        "verdict": "NEUTRAL",
+        "summary": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality.",
+        "inputs_used": {
+          "product": "co",
+          "provider_status": "live",
+          "availability": "available",
+          "max_age_hours": 24,
+          "contributes_to_support": false,
+          "value": 0.04325115046353522,
+          "unit": "mol/m²",
+          "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+          "band": "CO_column_number_density",
+          "quality": "usable",
+          "age_seconds": 82638.730541
+        },
+        "evidence_references": [
+          {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+            "observed_at": "2026-09-12T07:51:10Z",
+            "retrieved_at": "2026-09-13T06:48:28.116259Z",
+            "age_seconds": 82638.730541,
+            "submission_offset_seconds": -82622.723646,
+            "provenance": {
+              "source_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+              "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+              "is_demo": false,
+              "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+              "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_CO"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      },
+      {
+        "rule_id": "SATELLITE.AEROSOL_INDEX.v1",
+        "source": "Sentinel-5P aerosol_index",
+        "verdict": "NEUTRAL",
+        "summary": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality.",
+        "inputs_used": {
+          "product": "aerosol_index",
+          "provider_status": "live",
+          "availability": "available",
+          "max_age_hours": 24,
+          "contributes_to_support": false,
+          "value": -1.2593098568040946,
+          "unit": "dimensionless",
+          "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+          "band": "absorbing_aerosol_index",
+          "quality": "usable",
+          "age_seconds": 82638.730541
+        },
+        "evidence_references": [
+          {
+            "source_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+            "observed_at": "2026-09-12T07:51:10Z",
+            "retrieved_at": "2026-09-13T06:48:28.728452Z",
+            "age_seconds": 82638.730541,
+            "submission_offset_seconds": -82622.723646,
+            "provenance": {
+              "source_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+              "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+              "is_demo": false,
+              "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+              "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_AER_AI"
+            }
+          }
+        ],
+        "generated_at": "2026-09-13T06:48:28.730541Z"
+      }
+    ],
+    "aggregation_explanation": "Visual support exists; environmental context adds no independent event support.",
+    "contributing_rule_ids": [
+      "CITIZEN.VISUAL.v1"
+    ],
+    "source_summary": [
+      {
+        "source": "Citizen visual",
+        "status": "live",
+        "verdict": "SUPPORTS",
+        "message": "High ordinal visual support for a possible event."
+      },
+      {
+        "source": "Current air quality",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "CPCB AQI 65 adds no regional particulate support."
+      },
+      {
+        "source": "Nearby fire",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "No eligible nearby recent fire detection adds support; absence does not rule out combustion."
+      },
+      {
+        "source": "Wind consistency",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "No eligible recent fire candidate for wind comparison."
+      },
+      {
+        "source": "Sentinel-5P no2",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality."
+      },
+      {
+        "source": "Sentinel-5P co",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality."
+      },
+      {
+        "source": "Sentinel-5P aerosol_index",
+        "status": "live",
+        "verdict": "NEUTRAL",
+        "message": "Latest usable satellite observation is context only; native atmospheric columns/aerosol index do not establish ground concentration or event causality."
+      }
+    ],
+    "environmental_context": {
+      "latitude": 28.4595,
+      "longitude": 77.0266,
+      "requested_at": "2026-09-13T06:48:17.052027Z",
+      "generated_at": "2026-09-13T06:48:28.730541Z",
+      "requested_reference_time": "2026-09-13T06:48:12.723646Z",
+      "time_mode": "current",
+      "temporal_note": "AQ, weather and FIRMS query current conditions. Satellite uses its explicit search window.",
+      "satellite": {
+        "latitude": 28.4595,
+        "longitude": 77.0266,
+        "query_latitude": 28.4595,
+        "query_longitude": 77.0266,
+        "requested_at": "2026-09-13T06:48:17.052727Z",
+        "generated_at": "2026-09-13T06:48:28.729004Z",
+        "search_window": {
+          "start": "2026-09-10T06:48:12.723646Z",
+          "end": "2026-09-13T06:48:12.723646Z",
+          "lookback_hours": 72,
+          "end_mode": "explicit"
+        },
+        "retrieval_radius_km": 10.0,
+        "grid_scale_m": 1113.2,
+        "products": [
+          {
+            "product": "no2",
+            "status": "live",
+            "availability": "available",
+            "message": "Latest usable satellite observation in the requested window.",
+            "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+            "band": "tropospheric_NO2_column_number_density",
+            "unit": "mol/m²",
+            "observation": {
+              "product": "no2",
+              "value": 5.351062752739593e-05,
+              "unit": "mol/m²",
+              "observed_at": "2026-09-12T07:51:10Z",
+              "retrieved_at": "2026-09-13T06:48:26.360834Z",
+              "age_seconds": 82636.360834,
+              "collection": "COPERNICUS/S5P/NRTI/L3_NO2",
+              "band": "tropospheric_NO2_column_number_density",
+              "image_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+              "source_product_id": "S5P_NRTI_L2__NO2____20260912T075116_20260912T075616_46193_03_020901_20260912T083033",
+              "grid_scale_m": 1113.2,
+              "native_footprint": "5.5x3.5 km2",
+              "retrieval_radius_km": 10.0,
+              "statistic": "mean",
+              "quality": {
+                "status": "usable",
+                "catalog_qa_rule": "Catalog L3 ingestion: tropospheric NO2 QA >= 0.75",
+                "scene_quality": "NOMINAL",
+                "processing_status": "NRTI-processing product",
+                "valid_grid_cells": 241,
+                "applied_filters": [
+                  "Upstream L3 valid-pixel mask",
+                  "PRODUCT_QUALITY = NOMINAL",
+                  "PROCESSING_STATUS = NRTI-processing product",
+                  "Column >= -0.001 mol/m²; retain non-outlier negative values"
+                ],
+                "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+              },
+              "provenance": {
+                "source_id": "COPERNICUS/S5P/NRTI/L3_NO2/20260912T075116_20260912T083033",
+                "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+                "is_demo": false,
+                "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+                "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_NO2"
+              }
+            },
+            "scene_count": 4,
+            "quality_scene_count": 4,
+            "latency_ms": 9307.84,
+            "cache_hit": false
+          },
+          {
+            "product": "co",
+            "status": "live",
+            "availability": "available",
+            "message": "Latest usable satellite observation in the requested window.",
+            "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+            "band": "CO_column_number_density",
+            "unit": "mol/m²",
+            "observation": {
+              "product": "co",
+              "value": 0.04325115046353522,
+              "unit": "mol/m²",
+              "observed_at": "2026-09-12T07:51:10Z",
+              "retrieved_at": "2026-09-13T06:48:28.116259Z",
+              "age_seconds": 82638.116259,
+              "collection": "COPERNICUS/S5P/NRTI/L3_CO",
+              "band": "CO_column_number_density",
+              "image_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+              "source_product_id": "S5P_NRTI_L2__CO_____20260912T075116_20260912T075616_46193_03_020901_20260912T081853",
+              "grid_scale_m": 1113.2,
+              "native_footprint": "5.5x7.0 km2",
+              "retrieval_radius_km": 10.0,
+              "statistic": "mean",
+              "quality": {
+                "status": "usable",
+                "catalog_qa_rule": "Catalog L3 ingestion: CO QA >= 0.50",
+                "scene_quality": "NOMINAL",
+                "processing_status": "Nominal",
+                "valid_grid_cells": 320,
+                "applied_filters": [
+                  "Upstream L3 valid-pixel mask",
+                  "PRODUCT_QUALITY = NOMINAL",
+                  "PROCESSING_STATUS = Nominal",
+                  "Column >= -0.001 mol/m²; retain non-outlier negative values"
+                ],
+                "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+              },
+              "provenance": {
+                "source_id": "COPERNICUS/S5P/NRTI/L3_CO/20260912T075116_20260912T081853",
+                "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+                "is_demo": false,
+                "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+                "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_CO"
+              }
+            },
+            "scene_count": 4,
+            "quality_scene_count": 4,
+            "latency_ms": 1755.2,
+            "cache_hit": false
+          },
+          {
+            "product": "aerosol_index",
+            "status": "live",
+            "availability": "available",
+            "message": "Latest usable satellite observation in the requested window.",
+            "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+            "band": "absorbing_aerosol_index",
+            "unit": "dimensionless",
+            "observation": {
+              "product": "aerosol_index",
+              "value": -1.2593098568040946,
+              "unit": "dimensionless",
+              "observed_at": "2026-09-12T07:51:10Z",
+              "retrieved_at": "2026-09-13T06:48:28.728452Z",
+              "age_seconds": 82638.728452,
+              "collection": "COPERNICUS/S5P/NRTI/L3_AER_AI",
+              "band": "absorbing_aerosol_index",
+              "image_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+              "source_product_id": "S5P_NRTI_L2__AER_AI_20260912T075116_20260912T075616_46193_03_020901_20260912T081855",
+              "grid_scale_m": 1113.2,
+              "native_footprint": "5.5x3.5 km2",
+              "retrieval_radius_km": 10.0,
+              "statistic": "mean",
+              "quality": {
+                "status": "usable",
+                "catalog_qa_rule": "Catalog L3 ingestion: AER_AI QA >= 0.80",
+                "scene_quality": "NOMINAL",
+                "processing_status": "Nominal",
+                "valid_grid_cells": 323,
+                "applied_filters": [
+                  "Upstream L3 valid-pixel mask",
+                  "PRODUCT_QUALITY = NOMINAL",
+                  "PROCESSING_STATUS = Nominal"
+                ],
+                "note": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score."
+              },
+              "provenance": {
+                "source_id": "COPERNICUS/S5P/NRTI/L3_AER_AI/20260912T075116_20260912T081855",
+                "method": "Mean of valid L3 cells within buffered point; latest usable scene independently per product",
+                "is_demo": false,
+                "note": "Gridded scale is not native sensor footprint. L3 QA is pre-applied; no confidence percentage inferred.",
+                "documentation_url": "https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_NRTI_L3_AER_AI"
+              }
+            },
+            "scene_count": 3,
+            "quality_scene_count": 3,
+            "latency_ms": 612.05,
+            "cache_hit": false
+          }
+        ],
+        "provider_status": {
+          "provider": "earth_engine_sentinel5p",
+          "configured": true,
+          "status": "live",
+          "message": "Fresh search; acquisition times and availability are per product.",
+          "retrieved_at": "2026-09-13T06:48:28.729004Z",
+          "latency_ms": 11677.29
+        },
+        "availability": "complete",
+        "provenance": {
+          "source_id": "earth_engine_sentinel5p",
+          "method": "Sentinel-5P NRTI L3; independent latest usable scene per product",
+          "is_demo": false,
+          "note": "Copernicus Sentinel-5P / TROPOMI via Google Earth Engine. Regional atmospheric context, not surface concentration or causal attribution.",
+          "documentation_url": "https://developers.google.com/earth-engine/datasets/tags/s5p"
+        },
+        "temporal_note": "Latest usable observation per product; acquisition times may differ. Not real-time.",
+        "measurement_note": "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations."
+      },
+      "air_quality": {
+        "latitude": 28.4595,
+        "longitude": 77.0266,
+        "observed_at": "2026-09-13T06:00:00Z",
+        "retrieved_at": "2026-09-13T06:48:18.788278Z",
+        "status": "live",
+        "provenance": {
+          "source_id": "google_air_quality",
+          "method": "Google currentConditions lookup",
+          "is_demo": false,
+          "note": "Provider estimates; not a new regulatory monitoring station. Index scales and source units are preserved.",
+          "documentation_url": "https://developers.google.com/maps/documentation/air-quality/current-conditions"
+        },
+        "region_code": "in",
+        "indexes": [
+          {
+            "code": "uaqi",
+            "display_name": "Universal AQI",
+            "value": 37.0,
+            "category": "Low air quality",
+            "dominant_pollutant": "pm10"
+          },
+          {
+            "code": "ind_cpcb",
+            "display_name": "NAQI (IN)",
+            "value": 65.0,
+            "category": "Satisfactory air quality",
+            "dominant_pollutant": "pm10"
+          }
+        ],
+        "pollutants": [
+          {
+            "code": "co",
+            "name": "CO",
+            "full_name": "Carbon monoxide",
+            "concentration": {
+              "value": 866.07,
+              "unit": "PARTS_PER_BILLION"
+            }
+          },
+          {
+            "code": "no2",
+            "name": "NO2",
+            "full_name": "Nitrogen dioxide",
+            "concentration": {
+              "value": 6.25,
+              "unit": "PARTS_PER_BILLION"
+            }
+          },
+          {
+            "code": "o3",
+            "name": "O3",
+            "full_name": "Ozone",
+            "concentration": {
+              "value": 8.3,
+              "unit": "PARTS_PER_BILLION"
+            }
+          },
+          {
+            "code": "pm10",
+            "name": "PM10",
+            "full_name": "Inhalable particulate matter (<10µm)",
+            "concentration": {
+              "value": 106.45,
+              "unit": "MICROGRAMS_PER_CUBIC_METER"
+            }
+          },
+          {
+            "code": "pm25",
+            "name": "PM2.5",
+            "full_name": "Fine particulate matter (<2.5µm)",
+            "concentration": {
+              "value": 34.0,
+              "unit": "MICROGRAMS_PER_CUBIC_METER"
+            }
+          },
+          {
+            "code": "so2",
+            "name": "SO2",
+            "full_name": "Sulfur dioxide",
+            "concentration": {
+              "value": 5.54,
+              "unit": "PARTS_PER_BILLION"
+            }
+          },
+          {
+            "code": "nh3",
+            "name": "NH3",
+            "full_name": "Ammonia",
+            "concentration": {
+              "value": 42.61,
+              "unit": "PARTS_PER_BILLION"
+            }
+          }
+        ]
+      },
+      "weather": {
+        "latitude": 28.4595,
+        "longitude": 77.0266,
+        "observed_at": "2026-09-13T06:48:18.386778Z",
+        "retrieved_at": "2026-09-13T06:48:18.537211Z",
+        "status": "live",
+        "provenance": {
+          "source_id": "google_weather",
+          "method": "Google currentConditions lookup",
+          "is_demo": false,
+          "note": "Wind degrees indicate origin, clockwise from north; 360 is normalized to 0. QPF is provider precipitation estimate.",
+          "documentation_url": "https://developers.google.com/maps/documentation/weather/current-conditions"
+        },
+        "temperature": {
+          "value": 33.4,
+          "unit": "CELSIUS"
+        },
+        "relative_humidity_percent": 60.0,
+        "wind_speed": {
+          "value": 14.0,
+          "unit": "KILOMETERS_PER_HOUR"
+        },
+        "wind_from_degrees": 94.0,
+        "wind_cardinal": "EAST",
+        "sea_level_pressure": {
+          "value": 1010.16,
+          "unit": "MILLIBARS"
+        },
+        "precipitation_probability_percent": 8.0,
+        "precipitation_qpf": {
+          "value": 0.08,
+          "unit": "MILLIMETERS"
+        },
+        "cloud_cover_percent": 26.0
+      },
+      "fires": [
+        {
+          "latitude": 28.37236,
+          "longitude": 77.22545,
+          "observed_at": "2026-09-12T20:34:00Z",
+          "retrieved_at": "2026-09-13T06:48:18.499750Z",
+          "status": "live",
+          "provenance": {
+            "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.37236:77.22545",
+            "method": "VIIRS_NOAA20_NRT; bounding box then radius filter",
+            "is_demo": false,
+            "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+            "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+          },
+          "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.37236:77.22545",
+          "description": "Nearby active-fire detection",
+          "confidence": "n",
+          "satellite": "N20",
+          "instrument": "VIIRS",
+          "brightness": {
+            "value": 314.78,
+            "unit": "KELVIN"
+          },
+          "fire_radiative_power": {
+            "value": 2.36,
+            "unit": "MEGAWATTS"
+          },
+          "distance_from_query_km": 21.727
+        },
+        {
+          "latitude": 28.34751,
+          "longitude": 77.22929,
+          "observed_at": "2026-09-12T20:34:00Z",
+          "retrieved_at": "2026-09-13T06:48:18.499750Z",
+          "status": "live",
+          "provenance": {
+            "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.34751:77.22929",
+            "method": "VIIRS_NOAA20_NRT; bounding box then radius filter",
+            "is_demo": false,
+            "note": "Thermal detection, not proof of burning type or pollution causation. Confidence l/n/h is categorical, not a probability.",
+            "documentation_url": "https://firms.modaps.eosdis.nasa.gov/api/area/"
+          },
+          "source_id": "VIIRS_NOAA20_NRT:N20:2026-09-12T20:34:00+00:00:28.34751:77.22929",
+          "description": "Nearby active-fire detection",
+          "confidence": "n",
+          "satellite": "N20",
+          "instrument": "VIIRS",
+          "brightness": {
+            "value": 317.36,
+            "unit": "KELVIN"
+          },
+          "fire_radiative_power": {
+            "value": 2.48,
+            "unit": "MEGAWATTS"
+          },
+          "distance_from_query_km": 23.412
+        }
+      ],
+      "fire_dataset": "VIIRS_NOAA20_NRT",
+      "fire_search_radius_km": 25.0,
+      "fire_window_days": 2,
+      "source_statuses": {
+        "air_quality": {
+          "provider": "google_air_quality",
+          "configured": true,
+          "status": "live",
+          "message": "Current response. Observation times may differ.",
+          "retrieved_at": "2026-09-13T06:48:18.788425Z",
+          "latency_ms": 1736.71
+        },
+        "weather": {
+          "provider": "google_weather",
+          "configured": true,
+          "status": "live",
+          "message": "Current response. Observation times may differ.",
+          "retrieved_at": "2026-09-13T06:48:18.537321Z",
+          "latency_ms": 1485.12
+        },
+        "fires": {
+          "provider": "nasa_firms",
+          "configured": true,
+          "status": "live",
+          "message": "Current response. Observation times may differ.",
+          "retrieved_at": "2026-09-13T06:48:18.503150Z",
+          "latency_ms": 1450.82
+        }
+      },
+      "incident_relationship": "independent_context_not_demo_corroboration"
+    },
+    "limitations": [
+      "Image capture time is unknown; environmental context is aligned to report submission time rather than verified capture time.",
+      "AQ/weather/FIRMS use current lookup; satellite uses a window ending at submission. Observation ages and signed offsets are explicit; the sources are not simultaneous.",
+      "Corroboration does not establish event truth, source causality, legal responsibility, emission quantity, a regulatory violation or precise health impact.",
+      "Support levels are deterministic checklist categories, not calibrated probabilities.",
+      "Citizen text is unverified context and never independently contributes support.",
+      "Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations. All three satellite products are context only.",
+      "No detection, satisfactory AQ or missing coverage cannot rule out a local event.",
+      "Wind is a single-location approximation; spatial variability and unknown image time prevent plume or source attribution. Recommendations are advisory only."
+    ],
+    "provenance": {
+      "source_id": "CR-ca6b58b6-ee02-4b5d-94fb-2d7609a34107",
+      "method": "deterministic_corroboration_v1",
+      "is_demo": false,
+      "note": "Server-owned structured evidence and normalized environmental observations; no additional model call or incident mutation."
+    },
+    "policy_version": "corroboration_v1"
+  },
+  "deterministic_replay_pass": true,
+  "cached_wall_latency_ms": 5.35,
+  "cached_source_statuses": {
+    "air_quality": {
+      "provider": "google_air_quality",
+      "configured": true,
+      "status": "cached",
+      "message": "Cached response; original observation and retrieval times retained.",
+      "retrieved_at": "2026-09-13T06:48:18.788425Z",
+      "latency_ms": 0.4
+    },
+    "weather": {
+      "provider": "google_weather",
+      "configured": true,
+      "status": "cached",
+      "message": "Cached response; original observation and retrieval times retained.",
+      "retrieved_at": "2026-09-13T06:48:18.537321Z",
+      "latency_ms": 0.23
+    },
+    "fires": {
+      "provider": "nasa_firms",
+      "configured": true,
+      "status": "cached",
+      "message": "Cached response; original observation and retrieval times retained.",
+      "retrieved_at": "2026-09-13T06:48:18.503150Z",
+      "latency_ms": 0.2
+    }
+  },
+  "cached_satellite_status": {
+    "provider": "earth_engine_sentinel5p",
+    "configured": true,
+    "status": "cached",
+    "message": "Cached satellite search; original retrieval and acquisition times retained.",
+    "retrieved_at": "2026-09-13T06:48:28.729004Z",
+    "latency_ms": 0.44
+  },
+  "all_environmental_transports_live": true,
+  "provider_cache_pass": true,
+  "repeat_support_level": "WEAK",
+  "demo_unchanged": true,
+  "gemini_calls": 1,
+  "gate": "PASS"
+}

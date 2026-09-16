@@ -1355,3 +1355,27 @@ footer {
     padding: 24px 0 0;
   }
 }
+
+/* Phase 2B extends the existing source-status editorial language. */
+.fusion-panel { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 24px; }
+.fusion-action { max-width: 760px; }
+.fusion-card { border: 1px solid var(--line); background: var(--paper); padding: 28px; margin-top: 24px; }
+.fusion-heading, .fusion-row-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.fusion-heading h3 { font: 32px Georgia, serif; text-transform: capitalize; margin: 8px 0 16px; }
+.fusion-level { font-size: 18px; color: var(--teal); }
+.fusion-level.insufficient, .fusion-level.conflicting { color: #dcc596; }
+.fusion-rows { margin: 24px 0; }
+.fusion-row { padding: 20px 0; border-top: 1px solid var(--line); }
+.fusion-row h4 { margin: 0; font-size: 15px; }
+.fusion-row p { margin: 10px 0; line-height: 1.6; }
+.fusion-card summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 8px 0; }
+.fusion-card details, .fusion-reference { overflow-wrap: anywhere; }
+.fusion-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 12px; }
+.fusion-inputs dt { color: var(--muted); }
+.fusion-inputs dd { margin: 4px 0 0; }
+.fusion-reference { font-size: 12px; padding: 8px 12px; border-left: 1px solid var(--line); margin: 12px 0; }
+.fusion-next { border-top: 1px solid var(--line); padding: 20px 0; }
+.fusion-next h4 { margin: 10px 0; text-transform: capitalize; font: 25px Georgia, serif; }
+.fusion-next p { font-size: 12px; color: var(--muted); }
+.fusion-card .context-footnote ul { padding-left: 18px; font-size: 12px; line-height: 1.7; }
+@media (max-width: 600px) { .fusion-card { padding: 18px; } .fusion-inputs { grid-template-columns: 1fr; } .fusion-action button { width: 100%; } }

@@ -1,4 +1,4 @@
-# Evidence sources — Phase 2A
+# Evidence sources — Phase 2B
 
 Current implementations use backend-only HTTP requests and the official Earth Engine Python SDK. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
 
@@ -63,7 +63,7 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gate 
 
 The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. The optional `--gate` makes a second identical request, verifies no additional outbound responses and unchanged observation/provenance data, then disables Weather only in that local service instance to check partial success. It prints a PASS/FAIL result (nonzero exit on gate failure) without altering `.env` or provider services. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](PHASE_1B_VERIFICATION.md) for the actual delivery result.
 
-Vertex AI prediction, historical storage, custom AQI conversion, evidence fusion scoring, Google Maps, jurisdiction interoperability and pollution-source attribution remain future work. Gemini visual interpretation is independently implemented in Phase 2A.
+Vertex AI prediction, historical storage, custom AQI conversion, Google Maps, jurisdiction interoperability and pollution-source attribution remain future work. Gemini visual interpretation is implemented; Phase 2B joins it through deterministic corroboration, with no probability scoring.
 
 ## Earth Engine / Sentinel-5P
 
@@ -156,7 +156,7 @@ The [official NO₂ Product User Manual v4.5.0](https://sentiwiki.copernicus.eu/
 
 ## Vertex Gemini — citizen visual interpretation (Phase 2A)
 
-Gemini is an interpreter of a submitted image, not an environmental sensor. Its categorical visual output has no pollutant units, no calibrated probability and no causal/source/enforcement conclusion. **Gemini interpretation is NOT incident corroboration.** Air Quality, Weather, FIRMS and Sentinel-5P remain separate evidence paths.
+Gemini is an interpreter of a submitted image, not an environmental sensor. Its categorical visual output has no pollutant units, no calibrated probability and no causal/source/enforcement conclusion. **Gemini interpretation alone is not corroboration.** Air Quality, Weather, FIRMS and Sentinel-5P remain independently retrieved evidence streams; Phase 2B joins them through a separate deterministic checklist.
 
 Configuration: existing `GOOGLE_CLOUD_PROJECT`, backend ADC, `GOOGLE_CLOUD_LOCATION=global`, `GEMINI_MODEL=gemini-3.1-flash-lite`, `GEMINI_TIMEOUT_SECONDS=30`. Enable `aiplatform.googleapis.com`; use an identity authorized to predict with Vertex. No new service account or long-lived key was introduced. Browser code receives only typed report/interpretation/provenance responses.
 
@@ -164,6 +164,12 @@ The chosen model supports image input and structured output, and is configurable
 
 Native evidence is an image plus optional citizen text and user-supplied coordinates. Image location/time are not independently verified. EXIF is stripped rather than used as ground truth. The model receives metadata-free image bytes and JSON-encoded untrusted context. Prompt `citizen_evidence_v1` disallows identity inference, source causality, material/toxicity claims, AQ measurements and enforcement conclusions. Only controlled visual feature/uncertainty statements enter the response. The unknown/insufficient case is `uncertain` with low ordinal confidence. Even `no_visible_pollution` describes the image, not actual air quality.
 
-Input: one JPEG/PNG, up to 5 MiB and 16 MP; no animated images. Inference uses at most 2048-pixel edges, 2,048 output tokens and one bounded request. No environmental fusion, persistence, explicit prompt cache or automatic retry is used. Temporary multipart spools close during the request; image bytes are not retained by AirshedOS after processing. Google-side processing is governed by the project's cloud policies, not an application promise of zero cloud retention.
+Input: one JPEG/PNG, up to 5 MiB and 16 MP; no animated images. Inference uses at most 2048-pixel edges, 2,048 output tokens and one bounded request. The Gemini call performs no fusion and uses no explicit prompt cache or automatic retry. A separate Phase 2B operation uses temporary structured metadata for deterministic corroboration. Temporary multipart spools close during the request; image bytes are not retained by AirshedOS after processing. Google-side processing is governed by the project's cloud policies, not an application promise of zero cloud retention.
 
 [Evaluation images and prompts](../apps/api/scripts/citizen-evaluation/README.md) are synthetic, not reports about real places. The [Phase 2A verification record](PHASE_2A_VERIFICATION.md) separates actual Vertex calls from mock-based CI and records limitations honestly.
+
+## Phase 2B evidence joining
+
+[CORROBORATION_RULES.md](CORROBORATION_RULES.md) defines exact applicability, thresholds, ages and aggregation, with official source references. Existing AQ/weather/FIRMS/Sentinel-5P adapters and scientific QA are unchanged. The checklist uses the provider's CPCB index only, nominal/high VIIRS detections for combustion context, and conditional wind consistency. Native NO₂/CO columns and dimensionless UVAI remain context-only; no source measurements are converted into incident probabilities.
+
+Photo capture time is unknown. Submission is a proxy reference, not proof of simultaneity. Missing coverage, low regional AQ and zero FIRMS detections do not contradict a local event. The live synthetic image and Gurugram coordinate are not paired ground truth; the Phase 2B exercise verifies pipeline behavior only.

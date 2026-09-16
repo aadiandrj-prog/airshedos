@@ -77,5 +77,6 @@
     "interpretation_at": "2026-09-12T22:49:20.209325Z"
   },
   "message": "AI interpretation \u2014 requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
-  "latency_ms": 0.97
+  "latency_ms": 0.97,
+  "structured_report_ttl_seconds": 1800
 }

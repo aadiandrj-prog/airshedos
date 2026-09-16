@@ -81,6 +81,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/citizen-reports/{report_id}/corroborate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Corroborate */
+        post: operations["corroborate_api_v1_citizen_reports__report_id__corroborate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -264,6 +281,8 @@ export interface components {
             message: string;
             /** Latency Ms */
             latency_ms: number;
+            /** Structured Report Ttl Seconds */
+            structured_report_ttl_seconds: number | null;
         };
         /** CitizenInputError */
         CitizenInputError: {
@@ -332,6 +351,72 @@ export interface components {
              * Format: date-time
              */
             interpretation_at: string;
+        };
+        /** CorroborationAssessment */
+        CorroborationAssessment: {
+            /** Id */
+            id: string;
+            /** Report Id */
+            report_id: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            event_type: components["schemas"]["EventType"];
+            event_family: components["schemas"]["EventFamily"];
+            support_level: components["schemas"]["SupportLevel"];
+            recommended_next_step: components["schemas"]["NextStep"];
+            /**
+             * Temporal Basis
+             * @default submission_time_proxy
+             * @constant
+             */
+            temporal_basis: "submission_time_proxy";
+            /**
+             * Submission Time
+             * Format: date-time
+             */
+            submission_time: string;
+            /** Rules */
+            rules: components["schemas"]["CorroborationRuleResult"][];
+            /** Aggregation Explanation */
+            aggregation_explanation: string;
+            /** Contributing Rule Ids */
+            contributing_rule_ids: string[];
+            /** Source Summary */
+            source_summary: components["schemas"]["SourceSummary"][];
+            environmental_context: components["schemas"]["EnvironmentalContext"];
+            /** Limitations */
+            limitations: string[];
+            provenance: components["schemas"]["Provenance"];
+            /**
+             * Policy Version
+             * @default corroboration_v1
+             * @constant
+             */
+            policy_version: "corroboration_v1";
+        };
+        /** CorroborationRuleResult */
+        CorroborationRuleResult: {
+            /** Rule Id */
+            rule_id: string;
+            /** Source */
+            source: string;
+            verdict: components["schemas"]["Verdict"];
+            /** Summary */
+            summary: string;
+            /** Inputs Used */
+            inputs_used: {
+                [key: string]: components["schemas"]["JsonValue"];
+            };
+            /** Evidence References */
+            evidence_references: components["schemas"]["EvidenceReference"][];
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
         };
         /** EnvironmentalContext */
         EnvironmentalContext: {
@@ -425,10 +510,33 @@ export interface components {
             fires: components["schemas"]["ProviderConfiguration"];
         };
         /**
+         * EventFamily
+         * @enum {string}
+         */
+        EventFamily: "COMBUSTION" | "DUST" | "ATMOSPHERIC_HAZE" | "TRAFFIC" | "NONE_OR_UNCERTAIN";
+        /**
          * EventType
          * @enum {string}
          */
         EventType: "open_burning" | "industrial_smoke" | "construction_dust" | "road_dust" | "vehicular_emissions" | "fire_or_combustion" | "haze_or_smog" | "no_visible_pollution" | "uncertain" | "other";
+        /** EvidenceReference */
+        EvidenceReference: {
+            /** Source Id */
+            source_id: string;
+            /** Observed At */
+            observed_at: string | null;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /** Age Seconds */
+            age_seconds: number | null;
+            /** Submission Offset Seconds */
+            submission_offset_seconds: number | null;
+            /** Provenance */
+            provenance: components["schemas"]["ModelProvenance"] | components["schemas"]["EnvironmentalProvenance"] | components["schemas"]["Provenance"];
+        };
         /** EvidenceSignal */
         EvidenceSignal: {
             /** Id */
@@ -599,6 +707,7 @@ export interface components {
          * @enum {string}
          */
         IncidentStatus: "open" | "acknowledged";
+        JsonValue: unknown;
         /** Jurisdiction */
         Jurisdiction: {
             /** Id */
@@ -701,6 +810,11 @@ export interface components {
              */
             confidence_basis: "model_estimated_ordinal_not_calibrated";
         };
+        /**
+         * NextStep
+         * @enum {string}
+         */
+        NextStep: "FIELD_VERIFICATION" | "MONITOR" | "REVIEW" | "NO_ACTION_FROM_CURRENT_EVIDENCE";
         /** PollutantMeasurement */
         PollutantMeasurement: {
             /** Code */
@@ -785,6 +899,14 @@ export interface components {
              * @enum {string}
              */
             configuration_state: "configured" | "not_configured";
+        };
+        /** ReportUnavailable */
+        ReportUnavailable: {
+            /**
+             * Detail
+             * @default Report expired or unavailable. Analyze the image again to corroborate it.
+             */
+            detail: string;
         };
         /**
          * RiskLevel
@@ -1001,6 +1123,20 @@ export interface components {
          * @enum {string}
          */
         SourceState: "live" | "cached" | "unavailable" | "not_configured" | "error";
+        /** SourceSummary */
+        SourceSummary: {
+            /** Source */
+            source: string;
+            status: components["schemas"]["SourceState"];
+            verdict: components["schemas"]["Verdict"];
+            /** Message */
+            message: string;
+        };
+        /**
+         * SupportLevel
+         * @enum {string}
+         */
+        SupportLevel: "STRONG" | "MODERATE" | "WEAK" | "INSUFFICIENT" | "CONFLICTING";
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1014,6 +1150,11 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /**
+         * Verdict
+         * @enum {string}
+         */
+        Verdict: "SUPPORTS" | "WEAKLY_SUPPORTS" | "NEUTRAL" | "CONTRADICTS" | "UNAVAILABLE" | "STALE" | "NOT_APPLICABLE";
         /**
          * VisualConfidence
          * @enum {string}
@@ -1166,6 +1307,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CitizenInputError"];
+                };
+            };
+        };
+    };
+    corroborate_api_v1_citizen_reports__report_id__corroborate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorroborationAssessment"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportUnavailable"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

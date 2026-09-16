@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 2A. Environmental providers and independent citizen interpretation. No evidence fusion or causal attribution. Demo incident sharing is simulated.",
-    "version": "0.4.0"
+    "description": "Phase 2B. Transparent deterministic evidence corroboration. No causal attribution. Demo incident sharing is simulated.",
+    "version": "0.5.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -266,6 +266,58 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CitizenInputError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/citizen-reports/{report_id}/corroborate": {
+      "post": {
+        "tags": [
+          "Citizen evidence"
+        ],
+        "summary": "Corroborate",
+        "operationId": "corroborate_api_v1_citizen_reports__report_id__corroborate_post",
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorroborationAssessment"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportUnavailable"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -716,6 +768,19 @@
             "type": "number",
             "minimum": 0.0,
             "title": "Latency Ms"
+          },
+          "structured_report_ttl_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3600.0,
+                "minimum": 60.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structured Report Ttl Seconds"
           }
         },
         "additionalProperties": false,
@@ -727,7 +792,8 @@
           "analysis",
           "evidence",
           "message",
-          "latency_ms"
+          "latency_ms",
+          "structured_report_ttl_seconds"
         ],
         "title": "CitizenAnalysisResponse"
       },
@@ -890,6 +956,162 @@
           "interpretation_at"
         ],
         "title": "CitizenVisualSignal"
+      },
+      "CorroborationAssessment": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "report_id": {
+            "type": "string",
+            "title": "Report Id"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "event_family": {
+            "$ref": "#/components/schemas/EventFamily"
+          },
+          "support_level": {
+            "$ref": "#/components/schemas/SupportLevel"
+          },
+          "recommended_next_step": {
+            "$ref": "#/components/schemas/NextStep"
+          },
+          "temporal_basis": {
+            "type": "string",
+            "const": "submission_time_proxy",
+            "title": "Temporal Basis",
+            "default": "submission_time_proxy"
+          },
+          "submission_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Submission Time"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/CorroborationRuleResult"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
+          "aggregation_explanation": {
+            "type": "string",
+            "title": "Aggregation Explanation"
+          },
+          "contributing_rule_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contributing Rule Ids"
+          },
+          "source_summary": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSummary"
+            },
+            "type": "array",
+            "title": "Source Summary"
+          },
+          "environmental_context": {
+            "$ref": "#/components/schemas/EnvironmentalContext"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "policy_version": {
+            "type": "string",
+            "const": "corroboration_v1",
+            "title": "Policy Version",
+            "default": "corroboration_v1"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "report_id",
+          "generated_at",
+          "event_type",
+          "event_family",
+          "support_level",
+          "recommended_next_step",
+          "temporal_basis",
+          "submission_time",
+          "rules",
+          "aggregation_explanation",
+          "contributing_rule_ids",
+          "source_summary",
+          "environmental_context",
+          "limitations",
+          "provenance",
+          "policy_version"
+        ],
+        "title": "CorroborationAssessment"
+      },
+      "CorroborationRuleResult": {
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "title": "Rule Id"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/Verdict"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "inputs_used": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "title": "Inputs Used"
+          },
+          "evidence_references": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "type": "array",
+            "title": "Evidence References"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rule_id",
+          "source",
+          "verdict",
+          "summary",
+          "inputs_used",
+          "evidence_references",
+          "generated_at"
+        ],
+        "title": "CorroborationRuleResult"
       },
       "EnvironmentalContext": {
         "properties": {
@@ -1151,6 +1373,17 @@
         ],
         "title": "EnvironmentalSources"
       },
+      "EventFamily": {
+        "type": "string",
+        "enum": [
+          "COMBUSTION",
+          "DUST",
+          "ATMOSPHERIC_HAZE",
+          "TRAFFIC",
+          "NONE_OR_UNCERTAIN"
+        ],
+        "title": "EventFamily"
+      },
       "EventType": {
         "type": "string",
         "enum": [
@@ -1166,6 +1399,78 @@
           "other"
         ],
         "title": "EventType"
+      },
+      "EvidenceReference": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed At"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "age_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Seconds"
+          },
+          "submission_offset_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submission Offset Seconds"
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ModelProvenance"
+              },
+              {
+                "$ref": "#/components/schemas/EnvironmentalProvenance"
+              },
+              {
+                "$ref": "#/components/schemas/Provenance"
+              }
+            ],
+            "title": "Provenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source_id",
+          "observed_at",
+          "retrieved_at",
+          "age_seconds",
+          "submission_offset_seconds",
+          "provenance"
+        ],
+        "title": "EvidenceReference"
       },
       "EvidenceSignal": {
         "properties": {
@@ -1693,6 +1998,7 @@
         ],
         "title": "IncidentStatus"
       },
+      "JsonValue": {},
       "Jurisdiction": {
         "properties": {
           "id": {
@@ -1987,6 +2293,16 @@
         ],
         "title": "ModelProvenance"
       },
+      "NextStep": {
+        "type": "string",
+        "enum": [
+          "FIELD_VERIFICATION",
+          "MONITOR",
+          "REVIEW",
+          "NO_ACTION_FROM_CURRENT_EVIDENCE"
+        ],
+        "title": "NextStep"
+      },
       "PollutantMeasurement": {
         "properties": {
           "code": {
@@ -2230,6 +2546,21 @@
           "configuration_state"
         ],
         "title": "ProviderConfiguration"
+      },
+      "ReportUnavailable": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "default": "Report expired or unavailable. Analyze the image again to corroborate it."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ReportUnavailable"
       },
       "RiskLevel": {
         "type": "string",
@@ -2728,6 +3059,44 @@
         ],
         "title": "SourceState"
       },
+      "SourceSummary": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/Verdict"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "source",
+          "status",
+          "verdict",
+          "message"
+        ],
+        "title": "SourceSummary"
+      },
+      "SupportLevel": {
+        "type": "string",
+        "enum": [
+          "STRONG",
+          "MODERATE",
+          "WEAK",
+          "INSUFFICIENT",
+          "CONFLICTING"
+        ],
+        "title": "SupportLevel"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -2767,6 +3136,19 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "Verdict": {
+        "type": "string",
+        "enum": [
+          "SUPPORTS",
+          "WEAKLY_SUPPORTS",
+          "NEUTRAL",
+          "CONTRADICTS",
+          "UNAVAILABLE",
+          "STALE",
+          "NOT_APPLICABLE"
+        ],
+        "title": "Verdict"
       },
       "VisualConfidence": {
         "type": "string",

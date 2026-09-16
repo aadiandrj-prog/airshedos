@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api, type CitizenAnalysis } from "@/lib/api";
 
+import { CorroborationCard } from "./corroboration-card";
+
 const label = (text: string) => text.replaceAll("_", " ");
 const time = (value: string) =>
   new Intl.DateTimeFormat("en-IN", {
@@ -155,8 +157,9 @@ export function CitizenEvidencePanel() {
             />
             <p className="source-caveat">
               Submitting sends this image and context to Google Vertex AI for
-              interpretation. AirshedOS does not retain the image or create a
-              report history. Avoid including identifying details.
+              interpretation. AirshedOS does not retain the image. Structured
+              report metadata and interpretation are held temporarily for
+              corroboration, then expire. Avoid including identifying details.
             </p>
             <div className="citizen-actions">
               <button type="submit" disabled={!file || busy}>
@@ -257,6 +260,13 @@ export function CitizenEvidencePanel() {
           </div>
         </div>
       </div>
+      {analysis && result && (
+        <CorroborationCard
+          key={result.report.id}
+          reportId={result.report.id}
+          ttlSeconds={result.structured_report_ttl_seconds}
+        />
+      )}
     </section>
   );
 }
