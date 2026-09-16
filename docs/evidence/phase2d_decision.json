@@ -1,0 +1,73 @@
+{
+  "model_version": "prediction_model_v1",
+  "dataset_version": "prediction_dataset_v2",
+  "verdict": "MODEL_NOT_ACCEPTED",
+  "selection_status": "NO_MODEL_ACCEPTED",
+  "decision_at": "2026-09-15T23:37:50.039040+00:00",
+  "training_code_commit": "612dd8683212c4a36781ba98b711b5f90698b5e4",
+  "policy_sha256": "3e2168b125af05a2f30f803a98fb3cf8e24dff329ac43ce48e6cded9b2ef449e",
+  "dataset_contract_sha256": "9c208bf246bcf83984d7054418d253dfb821de7ab20a97e65c8d73813ed42c5e",
+  "train_rows": 6768,
+  "validation_rows": 763,
+  "candidate_test_evaluations": 0,
+  "cv_configurations": 48,
+  "cv_fits": 144,
+  "serious_validation_candidates": 12,
+  "best_rejected_config": {
+    "family": "xgboost",
+    "subset": "CORE_PM",
+    "weighting": "station_balanced",
+    "transform": "log1p",
+    "parameters": {
+      "n_estimators": 150,
+      "learning_rate": 0.05,
+      "max_depth": 2,
+      "min_child_weight": 10,
+      "reg_lambda": 10.0,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8
+    }
+  },
+  "best_rejected_macro_station_mae": 61.92945627827984,
+  "reference_baseline_macro_station_mae": 53.92683452141457,
+  "go_no_go": {
+    "eligible": false,
+    "checks": {
+      "macro_improvement": false,
+      "pooled_not_materially_worse": false,
+      "no_catastrophic_station": false,
+      "majority_stations_improve": false,
+      "same_stations": true
+    }
+  },
+  "local_selection_seconds": 63.107009332976304,
+  "vertex_status": "NOT_SUBMITTED_NO_ELIGIBLE_MODEL",
+  "vertex_setup": {
+    "project": "airshedos",
+    "region": "us-central1",
+    "configured_bucket": false,
+    "vertex": {
+      "http_status": 200
+    },
+    "buckets": {
+      "http_status": 200,
+      "buckets": []
+    },
+    "artifact_repositories": {
+      "http_status": 403,
+      "error_status": "PERMISSION_DENIED",
+      "error_reasons": [
+        "SERVICE_DISABLED"
+      ]
+    }
+  },
+  "deferred_after_no_go": [
+    "final test",
+    "selected model bundle/input contract",
+    "station holdout",
+    "research ablation",
+    "feature importance",
+    "seed stability",
+    "Vertex training/container/parity"
+  ]
+}
