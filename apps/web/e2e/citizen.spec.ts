@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 import type { CitizenAnalysis } from "../src/lib/api";
 import fixture from "./fixtures/citizen.test.json";
 import environment from "./fixtures/environment.test.json";

@@ -1,5 +1,8 @@
 import type { components } from "./api-schema";
 
+export type ForecastContext =
+  components["schemas"]["AirQualityForecastContext"];
+
 export type CorroborationAssessment =
   components["schemas"]["CorroborationAssessment"];
 
@@ -38,6 +41,21 @@ async function request<T>(
 }
 
 export const api = {
+  forecast: async (
+    lat: number,
+    lng: number,
+    signal: AbortSignal,
+  ): Promise<ForecastContext> => {
+    const response = await fetch(
+      `${API_BASE}/api/v1/environment/forecast?${new URLSearchParams({ lat: String(lat), lng: String(lng) })}`,
+      {
+        cache: "no-store",
+        signal: AbortSignal.any([signal, AbortSignal.timeout(70000)]),
+      },
+    );
+    if (!response.ok) throw new Error("Provider forecast unavailable");
+    return response.json() as Promise<ForecastContext>;
+  },
   corroborate: async (
     reportId: string,
     signal: AbortSignal,

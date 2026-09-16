@@ -1,0 +1,941 @@
+{
+  "regionCode": "in",
+  "hourlyForecasts": [
+    {
+      "dateTime": "2026-09-16T01:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 105,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 32,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 63,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 13,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T02:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 110,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 34,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 66,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 14,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T03:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 115,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 36,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 69,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 15,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T04:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 120,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 38,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 72,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 16,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T05:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 125,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 40,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 75,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 17,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T06:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 130,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 42,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 78,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 18,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T07:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 135,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 44,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 81,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 19,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T08:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 140,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 46,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 84,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 20,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T09:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 145,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 48,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 87,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 21,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T10:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 150,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 50,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 90,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 22,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T11:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 155,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 52,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 93,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 23,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T12:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 160,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 54,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 96,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 24,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T13:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 165,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 56,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 99,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 25,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T14:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 170,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 58,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 102,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 26,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T15:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 175,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 60,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 105,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 27,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T16:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 180,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 62,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 108,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 28,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T17:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 185,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 64,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 111,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 29,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T18:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 190,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 66,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 114,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 30,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T19:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 195,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 68,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 117,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 31,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T20:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 200,
+          "category": "Moderate",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 70,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 120,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 32,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T21:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 205,
+          "category": "Poor",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 72,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 123,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 33,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T22:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 210,
+          "category": "Poor",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 74,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 126,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 34,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-16T23:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 215,
+          "category": "Poor",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 76,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 129,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 35,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    },
+    {
+      "dateTime": "2026-09-17T00:00:00+00:00",
+      "indexes": [
+        {
+          "code": "uaqi",
+          "aqi": 70,
+          "category": "Good air quality"
+        },
+        {
+          "code": "ind_cpcb",
+          "aqi": 220,
+          "category": "Poor",
+          "dominantPollutant": "pm25"
+        }
+      ],
+      "pollutants": [
+        {
+          "code": "pm25",
+          "concentration": {
+            "value": 78,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "pm10",
+          "concentration": {
+            "value": 132,
+            "units": "MICROGRAMS_PER_CUBIC_METER"
+          }
+        },
+        {
+          "code": "no2",
+          "concentration": {
+            "value": 36,
+            "units": "PARTS_PER_BILLION"
+          }
+        }
+      ]
+    }
+  ]
+}

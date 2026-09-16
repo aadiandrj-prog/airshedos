@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from app.corroboration.engine import assess
 from app.corroboration.models import CorroborationAssessment, ReportUnavailable
+from app.environment.service import ProviderResult
 
 router = APIRouter(tags=["Citizen evidence"])
 
@@ -33,4 +34,11 @@ async def corroborate(report_id: str, request: Request):
         at=record.report.created_at,
         include_satellite=True,
     )
-    return assess(record, context, request.app.state.corroboration_settings)
+    assessment = assess(record, context, request.app.state.corroboration_settings)
+    # The frozen checklist runs BEFORE this separate provider outlook. It never sees forecasts.
+    assessment.forecast_outlook = await request.app.state.environment.forecast_context(
+        record.report.latitude,
+        record.report.longitude,
+        current_result=ProviderResult(context.air_quality, context.source_statuses.air_quality),
+    )
+    return assessment

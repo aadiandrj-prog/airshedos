@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import AwareDatetime
 
+from app.environment.forecast_models import AirQualityForecastContext
 from app.environment.models import (
     EnvironmentalContext,
     EnvironmentalSources,
@@ -58,3 +59,18 @@ async def satellite_context(
 ):
     """Independent bounded satellite lookup; lets the UI show ground data without waiting."""
     return await environment.satellite_context(lat, lng, at, lookback_hours)
+
+
+@router.get("/forecast", response_model=AirQualityForecastContext)
+async def forecast_context(
+    environment: Environment,
+    lat: Annotated[float, Query(ge=-90, le=90, allow_inf_nan=False)],
+    lng: Annotated[float, Query(ge=-180, le=180, allow_inf_nan=False)],
+    horizon_hours: Annotated[
+        int, Query(description="6, 12 or 24 hours; default includes all summaries")
+    ] = 24,
+):
+    """Google provider outlook. Never independent corroboration or an AirshedOS prediction."""
+    if horizon_hours not in (6, 12, 24):
+        raise HTTPException(422, "Forecast horizon must be 6, 12 or 24 hours.")
+    return await environment.forecast_context(lat, lng, horizon_hours)

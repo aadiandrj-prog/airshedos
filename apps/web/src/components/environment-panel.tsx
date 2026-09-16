@@ -8,6 +8,7 @@ import {
   type SourceStatus,
 } from "@/lib/api";
 
+import { ForecastPanel } from "./forecast-outlook";
 import { SatellitePanel } from "./satellite-panel";
 
 const DEFAULT_POINT = { lat: 28.4595, lng: 77.0266 };
@@ -491,11 +492,12 @@ export function EnvironmentPanel() {
             <span>OBSERVATION ≠ ATTRIBUTION</span>
             <p>
               Sources update at different times. AirshedOS does not infer
-              causation, confirm an incident, or calculate a live forecast.
+              causation or confirm an incident. Provider forecasts appear as a separate outlook.
             </p>
           </div>
         </>
       )}
+      <ForecastPanel key={`forecast-${point.sequence}`} lat={point.lat} lng={point.lng} />
       <SatellitePanel key={point.sequence} lat={point.lat} lng={point.lng} />
     </section>
   );

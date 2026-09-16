@@ -173,3 +173,10 @@ Input: one JPEG/PNG, up to 5 MiB and 16 MP; no animated images. Inference uses a
 [CORROBORATION_RULES.md](CORROBORATION_RULES.md) defines exact applicability, thresholds, ages and aggregation, with official source references. Existing AQ/weather/FIRMS/Sentinel-5P adapters and scientific QA are unchanged. The checklist uses the provider's CPCB index only, nominal/high VIIRS detections for combustion context, and conditional wind consistency. Native NO₂/CO columns and dimensionless UVAI remain context-only; no source measurements are converted into incident probabilities.
 
 Photo capture time is unknown. Submission is a proxy reference, not proof of simultaneity. Missing coverage, low regional AQ and zero FIRMS detections do not contradict a local event. The live synthetic image and Gurugram coordinate are not paired ground truth; the Phase 2B exercise verifies pipeline behavior only.
+
+
+## Google Air Quality operational forecast (Phase 2E)
+
+Official `POST /v1/forecast:lookup` uses the existing backend Google key. One 24-hour request serves 6/12/24-hour summaries; no new credential or frontend provider call. Native concentrations, `ind_cpcb` index identity, hourly UTC valid times, actual retrieval time and endpoint provenance are retained. The source does not provide issuance time; none is invented. Forecast/current AQ share Google's provider ecosystem, so the forecast is never an independent corroboration vote.
+
+The forecast is an operational outlook after assessment, not a custom AirshedOS prediction, incident probability or causal conclusion. Fifteen-minute cache, partial coverage, failure states, index handling, exact trend thresholds, attribution, API references and the rejected custom-model distinction are documented in [FORECASTING.md](FORECASTING.md). No past-issued forecast archive or accuracy estimate is claimed.

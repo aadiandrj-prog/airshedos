@@ -1379,3 +1379,19 @@ footer {
 .fusion-next p { font-size: 12px; color: var(--muted); }
 .fusion-card .context-footnote ul { padding-left: 18px; font-size: 12px; line-height: 1.7; }
 @media (max-width: 600px) { .fusion-card { padding: 18px; } .fusion-inputs { grid-template-columns: 1fr; } .fusion-action button { width: 100%; } }
+
+
+/* Provider outlook follows evidence assessment; it is not another evidence row. */
+.forecast-panel, .forecast-outlook { margin-top: 1.5rem; }
+.forecast-outlook { padding: 1.25rem; border: 1px solid var(--border, #29453b); background: #101e19; border-radius: 8px; }
+.forecast-horizons { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.forecast-horizons button, .forecast-retry { background: transparent; color: #c8d9cc; border: 1px solid #45634f; border-radius: 4px; padding: .5rem .75rem; cursor: pointer; }
+.forecast-horizons button[aria-pressed="true"] { background: #c9df85; color: #112017; border-color: #c9df85; }
+.forecast-horizons button:disabled { opacity: .45; cursor: default; }
+.forecast-trend { font-size: 1rem; font-weight: 700; letter-spacing: .06em; color: #d5e4b7; }
+.forecast-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+.forecast-comparison dt { color: #9aafa1; font-size: .75rem; margin-bottom: .35rem; }
+.forecast-comparison dd { margin: 0; font-size: 1rem; color: #e0e8da; overflow-wrap: anywhere; }
+.forecast-outlook details p { overflow-wrap: anywhere; }
+.forecast-retry { margin-top: .75rem; }
+@media (max-width: 560px) { .forecast-comparison { grid-template-columns: 1fr; } }

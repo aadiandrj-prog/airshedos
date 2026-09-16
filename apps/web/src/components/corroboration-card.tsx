@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { api, type CorroborationAssessment } from "@/lib/api";
 
+import { ForecastOutlook } from "./forecast-outlook";
+
 const label = (text: string) => text.replaceAll("_", " ");
 const sourceLabel = (text: string) =>
   (
@@ -211,6 +213,7 @@ export function CorroborationCard({
             <h4>{label(result.recommended_next_step)}</h4>
             <p>No incident or authority task has been created.</p>
           </div>
+          <ForecastOutlook context={result.forecast_outlook ?? null} />
           <div className="context-footnote">
             <span>LIMITATIONS</span>
             <ul>

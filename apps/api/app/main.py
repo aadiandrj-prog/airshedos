@@ -15,6 +15,7 @@ from app.citizen.settings import CitizenSettings
 from app.corroboration.repository import EphemeralReportRepository
 from app.corroboration.router import router as corroboration_router
 from app.corroboration.settings import CorroborationSettings
+from app.environment.forecast import GoogleAirQualityForecastProvider
 from app.environment.http import ProviderHTTP
 from app.environment.providers import (
     GoogleAirQualityProvider,
@@ -70,6 +71,9 @@ def create_app(
                             settings.firms_dataset,
                         ),
                         settings,
+                        forecast=GoogleAirQualityForecastProvider(
+                            http, settings.google_key.get_secret_value()
+                        ),
                     )
                     yield
         finally:
@@ -77,9 +81,9 @@ def create_app(
 
     api = FastAPI(
         title="AirshedOS API",
-        version="0.5.0",
+        version="0.6.0",
         lifespan=lifespan,
-        description="Phase 2B. Transparent deterministic evidence corroboration. "
+        description="Phase 2E. Provider forecast outlook separate from evidence corroboration. "
         "No causal attribution. Demo incident sharing is simulated.",
     )
     api.include_router(environment_router)

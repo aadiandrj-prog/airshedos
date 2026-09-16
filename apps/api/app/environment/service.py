@@ -7,6 +7,14 @@ from copy import deepcopy
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
+from app.environment.forecast import (
+    OPTIONS,
+    ForecastProvider,
+    GoogleAirQualityForecastProvider,
+    forecast_provenance,
+    summarize,
+)
+from app.environment.forecast_models import AirQualityForecastContext, ForecastWindow
 from app.environment.http import ProviderFailure
 from app.environment.models import (
     EnvironmentalContext,
@@ -52,12 +60,15 @@ class EnvironmentService:
         settings: EnvironmentSettings,
         clock=time.monotonic,
         satellite: SatelliteProvider | None = None,
+        forecast: ForecastProvider | None = None,
     ):
         self.providers = {"air_quality": air_quality, "weather": weather, "fires": fires}
         self.settings, self.clock = settings, clock
         self.satellite = satellite or EarthEngineSentinel5PProvider(
             settings.earth_engine_project, settings.satellite_timeout_seconds
         )
+        self.forecast = forecast or GoogleAirQualityForecastProvider(None, "")
+        self.forecast_lock = asyncio.Lock()
         self.satellite_lock = asyncio.Lock()
         self.cache: OrderedDict[tuple, tuple[float, ProviderResult]] = OrderedDict()
         self.expiry_handles: dict[tuple, asyncio.TimerHandle] = {}
@@ -201,6 +212,116 @@ class EnvironmentService:
         self.expiry_handles[key] = asyncio.get_running_loop().call_later(ttl, self._drop, key)
         while len(self.cache) > self.settings.cache_max_entries:
             self._drop(next(iter(self.cache)))
+
+    async def forecast_context(self, lat, lng, horizon_hours=24, current_result=None):
+        if horizon_hours not in (6, 12, 24):
+            raise ValueError("Forecast horizon must be 6, 12 or 24 hours")
+        requested = datetime.now(UTC)
+        anchor = requested.replace(minute=0, second=0, microsecond=0)
+        start, end = anchor + timedelta(hours=1), anchor + timedelta(hours=24)
+        started = time.perf_counter()
+        key = ("forecast", lat, lng, start.isoformat(), end.isoformat(), 24, OPTIONS, "en", True)
+
+        async def retrieve():
+            source = EnvironmentalSourceStatus(
+                provider=self.forecast.name,
+                configured=self.forecast.configured,
+                status=SourceState.NOT_CONFIGURED,
+                message="Backend Google Air Quality credentials are not configured.",
+                latency_ms=0,
+            )
+            if not self.forecast.configured:
+                return ProviderResult(None, source)
+            async with self.forecast_lock:
+                cached = self.cache.get(key)
+                if cached and cached[0] > self.clock():
+                    self.cache.move_to_end(key)
+                    result = deepcopy(cached[1])
+                    result.source.status = SourceState.CACHED
+                    result.source.message = (
+                        "Cached provider forecast; original retrieval time retained."
+                    )
+                    return result
+                self._drop(key)
+                try:
+                    data = await self.forecast.fetch(lat, lng, start, end)
+                    source.status = SourceState.LIVE if data else SourceState.UNAVAILABLE
+                    source.message = (
+                        "Provider forecast received; not an observation or accuracy claim."
+                        if data
+                        else "No usable provider forecasts returned."
+                    )
+                    source.retrieved_at = data["retrieved_at"] if data else None
+                    result = ProviderResult(data, source)
+                    if data and self.settings.forecast_cache_ttl_seconds > 0:
+                        self._store(key, result, self.settings.forecast_cache_ttl_seconds)
+                    return result
+                except ProviderFailure as exc:
+                    source.status, source.message = exc.status, exc.message
+                except Exception:
+                    source.status, source.message = (
+                        SourceState.ERROR,
+                        "Provider forecast could not be normalized; no values substituted.",
+                    )
+                return ProviderResult(None, source)
+
+        async def bounded():
+            try:
+                return await asyncio.wait_for(retrieve(), self.settings.timeout_seconds * 2 + 1)
+            except TimeoutError:
+                return ProviderResult(
+                    None,
+                    EnvironmentalSourceStatus(
+                        provider=self.forecast.name,
+                        configured=self.forecast.configured,
+                        status=SourceState.UNAVAILABLE,
+                        message="Forecast request deadline exceeded.",
+                        latency_ms=0,
+                    ),
+                )
+
+        if current_result is None:
+            forecast, current_result = await asyncio.gather(
+                bounded(), self._bounded_result("air_quality", lat, lng)
+            )
+        else:
+            forecast = await bounded()
+        forecast.source.latency_ms = round((time.perf_counter() - started) * 1000, 2)
+        data = forecast.data or {}
+        rows = data.get("hourly_forecasts", [])
+        summaries = [
+            summarize(rows, anchor, h, current_result.data, requested)
+            for h in (6, 12, 24)
+            if h <= horizon_hours
+        ]
+        logger.info(
+            json.dumps(
+                {
+                    "event": "environment_forecast",
+                    "provider": self.forecast.name,
+                    "status": forecast.source.status,
+                    "latency_ms": forecast.source.latency_ms,
+                }
+            )
+        )
+        return AirQualityForecastContext(
+            latitude=lat,
+            longitude=lng,
+            requested_at=requested,
+            generated_at=datetime.now(UTC),
+            requested_horizon_hours=horizon_hours,
+            provider_status=forecast.source,
+            window=ForecastWindow(start=start, end=anchor + timedelta(hours=horizon_hours)),
+            retrieved_at=data.get("retrieved_at"),
+            region_code=data.get("region_code"),
+            hourly_forecasts=[
+                r for r in rows if r.forecast_at <= anchor + timedelta(hours=horizon_hours)
+            ],
+            summaries=summaries,
+            current_air_quality=current_result.data,
+            current_source_status=current_result.source,
+            provenance=forecast_provenance(),
+        )
 
     async def satellite_context(self, lat, lng, at=None, lookback_hours=None):
         requested = datetime.now(UTC)
