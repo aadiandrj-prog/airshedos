@@ -1216,3 +1216,142 @@ footer {
     border-top: 1px solid var(--line);
   }
 }
+
+/* Citizen intake stays independent of the environmental probe and demo incident. */
+.citizen-panel {
+  margin: 32px 0 48px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.citizen-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 26px;
+}
+.citizen-form h3,
+.citizen-result > h3 {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  margin: 0 0 22px;
+  color: var(--teal);
+}
+.citizen-form fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.citizen-form label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.citizen-form label > span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.citizen-form input,
+.citizen-form textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  padding: 12px;
+  color: var(--ink);
+  background: #121b17;
+  font: inherit;
+  margin-top: 8px;
+  border-radius: 2px;
+}
+.citizen-form input[type="file"] {
+  margin-bottom: 18px;
+  font-size: 12px;
+}
+.citizen-form textarea {
+  resize: vertical;
+}
+.citizen-coordinates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+.citizen-coordinates > label {
+  min-width: 0;
+}
+.citizen-preview {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  background: #080e0b;
+  border: 1px solid var(--line);
+}
+.citizen-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.citizen-result {
+  border-left: 1px solid var(--line);
+  padding-left: 32px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.citizen-result ul {
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.citizen-result h4 {
+  margin: 24px 0 8px;
+}
+.citizen-result .citizen-event {
+  text-transform: capitalize;
+  font-family: Georgia, serif;
+  font-size: 28px;
+  margin-top: 10px;
+  font-weight: 400;
+}
+.citizen-empty {
+  padding: 34px 0;
+  color: var(--muted);
+}
+.citizen-empty > span {
+  font-size: 42px;
+  color: var(--teal);
+}
+.citizen-disclaimer {
+  display: block;
+  margin-top: 28px;
+}
+.citizen-disclaimer p {
+  margin-top: 12px;
+}
+.citizen-description {
+  margin: 18px 0;
+  padding: 14px;
+  background: #121b17;
+  font-size: 12px;
+  color: var(--muted);
+  border-left: 2px solid var(--line);
+  white-space: pre-wrap;
+}
+@media (max-width: 760px) {
+  .citizen-panel {
+    padding: 18px;
+  }
+  .citizen-columns {
+    grid-template-columns: 1fr;
+  }
+  .citizen-result {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 24px 0 0;
+  }
+}

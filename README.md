@@ -1,10 +1,10 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 1C satellite availability and normalization.**
+**AI Pollution Incident Command — Phase 2A citizen evidence and Gemini interpretation.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
-The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. AI inference and real notifications are not implemented.
+The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. It does not corroborate incidents or query environmental sources. Real notifications remain unimplemented.
 
 ## Current architecture
 
@@ -23,7 +23,7 @@ apps/
   api/
     app/                  # Models, fictional fixture, repository, routes, environment adapters
     tests/                # Endpoint, schema, state, and concurrency tests
-    scripts/              # OpenAPI export and manual provider verification
+    scripts/              # OpenAPI export, manual verification and synthetic image evaluation
     openapi.json          # Generated API contract
     pyproject.toml
     requirements*.lock    # Exact Python dependency versions
@@ -41,6 +41,7 @@ docs/
   VERIFICATION.md         # Historical Phase 1A result
   PHASE_1B_VERIFICATION.md
   PHASE_1C_VERIFICATION.md
+  PHASE_2A_VERIFICATION.md
   DATA_SOURCES.md
   screenshots/
 .github/workflows/ci.yml
@@ -178,9 +179,9 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 
 ## Planned architecture (not implemented)
 
-Citizen/environmental signals → Gemini multimodal → environmental data adapters → BigQuery → Vertex AI prediction → evidence fusion → command center → jurisdiction sharing.
+Future Phase 2B may join independently tested citizen and environmental evidence. Prediction, persistence, mapping and real jurisdiction workflows require separate later phases.
 
-Current: Google AQ, Weather, FIRMS, and a narrowly scoped Earth Engine / Sentinel-5P atmospheric evidence adapter. Planned: Gemini, evidence fusion, Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Phase 1C introduces no causal source attribution or AI. Its authenticated live gate is recorded separately from implementation readiness.
+Current: Google AQ, Weather, FIRMS, Sentinel-5P atmospheric evidence, and **independent Gemini citizen visual interpretation**. Planned: evidence fusion, Vertex AI prediction, Google Maps, jurisdiction interoperability, persistence and real notifications. Gemini interpretation is NOT incident corroboration. No source attribution is implemented. Stop after Phase 2A.
 
 See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 
@@ -209,3 +210,36 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --satel
 The full manual gate now covers all sources; exit 1 indicates a ground regression, exit 2 an unmet satellite gate. Genuine empty/filtered satellite searches are valid; configuration and authentication failures are not missing coverage. A wider `--lookback-hours` or explicit `--at` is a separate debug query and must be labelled as such.
 
 Secret checks from the repository root: `python3 scripts/scan_secrets.py --include-build`. The scanner checks Git-visible files and optionally compiled frontend output, with generic token signatures plus exact local provider-key comparisons; it never prints secret values.
+
+
+## Citizen evidence / Gemini (Phase 2A)
+
+Use **SUBMIT FIELD EVIDENCE** below the environmental probe. Submit one JPEG/PNG, latitude, longitude and optional description. The result separates the original citizen description from a derived interpretation, ordinal confidence, observed features, uncertainty, model and prompt provenance. No incident is created and no environmental query is triggered by submission.
+
+Backend `.env` configuration (never place these in `apps/web`):
+
+```dotenv
+GOOGLE_CLOUD_PROJECT=your-existing-project
+GOOGLE_CLOUD_LOCATION=global
+GEMINI_MODEL=gemini-3.1-flash-lite
+GEMINI_TIMEOUT_SECONDS=30
+```
+
+Empty location/model values use these defaults; no project returns `not_configured`. Use existing backend Application Default Credentials. Ensure `aiplatform.googleapis.com` is enabled in that project and the principal has Vertex prediction permission (`aiplatform.endpoints.predict`, commonly via `roles/aiplatform.user`), plus service usage access as applicable. No service-account key is needed. The official Google Gen AI Python SDK is pinned in the backend dependency locks. [Google's model documentation](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-1-flash-lite) lists image input, structured output and the global endpoint; model choice remains configurable.
+
+```sh
+# Only if API enablement or local ADC setup is needed:
+gcloud services enable aiplatform.googleapis.com --project YOUR_PROJECT_ID
+gcloud auth application-default login
+# Manual live evaluation; never run in CI:
+apps/api/.venv/bin/python apps/api/scripts/evaluate_citizen_evidence.py \
+  --output docs/verification/phase2a-gemini-live.json
+```
+
+For Docker, the existing optional `docker-compose.earth-engine.yml` ADC mount is shared by both Earth Engine and Gemini; `EARTH_ENGINE_ADC_FILE` keeps its established name. Use `-f docker-compose.yml -f docker-compose.earth-engine.yml` and point that variable at the existing host ADC file. No credentials are copied into images. Default Compose health works without ADC, with explicit analysis authentication failures when a project is configured. Restart the backend after changing configuration.
+
+`POST /api/v1/citizen-reports/analyze` accepts multipart fields `image`, `latitude`, `longitude`, `description` (optional, at most 2,000 characters). JPEG/PNG only, at most **5 MiB / 16 MP**, one still frame. Malformed input returns a safe 422; oversize uploads return 413. A valid submission returns HTTP 200 with `status`, original `report`, nullable `analysis` and `evidence`, a safe message, request ID and inference latency. Provider failure never invents an interpretation.
+
+Images are decoded, oriented, stripped of metadata and resized to at most 2048 pixels per edge before inference. AirshedOS retains no images, report history or analysis cache. Multipart files may spool temporarily above 1 MiB and are closed/deleted within the request; cleaned images stay in memory. The browser preview remains only until clear/replacement/navigation. Google processes the submitted image/context under its service policies; this does not assert zero retention by the cloud provider. Avoid identifying content. No facial/plate recognition, identity inference, database or upload gallery is implemented.
+
+See [Phase 2A verification](docs/PHASE_2A_VERIFICATION.md) for live results, limitations and exact regression checks, and [synthetic fixture provenance](apps/api/scripts/citizen-evaluation/README.md).

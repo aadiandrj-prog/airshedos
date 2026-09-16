@@ -1,0 +1,81 @@
+{
+  "request_id": "52fc650b-c9b7-4e08-a94d-ca73106b85ba",
+  "status": "interpreted",
+  "report": {
+    "id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+    "created_at": "2026-09-12T22:49:20.208828Z",
+    "latitude": 28.4595,
+    "longitude": 77.0266,
+    "description": "untrusted citizen text",
+    "language": "und",
+    "image_url": null,
+    "source_type": "citizen_report"
+  },
+  "analysis": {
+    "event_type": "uncertain",
+    "event_type_confidence": "low",
+    "visible_smoke": null,
+    "visible_flames": false,
+    "visible_dust": null,
+    "industrial_context": null,
+    "construction_context": false,
+    "waste_burning_context": null,
+    "vegetation_burning_context": null,
+    "traffic_context": false,
+    "scene_type": "outdoor",
+    "apparent_scale": "unclear",
+    "visual_observations": [
+      "Gray plume or cloud-like feature visible."
+    ],
+    "uncertainty_reasons": [
+      "Smoke, dust, cloud and fog can look similar."
+    ],
+    "insufficient_evidence": true,
+    "source_report_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+    "analyzed_at": "2026-09-12T22:49:20.209325Z",
+    "provenance": {
+      "source_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+      "method": "vertex_ai_gemini_multimodal",
+      "is_demo": false,
+      "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+      "model": "fake-gemini",
+      "model_version": "fake-version-001",
+      "prompt_version": "citizen_evidence_v1",
+      "generated_at": "2026-09-12T22:49:20.209325Z",
+      "source_report_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+      "derived": true,
+      "author": "model",
+      "confidence_basis": "model_estimated_ordinal_not_calibrated"
+    },
+    "safety_note": "AI interpretation \u2014 requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation."
+  },
+  "evidence": {
+    "id": "CE-fa6c7ac2-8ecd-4f49-95c1-37092b9486c4",
+    "signal_type": "citizen_report",
+    "source": "gemini_multimodal",
+    "status": "interpreted",
+    "confidence": null,
+    "observed_at": null,
+    "summary": "Possible event type: uncertain. Visual evidence only; requires environmental corroboration.",
+    "provenance": {
+      "source_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+      "method": "vertex_ai_gemini_multimodal",
+      "is_demo": false,
+      "note": "Derived visual interpretation. Upload time is not image acquisition time. No environmental corroboration or source attribution has occurred.",
+      "model": "fake-gemini",
+      "model_version": "fake-version-001",
+      "prompt_version": "citizen_evidence_v1",
+      "generated_at": "2026-09-12T22:49:20.209325Z",
+      "source_report_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+      "derived": true,
+      "author": "model",
+      "confidence_basis": "model_estimated_ordinal_not_calibrated"
+    },
+    "raw_reference": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+    "source_report_id": "CR-cc65623d-f050-4676-865a-c4f0404d859b",
+    "derived": true,
+    "interpretation_at": "2026-09-12T22:49:20.209325Z"
+  },
+  "message": "AI interpretation \u2014 requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+  "latency_ms": 0.97
+}

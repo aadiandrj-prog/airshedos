@@ -1,4 +1,4 @@
-# Environmental data sources — Phase 1C
+# Evidence sources — Phase 2A
 
 Current implementations use backend-only HTTP requests and the official Earth Engine Python SDK. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
 
@@ -63,7 +63,7 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gate 
 
 The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. The optional `--gate` makes a second identical request, verifies no additional outbound responses and unchanged observation/provenance data, then disables Weather only in that local service instance to check partial success. It prints a PASS/FAIL result (nonzero exit on gate failure) without altering `.env` or provider services. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](PHASE_1B_VERIFICATION.md) for the actual delivery result.
 
-Gemini, Vertex AI prediction, historical storage, custom AQI conversion, evidence fusion scoring, Google Maps, jurisdiction interoperability and pollution-source attribution remain future work.
+Vertex AI prediction, historical storage, custom AQI conversion, evidence fusion scoring, Google Maps, jurisdiction interoperability and pollution-source attribution remain future work. Gemini visual interpretation is independently implemented in Phase 2A.
 
 ## Earth Engine / Sentinel-5P
 
@@ -152,3 +152,18 @@ This reports query/configuration status, each product's native value/unit, acqui
 The [authenticated scene inspection](verification/phase1c-metadata-diagnostic.json) found uppercase `NOMINAL` for all 11 Gurugram NRTI candidates. NO₂ processing metadata was `NRTI-processing product`; CO/Aerosol Index processing metadata was `Nominal`. No consulted property was missing. The catalog's generic title-case Nominal/Degraded descriptions do not enumerate those actual source strings correctly.
 
 The [official NO₂ Product User Manual v4.5.0](https://sentiwiki.copernicus.eu/__attachments/1673595/S5P-KNMI-L2-0021-MA%20-%20Sentinel-5P%20Level%202%20Product%20User%20Manual%20Nitrogendioxide%202025-4.5.0.pdf?inst-v=48f4e5b4-21dc-4a3c-b262-15dde094f6bd), pp. 37 and 143, defines the NRTI processing label as a production mode and the uppercase nominal quality enum. The predicate therefore accepts these exact source strings, retaining the catalog-described Nominal forms for compatibility. It does not treat arbitrary processing strings as usable or admit the NO₂ processing mode for other products. Pixel masks, QA thresholds, outlier cutoff, geometry, time window and reducer are unchanged. See [the final diagnostic](PHASE_1C_VERIFICATION.md#final-metadata-diagnostic--12-september-2026).
+
+
+## Vertex Gemini — citizen visual interpretation (Phase 2A)
+
+Gemini is an interpreter of a submitted image, not an environmental sensor. Its categorical visual output has no pollutant units, no calibrated probability and no causal/source/enforcement conclusion. **Gemini interpretation is NOT incident corroboration.** Air Quality, Weather, FIRMS and Sentinel-5P remain separate evidence paths.
+
+Configuration: existing `GOOGLE_CLOUD_PROJECT`, backend ADC, `GOOGLE_CLOUD_LOCATION=global`, `GEMINI_MODEL=gemini-3.1-flash-lite`, `GEMINI_TIMEOUT_SECONDS=30`. Enable `aiplatform.googleapis.com`; use an identity authorized to predict with Vertex. No new service account or long-lived key was introduced. Browser code receives only typed report/interpretation/provenance responses.
+
+The chosen model supports image input and structured output, and is configurable rather than scattered through provider code. See [official model capabilities and lifecycle](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-1-flash-lite), [Google Gen AI Python SDK](https://googleapis.github.io/python-genai/) and [structured-output constraints](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output). Google documents schema complexity limitations and local validation remains mandatory. Live isolation found that removing remote array-length bounds resolves this schema's HTTP 400; application bounds and allowed claims are unchanged.
+
+Native evidence is an image plus optional citizen text and user-supplied coordinates. Image location/time are not independently verified. EXIF is stripped rather than used as ground truth. The model receives metadata-free image bytes and JSON-encoded untrusted context. Prompt `citizen_evidence_v1` disallows identity inference, source causality, material/toxicity claims, AQ measurements and enforcement conclusions. Only controlled visual feature/uncertainty statements enter the response. The unknown/insufficient case is `uncertain` with low ordinal confidence. Even `no_visible_pollution` describes the image, not actual air quality.
+
+Input: one JPEG/PNG, up to 5 MiB and 16 MP; no animated images. Inference uses at most 2048-pixel edges, 2,048 output tokens and one bounded request. No environmental fusion, persistence, explicit prompt cache or automatic retry is used. Temporary multipart spools close during the request; image bytes are not retained by AirshedOS after processing. Google-side processing is governed by the project's cloud policies, not an application promise of zero cloud retention.
+
+[Evaluation images and prompts](../apps/api/scripts/citizen-evaluation/README.md) are synthetic, not reports about real places. The [Phase 2A verification record](PHASE_2A_VERIFICATION.md) separates actual Vertex calls from mock-based CI and records limitations honestly.
