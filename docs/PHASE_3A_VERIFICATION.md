@@ -53,13 +53,15 @@ A real prospective forecast snapshot was recorded locally. Later observed-hour m
 | Docker | API and web rebuilt, started and healthy with ADC and separated browser-key configuration |
 | Secrets | PASS: 1,809 source/build/artifact files, 0 findings; backend credentials absent from compiled frontend |
 | Prior verification records | All eight protected document checksums unchanged |
-| GitHub CI | Pending focused Phase 3A PR push at initial report creation; final run recorded below |
+| GitHub CI | Implementation commit 224b1fc passed [PR CI](https://github.com/aadiandrj-prog/airshedos/actions/runs/35154879356); current head checks are linked from [PR #8](https://github.com/aadiandrj-prog/airshedos/pull/8/checks) |
 
 CI uses fixture providers and a Google SDK mock, with Maps networking blocked. It never receives live provider credentials. Browser coverage includes queue/case selection; report and fire marker/text selection; no-fire centering; review and monitoring/closure; immutable evidence/forecast; synthetic intake-to-monitoring; map authentication/import failure; keyboard selection; expiry errors; mobile layout; and preserved fictional labeling. Backend coverage includes jurisdiction/unknown/overlap, lifecycle/invalid transitions/revisions, deep-copy immutability, expiry/capacity/ordering, HTTP serialization, no provider reruns, synthetic label persistence, prospective snapshot matching and narrow public-key scanner rules.
 
 ## Limits and next phase
 
 Prototype jurisdiction rectangles are not official polygons. Cases and review history are ephemeral, with no accounts, identities or durable audit log. The map caps displayed fire points at 50 while all returned coordinates remain textual. Google Maps needs network/billing and the configured local origin. Only the selected workflow is mapped; standalone provider probe data does not pretend to be a physical sensor. No prospective forecast accuracy has been established. Optional forecast charts and officer notes were omitted to keep this phase narrow.
+
+Focused [PR #8](https://github.com/aadiandrj-prog/airshedos/pull/8) remains open and unmerged. Implementation commit: `224b1fc7b8e3f8c2733878c6085d51e3ab9af4bb`. This follow-up records CI results only; no implementation changed.
 
 Recommend scoping Phase 3B as **explicitly authorized jurisdiction handoff design**, with clear authority ownership, verified boundaries and a durable audit/identity plan before real routing. No Phase 3B implementation or automatic merge is authorized here.
 
