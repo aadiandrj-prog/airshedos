@@ -1,5 +1,11 @@
 import type { components } from "./api-schema";
 
+export type HandoffRecord = components["schemas"]["HandoffRecord"];
+export type HandoffSummary = components["schemas"]["HandoffSummary"];
+export type HandoffJurisdiction = components["schemas"]["HandoffJurisdiction"];
+export type HandoffReason = components["schemas"]["HandoffReason"];
+export type HandoffState = components["schemas"]["HandoffState"];
+export type PollutionEvent = components["schemas"]["PollutionEvent"];
 export type OfficerCase = components["schemas"]["OfficerCase"];
 export type CaseSummary = components["schemas"]["CaseSummary"];
 export type ReviewState = components["schemas"]["ReviewState"];
@@ -44,7 +50,27 @@ async function request<T>(
   return response.json() as Promise<T>;
 }
 
+async function handoffRequest<T>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body), signal: AbortSignal.timeout(10000),
+  });
+  if (response.status === 409) throw new Error("Transition, revision or integrity conflict. Refresh the case or handoff before acting.");
+  if (response.status === 404) throw new Error("Case or handoff expired. Generate a packet from an active reviewed case.");
+  if (!response.ok) throw new Error("Handoff request rejected. Check jurisdiction and review state.");
+  return response.json() as Promise<T>;
+}
+
 export const api = {
+  handoffs: (filters: { case_id?: string; destination?: HandoffJurisdiction }) => request<HandoffSummary[]>(`/api/v1/handoffs?${new URLSearchParams(filters)}`),
+  handoff: (id: string) => request<HandoffRecord>(`/api/v1/handoffs/${encodeURIComponent(id)}`),
+  createHandoff: (id: string, body: components["schemas"]["CreateHandoff"]) => handoffRequest<HandoffRecord>(`/api/v1/review/cases/${encodeURIComponent(id)}/handoffs`, body),
+  transitionHandoff: (id: string, state: HandoffState, revision: number) => handoffRequest<HandoffRecord>(`/api/v1/handoffs/${encodeURIComponent(id)}/transition`, { state, expected_revision: revision }),
+  exportHandoff: async (id: string) => {
+    const response = await fetch(`${API_BASE}/api/v1/handoffs/${encodeURIComponent(id)}/export`, { cache: "no-store", signal: AbortSignal.timeout(10000) });
+    if (!response.ok) throw new Error("Packet expired or failed integrity verification. Export unavailable.");
+    return response.arrayBuffer();
+  },
   cases: () => request<CaseSummary[]>("/api/v1/review/cases"),
   case: (id: string) => request<OfficerCase>(`/api/v1/review/cases/${encodeURIComponent(id)}`),
   review: async (id: string, state: ReviewState, revision: number): Promise<OfficerCase> => {

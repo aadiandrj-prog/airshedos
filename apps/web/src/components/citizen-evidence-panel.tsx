@@ -14,6 +14,7 @@ const time = (value: string) =>
   }).format(new Date(value)) + " IST";
 
 export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (assessment: CorroborationAssessment, signal: AbortSignal) => Promise<boolean> }) {
+  const [borderDemo, setBorderDemo] = useState(false);
   const [synthetic, setSynthetic] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
@@ -30,6 +31,7 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
 
   function chooseFile(next: File | null) {
     setSynthetic(false);
+    setBorderDemo(false);
     setResult(null);
     setError("");
     setPreview("");
@@ -68,15 +70,16 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
     }
   }
 
-  async function loadSample() {
+  async function loadSample(crossBorder = false) {
     try {
       const response = await fetch("/demo/open-burning.png");
       if (!response.ok) throw new Error();
       chooseFile(new File([await response.blob()], "synthetic-open-burning.png", { type: "image/png" }));
       setSynthetic(true);
-      for (const [name, value] of [["latitude", "28.4595"], ["longitude", "77.0266"]]) {
+      setBorderDemo(crossBorder);
+      for (const [name, value] of [["latitude", crossBorder ? "28.52" : "28.4595"], ["longitude", crossBorder ? "77.08" : "77.0266"]]) {
         const input = formRef.current?.elements.namedItem(name);
-        if (input instanceof HTMLInputElement && !input.value) input.value = value;
+        if (input instanceof HTMLInputElement && (crossBorder || !input.value)) input.value = value;
       }
     } catch { setError("Synthetic sample could not be loaded. Choose a local image instead."); }
   }
@@ -177,8 +180,10 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
               report metadata and interpretation are held temporarily for
               corroboration, then expire. Avoid including identifying details.
             </p>
+            {borderDemo && <p className="synthetic-label">SYNTHETIC CROSS-JURISDICTION DEMO · Fictional Delhi–Haryana border-area scenario at 28.52, 77.08. Exact boundary and location ownership are unverified. Choose control rooms manually after review.</p>}
             {synthetic && <p className="synthetic-label">SYNTHETIC IMAGE · Demonstration only. Gemini and provider calls still use live services.</p>}
             <button type="button" className="secondary" onClick={() => void loadSample()} disabled={busy}>Use synthetic sample image</button>
+            <button type="button" className="secondary" onClick={() => void loadSample(true)} disabled={busy}>Use synthetic cross-jurisdiction demo</button>
             <div className="citizen-actions">
               <button type="submit" disabled={!file || busy}>
                 {busy ? "Interpreting image…" : "Interpret image"}

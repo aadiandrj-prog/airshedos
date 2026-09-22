@@ -505,7 +505,7 @@ export default function CommandCenter() {
         <footer>
           AirshedOS{" "}
           <span>
-            Phase 1B · Environmental context & demo operations · No causal
+            Phase 3B · Simulated jurisdiction handoff · No causal
             attribution
           </span>
         </footer>

@@ -1427,3 +1427,14 @@ footer {
 .officer-workspace button:focus-visible, .officer-workspace summary:focus-visible { outline: 3px solid #eedc7b; outline-offset: 3px; }
 @media (max-width: 1100px) { .officer-grid { grid-template-columns: 1fr; } .officer-detail { max-height: none; } .case-queue { max-height: 420px; overflow-y: auto; } }
 @media (max-width: 600px) { .officer-workspace { padding: 12px; } .spatial-map-canvas { height: 320px; } .officer-grid { gap: 12px; } }
+
+.handoff-composer, .handoff-detail { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.handoff-composer fieldset { border: 0; padding: 0; min-width: 0; }
+.handoff-composer label, .handoff-inbox label { display: grid; gap: 8px; margin: 14px 0; font-size: .9rem; }
+.handoff-composer select, .handoff-inbox select { width: 100%; min-width: 0; color: var(--ink); background: var(--surface); border: 1px solid #4b6558; padding: 10px; border-radius: 5px; }
+.handoff-composer button[type=submit] { padding: 12px; margin: 12px 0; }
+.handoff-detail pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .75rem; max-height: 400px; overflow: auto; }
+.handoff-detail li { margin: 12px 0; }
+.handoff-detail [role=status] { font-weight: bold; }
+.handoff-detail .secondary { margin: 5px 0; }
+.handoff-composer select:focus-visible, .handoff-inbox select:focus-visible { outline: 3px solid #eedc7b; outline-offset: 2px; }

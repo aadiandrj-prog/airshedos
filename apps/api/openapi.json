@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AirshedOS API",
-    "description": "Phase 3A. Spatial command center and ephemeral officer review. No causal attribution. Demo incident sharing is simulated.",
-    "version": "0.7.0"
+    "description": "Phase 3B. Simulated jurisdiction handoff and PollutionEvent v1. No causal attribution. Demo incident sharing is simulated.",
+    "version": "0.8.0"
   },
   "paths": {
     "/api/v1/environment/sources": {
@@ -497,6 +497,259 @@
                   "$ref": "#/components/schemas/OfficerCase"
                 }
               }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/review/cases/{case_id}/handoffs": {
+      "post": {
+        "tags": [
+          "Simulated jurisdiction handoff"
+        ],
+        "summary": "Create Handoff",
+        "operationId": "create_handoff_api_v1_review_cases__case_id__handoffs_post",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHandoff"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoffRecord"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/handoffs": {
+      "get": {
+        "tags": [
+          "Simulated jurisdiction handoff"
+        ],
+        "summary": "List Handoffs",
+        "operationId": "list_handoffs_api_v1_handoffs_get",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Case Id"
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/HandoffJurisdiction"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Destination"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HandoffSummary"
+                  },
+                  "title": "Response List Handoffs Api V1 Handoffs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/handoffs/{handoff_id}": {
+      "get": {
+        "tags": [
+          "Simulated jurisdiction handoff"
+        ],
+        "summary": "Get Handoff",
+        "operationId": "get_handoff_api_v1_handoffs__handoff_id__get",
+        "parameters": [
+          {
+            "name": "handoff_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Handoff Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoffRecord"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/handoffs/{handoff_id}/transition": {
+      "post": {
+        "tags": [
+          "Simulated jurisdiction handoff"
+        ],
+        "summary": "Transition Handoff",
+        "operationId": "transition_handoff_api_v1_handoffs__handoff_id__transition_post",
+        "parameters": [
+          {
+            "name": "handoff_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Handoff Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionHandoff"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandoffRecord"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/handoffs/{handoff_id}/export": {
+      "get": {
+        "tags": [
+          "Simulated jurisdiction handoff"
+        ],
+        "summary": "Export Handoff",
+        "operationId": "export_handoff_api_v1_handoffs__handoff_id__export_get",
+        "parameters": [
+          {
+            "name": "handoff_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Handoff Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exact canonical PollutionEvent UTF-8 bytes; SHA-256 in X-Payload-SHA256.",
+            "content": {
+              "application/json": {}
             }
           },
           "422": {
@@ -1567,6 +1820,33 @@
         ],
         "title": "CorroborationRuleResult"
       },
+      "CreateHandoff": {
+        "properties": {
+          "origin_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "destination_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/HandoffReason"
+          },
+          "expected_case_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Case Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "origin_jurisdiction",
+          "destination_jurisdiction",
+          "reason",
+          "expected_case_revision"
+        ],
+        "title": "CreateHandoff"
+      },
       "EnvironmentalContext": {
         "properties": {
           "latitude": {
@@ -1827,6 +2107,118 @@
         ],
         "title": "EnvironmentalSources"
       },
+      "EventEvidence": {
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "title": "Report Id"
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic"
+          },
+          "citizen_evidence_summary": {
+            "type": "string",
+            "const": "Structured visual interpretation; raw image and citizen text omitted.",
+            "title": "Citizen Evidence Summary"
+          },
+          "gemini": {
+            "$ref": "#/components/schemas/GeminiEvidenceAnalysis"
+          },
+          "source_statuses": {
+            "items": {
+              "$ref": "#/components/schemas/EventSourceStatus"
+            },
+            "type": "array",
+            "title": "Source Statuses"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/EventRule"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
+          "air_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AirQualityObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "weather": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeteorologicalObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fires": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FireObservation"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fires"
+          },
+          "fire_search_radius_km": {
+            "type": "number",
+            "title": "Fire Search Radius Km"
+          },
+          "satellite": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SatelliteEvidence"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Satellite"
+          },
+          "assessment_provenance": {
+            "$ref": "#/components/schemas/Provenance"
+          },
+          "source_snapshot_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Source Snapshot Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "report_id",
+          "is_synthetic",
+          "citizen_evidence_summary",
+          "gemini",
+          "source_statuses",
+          "rules",
+          "air_quality",
+          "weather",
+          "fires",
+          "fire_search_radius_km",
+          "satellite",
+          "assessment_provenance",
+          "source_snapshot_sha256"
+        ],
+        "title": "EventEvidence"
+      },
       "EventFamily": {
         "type": "string",
         "enum": [
@@ -1837,6 +2229,218 @@
           "NONE_OR_UNCERTAIN"
         ],
         "title": "EventFamily"
+      },
+      "EventForecast": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "google_air_quality_forecast",
+            "title": "Provider"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          },
+          "issued_at": {
+            "type": "null",
+            "title": "Issued At"
+          },
+          "summaries": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastSummary"
+            },
+            "type": "array",
+            "title": "Summaries"
+          },
+          "hourly_forecasts": {
+            "items": {
+              "$ref": "#/components/schemas/HourlyAirQualityForecast"
+            },
+            "type": "array",
+            "title": "Hourly Forecasts"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/EnvironmentalProvenance"
+          },
+          "independence_note": {
+            "type": "string",
+            "title": "Independence Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "status",
+          "retrieved_at",
+          "issued_at",
+          "summaries",
+          "hourly_forecasts",
+          "provenance",
+          "independence_note"
+        ],
+        "title": "EventForecast"
+      },
+      "EventLocation": {
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude"
+          },
+          "location_precision": {
+            "type": "string",
+            "const": "reported_coordinate_accuracy_unknown",
+            "title": "Location Precision"
+          },
+          "jurisdiction_at_location": {
+            "$ref": "#/components/schemas/JurisdictionResolution"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude",
+          "location_precision",
+          "jurisdiction_at_location"
+        ],
+        "title": "EventLocation"
+      },
+      "EventRule": {
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "title": "Rule Id"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "verdict": {
+            "$ref": "#/components/schemas/Verdict"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "evidence_references": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "type": "array",
+            "title": "Evidence References"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rule_id",
+          "source",
+          "verdict",
+          "summary",
+          "generated_at",
+          "evidence_references"
+        ],
+        "title": "EventRule"
+      },
+      "EventSourceStatus": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrieved At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "status",
+          "retrieved_at"
+        ],
+        "title": "EventSourceStatus"
+      },
+      "EventTemporal": {
+        "properties": {
+          "report_submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Report Submitted At"
+          },
+          "image_capture_time_known": {
+            "type": "boolean",
+            "const": false,
+            "title": "Image Capture Time Known"
+          },
+          "image_capture_time": {
+            "type": "null",
+            "title": "Image Capture Time"
+          },
+          "environmental_reference_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Environmental Reference Time"
+          },
+          "environmental_context_generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Environmental Context Generated At"
+          },
+          "temporal_basis": {
+            "type": "string",
+            "const": "submission_time_proxy",
+            "title": "Temporal Basis"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "report_submitted_at",
+          "image_capture_time_known",
+          "image_capture_time",
+          "environmental_reference_time",
+          "environmental_context_generated_at",
+          "temporal_basis"
+        ],
+        "title": "EventTemporal"
       },
       "EventType": {
         "type": "string",
@@ -2610,6 +3214,368 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "HandoffAudit": {
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Sequence"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "CREATED"
+              },
+              {
+                "$ref": "#/components/schemas/HandoffState"
+              }
+            ],
+            "title": "Action"
+          },
+          "state": {
+            "$ref": "#/components/schemas/HandoffState"
+          },
+          "handoff_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Handoff Revision"
+          },
+          "event_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Event Version"
+          },
+          "origin_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "destination_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "payload_hash": {
+            "type": "string",
+            "title": "Payload Hash"
+          },
+          "actor": {
+            "type": "string",
+            "enum": [
+              "source_control_room",
+              "destination_control_room"
+            ],
+            "title": "Actor"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sequence",
+          "timestamp",
+          "action",
+          "state",
+          "handoff_revision",
+          "event_version",
+          "origin_jurisdiction",
+          "destination_jurisdiction",
+          "payload_hash",
+          "actor"
+        ],
+        "title": "HandoffAudit"
+      },
+      "HandoffJurisdiction": {
+        "type": "string",
+        "enum": [
+          "DELHI",
+          "HARYANA",
+          "UTTAR_PRADESH"
+        ],
+        "title": "HandoffJurisdiction"
+      },
+      "HandoffReason": {
+        "type": "string",
+        "enum": [
+          "CROSS_BORDER_EVENT",
+          "DOWNWIND_IMPACT",
+          "JURISDICTION_MISMATCH",
+          "SHARED_CORRIDOR_CONTEXT",
+          "MANUAL_OFFICER_HANDOFF"
+        ],
+        "title": "HandoffReason"
+      },
+      "HandoffRecord": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "event_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Event Version"
+          },
+          "origin_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "destination_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/HandoffReason"
+          },
+          "possible_event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "corroboration_support": {
+            "$ref": "#/components/schemas/SupportLevel"
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/HandoffState"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Revision"
+          },
+          "payload_hash": {
+            "type": "string",
+            "title": "Payload Hash"
+          },
+          "integrity": {
+            "type": "string",
+            "enum": [
+              "VERIFIED",
+              "MISMATCH"
+            ],
+            "title": "Integrity"
+          },
+          "allowed_transitions": {
+            "items": {
+              "$ref": "#/components/schemas/HandoffState"
+            },
+            "type": "array",
+            "title": "Allowed Transitions"
+          },
+          "simulated": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulated",
+            "default": true
+          },
+          "payload": {
+            "$ref": "#/components/schemas/PollutionEvent"
+          },
+          "audit": {
+            "items": {
+              "$ref": "#/components/schemas/HandoffAudit"
+            },
+            "type": "array",
+            "title": "Audit"
+          },
+          "audit_notice": {
+            "type": "string",
+            "const": "Ephemeral prototype audit trail; no authenticated identities or external delivery.",
+            "title": "Audit Notice",
+            "default": "Ephemeral prototype audit trail; no authenticated identities or external delivery."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "case_id",
+          "event_id",
+          "event_version",
+          "origin_jurisdiction",
+          "destination_jurisdiction",
+          "reason",
+          "possible_event_type",
+          "corroboration_support",
+          "is_synthetic",
+          "created_at",
+          "sent_at",
+          "expires_at",
+          "state",
+          "revision",
+          "payload_hash",
+          "integrity",
+          "allowed_transitions",
+          "simulated",
+          "payload",
+          "audit",
+          "audit_notice"
+        ],
+        "title": "HandoffRecord"
+      },
+      "HandoffState": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "READY",
+          "SENT_SIMULATED",
+          "RECEIVED",
+          "ACCEPTED",
+          "REJECTED",
+          "RETURNED_FOR_REVIEW"
+        ],
+        "title": "HandoffState"
+      },
+      "HandoffSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "event_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Event Version"
+          },
+          "origin_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "destination_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/HandoffReason"
+          },
+          "possible_event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "corroboration_support": {
+            "$ref": "#/components/schemas/SupportLevel"
+          },
+          "is_synthetic": {
+            "type": "boolean",
+            "title": "Is Synthetic"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/HandoffState"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Revision"
+          },
+          "payload_hash": {
+            "type": "string",
+            "title": "Payload Hash"
+          },
+          "integrity": {
+            "type": "string",
+            "enum": [
+              "VERIFIED",
+              "MISMATCH"
+            ],
+            "title": "Integrity"
+          },
+          "allowed_transitions": {
+            "items": {
+              "$ref": "#/components/schemas/HandoffState"
+            },
+            "type": "array",
+            "title": "Allowed Transitions"
+          },
+          "simulated": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulated",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "case_id",
+          "event_id",
+          "event_version",
+          "origin_jurisdiction",
+          "destination_jurisdiction",
+          "reason",
+          "possible_event_type",
+          "corroboration_support",
+          "is_synthetic",
+          "created_at",
+          "sent_at",
+          "expires_at",
+          "state",
+          "revision",
+          "payload_hash",
+          "integrity",
+          "allowed_transitions",
+          "simulated"
+        ],
+        "title": "HandoffSummary"
+      },
       "HourlyAirQualityForecast": {
         "properties": {
           "forecast_at": {
@@ -3204,6 +4170,152 @@
         ],
         "title": "PollutantMeasurement"
       },
+      "PollutionEvent": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "pollution_event_v1",
+            "title": "Schema Version"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "case_id": {
+            "type": "string",
+            "title": "Case Id"
+          },
+          "event_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Event Version"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "origin_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "origin_system": {
+            "type": "string",
+            "const": "AirshedOS prototype",
+            "title": "Origin System"
+          },
+          "origin_case_id": {
+            "type": "string",
+            "title": "Origin Case Id"
+          },
+          "destination_jurisdiction": {
+            "$ref": "#/components/schemas/HandoffJurisdiction"
+          },
+          "handoff_reason": {
+            "$ref": "#/components/schemas/HandoffReason"
+          },
+          "origin_basis": {
+            "type": "string",
+            "const": "manual_prototype_control_room",
+            "title": "Origin Basis"
+          },
+          "location": {
+            "$ref": "#/components/schemas/EventLocation"
+          },
+          "possible_event_type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "event_family": {
+            "$ref": "#/components/schemas/EventFamily"
+          },
+          "corroboration_support": {
+            "$ref": "#/components/schemas/SupportLevel"
+          },
+          "advisory_next_step": {
+            "$ref": "#/components/schemas/NextStep"
+          },
+          "review_state": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "source_review_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Source Review Revision"
+          },
+          "temporal": {
+            "$ref": "#/components/schemas/EventTemporal"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/EventEvidence"
+          },
+          "forecast": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EventForecast"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "handoff_id": {
+            "type": "string",
+            "title": "Handoff Id"
+          },
+          "handoff_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Handoff Created At"
+          },
+          "simulated": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulated"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "schema_version",
+          "event_id",
+          "case_id",
+          "event_version",
+          "created_at",
+          "updated_at",
+          "origin_jurisdiction",
+          "origin_system",
+          "origin_case_id",
+          "destination_jurisdiction",
+          "handoff_reason",
+          "origin_basis",
+          "location",
+          "possible_event_type",
+          "event_family",
+          "corroboration_support",
+          "advisory_next_step",
+          "review_state",
+          "source_review_revision",
+          "temporal",
+          "evidence",
+          "forecast",
+          "limitations",
+          "handoff_id",
+          "handoff_created_at",
+          "simulated"
+        ],
+        "title": "PollutionEvent"
+      },
       "PollutionIncident": {
         "properties": {
           "id": {
@@ -3553,6 +4665,72 @@
           "measurement_note"
         ],
         "title": "SatelliteAtmosphericContext"
+      },
+      "SatelliteEvidence": {
+        "properties": {
+          "product": {
+            "type": "string",
+            "enum": [
+              "no2",
+              "co",
+              "aerosol_index"
+            ],
+            "title": "Product"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SourceState"
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "available",
+              "no_scene",
+              "quality_filtered",
+              "no_usable_pixels",
+              "not_configured",
+              "authentication_error",
+              "configuration_error",
+              "provider_error",
+              "timeout",
+              "busy"
+            ],
+            "title": "Availability"
+          },
+          "collection": {
+            "type": "string",
+            "title": "Collection"
+          },
+          "band": {
+            "type": "string",
+            "title": "Band"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SatelliteObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product",
+          "status",
+          "availability",
+          "collection",
+          "band",
+          "unit",
+          "observation"
+        ],
+        "title": "SatelliteEvidence"
       },
       "SatelliteObservation": {
         "properties": {
@@ -3999,6 +5177,25 @@
           "CONFLICTING"
         ],
         "title": "SupportLevel"
+      },
+      "TransitionHandoff": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/HandoffState"
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "state",
+          "expected_revision"
+        ],
+        "title": "TransitionHandoff"
       },
       "ValidationError": {
         "properties": {

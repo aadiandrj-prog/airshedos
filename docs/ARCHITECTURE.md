@@ -1,6 +1,6 @@
 # AirshedOS architecture
 
-## Current: Phase 3A
+## Current: Phase 3B
 
 ```mermaid
 flowchart LR
@@ -72,7 +72,7 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Translation, Vertex AI prediction, BigQuery, source attribution, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Phase 2E adds the separate provider outlook; Phase 3A adds the selected-workflow map and ephemeral officer review described below.
+Translation, Vertex AI prediction, BigQuery, source attribution, persistence, application authentication, real authority integration and real notification delivery remain unimplemented. Phase 2E adds the separate provider outlook; Phase 3A adds the selected-workflow map and ephemeral officer review described below.
 
 ## Satellite evidence boundary
 
@@ -181,4 +181,29 @@ Forecast never feeds back into support. Corroboration registers a deep-copied sn
 
 Queue ordering groups NEW, UNDER_REVIEW, ACKNOWLEDGED/MONITORING, CLOSED_NO_ACTION, then descending submission time and case ID. Prototype jurisdiction uses explicitly non-authoritative interior lookup rectangles; outside/ambiguous points are Unknown. `CitizenReport.is_synthetic` defaults false and labels the provided demo input independently from provider statuses. OpenAPI remains the source for frontend types.
 
-The developer snapshot recorder reads the existing local forecast/current AQ endpoints once per invocation and writes only ignored local prospective JSON. It does not train/evaluate a custom model, query historical forecasts or poll. Phase 2D's MODEL_NOT_ACCEPTED result and locked test set remain intact. Phase 3B interoperability is not implemented.
+The developer snapshot recorder reads the existing local forecast/current AQ endpoints once per invocation and writes only ignored local prospective JSON. It does not train/evaluate a custom model, query historical forecasts or poll. Phase 2D's MODEL_NOT_ACCEPTED result and locked test set remain intact. Phase 3B adds the strictly simulated interoperability boundary below.
+
+
+## Frozen interoperability boundary (Phase 3B)
+
+```mermaid
+flowchart LR
+  Case[Immutable officer case + separate review] --> Manual[Explicit origin / destination / reason]
+  Manual --> Packet[PollutionEvent v1 frozen snapshot]
+  Packet --> Bytes[Canonical JSON + SHA-256]
+  Bytes --> Handoff[Bounded in-memory handoff record]
+  Handoff --> Send[Manual simulated send]
+  Send --> Inbox[Prototype destination inbox]
+  Inbox --> Receive[Manual receive + integrity verification]
+  Receive --> Decision[Accept / reject / return]
+  Decision --> Audit[Append-only ephemeral audit]
+  Bytes --> Export[Exact-byte JSON export]
+```
+
+`app/handoff` owns the strict contract, allowlisted packet builder, deterministic serializer, bounded repository and focused router. It depends on normalized domain models and a deep copy of an active officer case; it has no environmental service or Gemini dependency. No handoff route can mutate the source case. The lifecycle envelope and audit change independently of immutable event bytes; recomputed hash mismatch blocks state advancement and export. Source/destination are views over the same process-local record, not separate remote systems.
+
+The store holds 128 packets for 3,600 seconds with oldest-created eviction and independent expiry, including when the source expires. It caps each audit at 128 entries. Revision checks occur atomically within one event loop; there is no distributed consistency or authenticated actor. Event versions increase process-wide and may have gaps per case. Generic control-room actor labels are workflow roles only.
+
+OpenAPI owns frontend types. The existing command center adds a keyed handoff composer and destination panel; selection reuses the existing map with a frozen report marker and full text fallback. Provider readings/forecast/rules retain their original semantics, units and provenance. Receipt never refreshes them. The export downloader hashes exact bytes before download; this is integrity, not a signature. No raw media or citizen free text enters the packet.
+
+[INTEROPERABILITY.md](INTEROPERABILITY.md) specifies field meanings, canonical bytes, routes, transitions, prototype boundaries, expiry and deferred production requirements. No real authority routing, external handoff network, database, accounts or Phase 3C work is added. Phase 2D MODEL_NOT_ACCEPTED and prior verification records remain intact.
