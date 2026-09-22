@@ -80,4 +80,6 @@ Recommend Phase 3C/finalization begin with a scoped demo/usability and receiver-
 
 ## GitHub review
 
-The focused Phase 3B PR will remain unmerged. GitHub checks are recorded here after publishing and completion; local checks above have passed.
+Focused [PR #9](https://github.com/aadiandrj-prog/airshedos/pull/9) is open and unmerged. Implementation commit: `3cc113b9b554adcfb98d7740a7ac8fe2acba4409`.
+
+All eight implementation checks passed: backend, frontend, browser/Docker and secrets on both the [push run](https://github.com/aadiandrj-prog/airshedos/actions/runs/35709300302) and [PR run](https://github.com/aadiandrj-prog/airshedos/actions/runs/35709341517). This documentation-only follow-up records those completed results. The [PR checks](https://github.com/aadiandrj-prog/airshedos/pull/9/checks) show the current head's verification. No automatic merge is authorized.
