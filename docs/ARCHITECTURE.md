@@ -1,6 +1,6 @@
 # AirshedOS architecture
 
-## Current: Phase 2B
+## Current: Phase 3A
 
 ```mermaid
 flowchart LR
@@ -24,7 +24,7 @@ The app factory creates a fresh repository for each application instance. Routes
 
 The repository provides list, detail, acknowledgment, and share operations. Acknowledgment is idempotent. Simulated sharing is idempotent per incident/target pair. Each successful mutation appends a structured action and updates the incident timestamp. Acknowledgment means an officer has seen the incident; it is not field verification, confirmation of a source, or resolution. No actions invoke third parties.
 
-`OperationsPane` receives a typed incident and renders a labelled SVG schematic. It is isolated from data fetching and actions so a later mapping implementation can replace it without rewriting command logic. Its generic geometry is not derived from a geospatial boundary dataset. No tile service, map key, imagery, or map SDK is used.
+`OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](COMMAND_CENTER.md).
 
 ## Domain decisions
 
@@ -44,7 +44,7 @@ The suggested model was extended with structured provenance on the incident and 
 
 ## Scope and deployment
 
-Two local processes or two Docker containers; no database, queue, application authentication, shared language packages or notification delivery. Existing cloud APIs are called only from the backend. CORS allows configured local frontend origins. The frontend calls the API from the browser, so its API URL must be reachable from that browser. Production Docker output uses Next.js standalone mode and a single Uvicorn worker. Compose waits for API readiness before starting the frontend.
+Two local processes or two Docker containers; no database, queue, application authentication, shared language packages or notification delivery. Environmental and Gemini cloud APIs are called only from the backend. Google Maps JavaScript runs in the browser using a separately restricted browser credential. CORS allows configured local frontend origins. The frontend calls the API from the browser, so its API URL must be reachable from that browser. Production Docker output uses Next.js standalone mode and a single Uvicorn worker. Compose waits for API readiness before starting the frontend.
 
 In-memory state is deliberately ephemeral and unsuitable for multi-worker or public production use. Future durability and authorization need an explicit later-phase decision. The current API serves complete incident objects in the list because the fixture is tiny; a separate summary schema can be introduced when payload size warrants it.
 
@@ -72,7 +72,7 @@ This intentionally refines the Phase 1A appearance under the user's direct reque
 
 ## Planned only
 
-Translation, Vertex AI prediction, BigQuery, source attribution, Google Maps, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Phase 2E adds only the separate provider outlook described below; Phase 3 remains unimplemented.
+Translation, Vertex AI prediction, BigQuery, source attribution, persistence, application authentication, jurisdiction interoperability and real notification delivery remain unimplemented. Phase 2E adds the separate provider outlook; Phase 3A adds the selected-workflow map and ephemeral officer review described below.
 
 ## Satellite evidence boundary
 
@@ -160,3 +160,25 @@ Citizen → Gemini → structured citizen evidence → deterministic environment
 The existing cache stores one canonical 24-hour forecast batch for 900 seconds, keyed by coordinates, UTC window and API options. The forecast endpoint can serve all three horizons from that batch. Current AQ and forecast execute concurrently in the standalone endpoint; the UI fetches forecast separately so current cards can render first. Existing source/provider failure handling is retained; forecast failures return a typed absent outlook. No queue, database, new dependencies, model imports or frontend credentials were introduced.
 
 `ForecastOutlook` is shared by the Evidence Fusion Card and standalone coordinate panel. It shows attributed provider results, coverage, a transparent peak/current category and native-unit/CPCB comparisons. Backend UTC is preserved; displayed times are labelled IST. Source provenance and exact thresholds are expandable. No charts, map overlays or product redesign. See [FORECASTING.md](FORECASTING.md) for the complete contract, restrictions and policy. Phase 2D's rejected research remains untouched.
+
+
+## Officer review boundary (Phase 3A)
+
+```mermaid
+flowchart TD
+  Citizen[Citizen or explicitly synthetic input] --> Gemini[Backend Gemini interpretation]
+  Gemini --> Structured[Ephemeral structured report]
+  Structured --> Corroboration[Deterministic corroboration with environmental context]
+  Corroboration --> Support[Fixed support assessment]
+  GoogleForecast[Google operational forecast] --> Outlook[Separate operational outlook]
+  Support --> Snapshot[Immutable case snapshot]
+  Outlook --> Snapshot
+  Snapshot --> Queue[Sorted case queue / selected map / evidence detail]
+  Queue --> Review[Manual officer review state]
+```
+
+Forecast never feeds back into support. Corroboration registers a deep-copied snapshot with `OfficerCaseRepository`, bounded to 64 and capped by the source report's remaining TTL. Evidence and workflow metadata have separate models. Only review state, action time, revision and allowed transitions change. Routes reject arbitrary evidence writes and compare revisions atomically within the single event loop. Snapshots expire even without subsequent requests and are cleared at shutdown. No image bytes, database or identity is added.
+
+Queue ordering groups NEW, UNDER_REVIEW, ACKNOWLEDGED/MONITORING, CLOSED_NO_ACTION, then descending submission time and case ID. Prototype jurisdiction uses explicitly non-authoritative interior lookup rectangles; outside/ambiguous points are Unknown. `CitizenReport.is_synthetic` defaults false and labels the provided demo input independently from provider statuses. OpenAPI remains the source for frontend types.
+
+The developer snapshot recorder reads the existing local forecast/current AQ endpoints once per invocation and writes only ignored local prospective JSON. It does not train/evaluate a custom model, query historical forecasts or poll. Phase 2D's MODEL_NOT_ACCEPTED result and locked test set remain intact. Phase 3B interoperability is not implemented.

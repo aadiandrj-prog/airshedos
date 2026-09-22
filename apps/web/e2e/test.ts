@@ -1,4 +1,5 @@
 import { test as base } from "@playwright/test";
+import { mockMaps } from "./maps-mock";
 import forecast from "./fixtures/forecast.test.json";
 export { expect, type Page } from "@playwright/test";
 
@@ -7,6 +8,7 @@ export { expect, type Page } from "@playwright/test";
 export const test = base.extend<{ forecastIsolation: void }>({
   forecastIsolation: [
     async ({ page }, use) => {
+      await mockMaps(page);
       await page.route("**/api/v1/environment/forecast?*", (route) =>
         route.fulfill({
           json: {

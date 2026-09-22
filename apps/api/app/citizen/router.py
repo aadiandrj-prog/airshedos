@@ -102,12 +102,13 @@ async def analyze(
     latitude: Annotated[float, Form(ge=-90, le=90, allow_inf_nan=False)],
     longitude: Annotated[float, Form(ge=-180, le=180, allow_inf_nan=False)],
     description: Annotated[str, Form(max_length=2000)] = "",
+    is_synthetic: Annotated[bool, Form()] = False,
 ):
     try:
         form = await request.form()
         if (
             len(form.getlist("image")) != 1
-            or set(form) - {"image", "latitude", "longitude", "description"}
+            or set(form) - {"image", "latitude", "longitude", "description", "is_synthetic"}
             or any(len(form.getlist(key)) != 1 for key in form)
         ):
             return invalid("Submit exactly one image and the supported fields.")
@@ -122,6 +123,7 @@ async def analyze(
     result = await interpret(
         request.app.state.citizen_analyzer, clean, mime_type, latitude, longitude, description
     )
+    result.report.is_synthetic = is_synthetic
     if result.analysis is not None and result.evidence is not None:
         request.app.state.structured_reports.put(
             StructuredReport(

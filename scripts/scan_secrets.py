@@ -35,10 +35,13 @@ def main():
     paths.update(Path(p).resolve() for p in args.artifact)
     # Compare the actual local API keys as well as generic signatures. Never print values.
     exact = []
+    browser_key = b""
     env_file = ROOT / ".env"
     if env_file.exists():
         for line in env_file.read_text().splitlines():
             key, _, value = line.partition("=")
+            if key.strip() == "NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY":
+                browser_key = value.strip().strip("\"'").encode()
             if key.strip() in (
                 "GOOGLE_MAPS_PLATFORM_API_KEY",
                 "NASA_FIRMS_MAP_KEY",
@@ -54,7 +57,12 @@ def main():
         count += 1
         data = path.read_bytes()
         for rule, pattern in RULES.items():
-            if re.search(pattern, data):
+            matches = re.findall(pattern, data)
+            if rule == "Google API key" and path.is_relative_to(ROOT / "apps/web/.next"):
+                # Only this explicitly configured public credential may occur in bundles.
+                # Backend keys, source files and arbitrary artifacts remain fully scanned.
+                matches = [m for m in matches if m != browser_key or m in exact]
+            if matches:
                 failures.append(
                     (
                         str(path.relative_to(ROOT))

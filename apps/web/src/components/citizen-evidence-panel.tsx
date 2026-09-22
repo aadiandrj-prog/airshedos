@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { api, type CitizenAnalysis } from "@/lib/api";
+import { api, type CitizenAnalysis, type CorroborationAssessment } from "@/lib/api";
 
 import { CorroborationCard } from "./corroboration-card";
 
@@ -13,7 +13,8 @@ const time = (value: string) =>
     timeZone: "Asia/Kolkata",
   }).format(new Date(value)) + " IST";
 
-export function CitizenEvidencePanel() {
+export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (assessment: CorroborationAssessment, signal: AbortSignal) => Promise<boolean> }) {
+  const [synthetic, setSynthetic] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [result, setResult] = useState<CitizenAnalysis | null>(null);
@@ -28,6 +29,7 @@ export function CitizenEvidencePanel() {
   }, [preview]);
 
   function chooseFile(next: File | null) {
+    setSynthetic(false);
     setResult(null);
     setError("");
     setPreview("");
@@ -49,6 +51,7 @@ export function CitizenEvidencePanel() {
     if (!file || busy) return;
     const data = new FormData(event.currentTarget);
     data.set("image", file);
+    data.set("is_synthetic", String(synthetic));
     setBusy(true);
     setError("");
     setResult(null);
@@ -63,6 +66,19 @@ export function CitizenEvidencePanel() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function loadSample() {
+    try {
+      const response = await fetch("/demo/open-burning.png");
+      if (!response.ok) throw new Error();
+      chooseFile(new File([await response.blob()], "synthetic-open-burning.png", { type: "image/png" }));
+      setSynthetic(true);
+      for (const [name, value] of [["latitude", "28.4595"], ["longitude", "77.0266"]]) {
+        const input = formRef.current?.elements.namedItem(name);
+        if (input instanceof HTMLInputElement && !input.value) input.value = value;
+      }
+    } catch { setError("Synthetic sample could not be loaded. Choose a local image instead."); }
   }
 
   function clear() {
@@ -107,7 +123,7 @@ export function CitizenEvidencePanel() {
               name="image"
               type="file"
               accept="image/jpeg,image/png"
-              required
+              required={!synthetic}
               onChange={(event) => chooseFile(event.target.files?.[0] ?? null)}
             />
             {preview && (
@@ -161,6 +177,8 @@ export function CitizenEvidencePanel() {
               report metadata and interpretation are held temporarily for
               corroboration, then expire. Avoid including identifying details.
             </p>
+            {synthetic && <p className="synthetic-label">SYNTHETIC IMAGE · Demonstration only. Gemini and provider calls still use live services.</p>}
+            <button type="button" className="secondary" onClick={() => void loadSample()} disabled={busy}>Use synthetic sample image</button>
             <div className="citizen-actions">
               <button type="submit" disabled={!file || busy}>
                 {busy ? "Interpreting image…" : "Interpret image"}
@@ -208,6 +226,36 @@ export function CitizenEvidencePanel() {
                 </blockquote>
               )}
               {analysis ? (
+                <CitizenInterpretation analysis={analysis} latencyMs={result.latency_ms} />
+              ) : (
+                <p role="alert">{result.message}</p>
+              )}
+            </>
+          )}
+          <div className="context-footnote citizen-disclaimer">
+            <span>INTERPRETATION ≠ CORROBORATION</span>
+            <p>
+              AI interpretation — requires environmental corroboration. An image
+              cannot establish pollutant concentration, source causality or a
+              violation.
+            </p>
+          </div>
+        </div>
+      </div>
+      {analysis && result && (
+        <CorroborationCard
+          key={result.report.id}
+          reportId={result.report.id}
+          ttlSeconds={result.structured_report_ttl_seconds}
+          onCorroborated={onCorroborated}
+        />
+      )}
+    </section>
+  );
+}
+
+export function CitizenInterpretation({ analysis, latencyMs }: { analysis: NonNullable<CitizenAnalysis["analysis"]>; latencyMs?: number }) {
+  return (
                 <>
                   <p className="eyebrow">Possible event type</p>
                   <h4 className="citizen-event">
@@ -238,35 +286,12 @@ export function CitizenEvidencePanel() {
                     {analysis.provenance.model_version ??
                       analysis.provenance.model}{" "}
                     · Prompt: {analysis.provenance.prompt_version} ·{" "}
-                    {(result.latency_ms / 1000).toFixed(1)} s
+                    {latencyMs == null ? "Not retained" : `${(latencyMs / 1000).toFixed(1)} s`}
                   </p>
                   <p className="source-caveat">
                     Derived from {analysis.source_report_id}. Interpreted{" "}
                     {time(analysis.analyzed_at)}; image capture time unknown.
                   </p>
                 </>
-              ) : (
-                <p role="alert">{result.message}</p>
-              )}
-            </>
-          )}
-          <div className="context-footnote citizen-disclaimer">
-            <span>INTERPRETATION ≠ CORROBORATION</span>
-            <p>
-              AI interpretation — requires environmental corroboration. An image
-              cannot establish pollutant concentration, source causality or a
-              violation.
-            </p>
-          </div>
-        </div>
-      </div>
-      {analysis && result && (
-        <CorroborationCard
-          key={result.report.id}
-          reportId={result.report.id}
-          ttlSeconds={result.structured_report_ttl_seconds}
-        />
-      )}
-    </section>
   );
 }

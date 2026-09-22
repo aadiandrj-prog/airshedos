@@ -35,11 +35,14 @@ function displayReference(rule: CorroborationAssessment["rules"][number]) {
 export function CorroborationCard({
   reportId,
   ttlSeconds,
+  onCorroborated,
 }: {
   reportId: string;
   ttlSeconds: number | null;
+  onCorroborated?: (assessment: CorroborationAssessment, signal: AbortSignal) => Promise<boolean>;
 }) {
   const [result, setResult] = useState<CorroborationAssessment | null>(null);
+  const [inQueue, setInQueue] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const controller = useRef<AbortController | null>(null);
@@ -52,9 +55,16 @@ export function CorroborationCard({
     setBusy(true);
     setError("");
     setResult(null);
+    setInQueue(false);
     try {
       const assessment = await api.corroborate(reportId, active.signal);
-      if (!active.signal.aborted) setResult(assessment);
+      if (!active.signal.aborted) {
+        setResult(assessment);
+        if (onCorroborated) {
+          const queued = await onCorroborated(assessment, active.signal);
+          if (!active.signal.aborted) setInQueue(queued);
+        }
+      }
     } catch (cause) {
       if (!active.signal.aborted)
         setError(
@@ -97,7 +107,16 @@ export function CorroborationCard({
           {error}
         </p>
       )}
-      {result && (
+      {inQueue && <p className="feedback">Assessment added to the officer queue above. Select the case to review it.</p>}
+      {result && !inQueue && (
+        <AssessmentView result={result} reportId={reportId} />
+      )}
+    </section>
+  );
+}
+
+export function AssessmentView({ result, reportId, showForecast = true }: { result: CorroborationAssessment; reportId: string; showForecast?: boolean }) {
+  return (
         <article
           className="fusion-card"
           aria-labelledby={`fusion-${reportId}`}
@@ -213,7 +232,7 @@ export function CorroborationCard({
             <h4>{label(result.recommended_next_step)}</h4>
             <p>No incident or authority task has been created.</p>
           </div>
-          <ForecastOutlook context={result.forecast_outlook ?? null} />
+          {showForecast && <ForecastOutlook context={result.forecast_outlook ?? null} />}
           <div className="context-footnote">
             <span>LIMITATIONS</span>
             <ul>
@@ -240,7 +259,5 @@ export function CorroborationCard({
             </p>
           </details>
         </article>
-      )}
-    </section>
   );
 }
