@@ -1,6 +1,6 @@
 # AirshedOS architecture
 
-## Current: Phase 3B
+## Current: Phase 3C finalization
 
 ```mermaid
 flowchart LR
@@ -207,3 +207,14 @@ The store holds 128 packets for 3,600 seconds with oldest-created eviction and i
 OpenAPI owns frontend types. The existing command center adds a keyed handoff composer and destination panel; selection reuses the existing map with a frozen report marker and full text fallback. Provider readings/forecast/rules retain their original semantics, units and provenance. Receipt never refreshes them. The export downloader hashes exact bytes before download; this is integrity, not a signature. No raw media or citizen free text enters the packet.
 
 [INTEROPERABILITY.md](INTEROPERABILITY.md) specifies field meanings, canonical bytes, routes, transitions, prototype boundaries, expiry and deferred production requirements. No real authority routing, external handoff network, database, accounts or Phase 3C work is added. Phase 2D MODEL_NOT_ACCEPTED and prior verification records remain intact.
+
+
+## Finalization boundary (Phase 3C)
+
+The product and `pollution_event_v1` wire contract are unchanged. Targeted UI copy distinguishes provider states, Gemini interpretation, deterministic rules and the legacy illustrative forecast. Anchor navigation connects the existing single synthetic journey without creating another workflow.
+
+`export_openapi.py` also emits the standalone Draft 2020-12 [JSON Schema](contracts/pollution_event_v1.schema.json). The offline `receive_pollution_event.py` uses JSON Schema and independent top-level reference checks, hashes exact input bytes against the sender's expected digest, and imports no application code. It neither authenticates provenance nor imports/receives a case. The validator dependency is development-only; runtime images retain their original dependencies.
+
+`demo_preflight.py` reports health/configuration and optionally performs genuine provider queries. It never changes credentials or seeds provider results. The existing browser verifier's `--final` mode runs the same synthetic journey, records timings, invokes the isolated receiver, and measures a separately identified cached-corroboration diagnostic. There is no public reset endpoint; a documented local API restart deliberately resets ephemeral state/caches before preparation.
+
+Protected prior verification/model files are checksum-pinned in `contracts/protected-records.json` and tested for unchanged contents. Historical records describe their original phase; later merge status belongs to the later verification record. [Final diagram source](architecture.mmd), [judge-friendly overview](SYSTEM_OVERVIEW.md), [demo checklist](DEMO_CHECKLIST.md) and [deployment readiness](DEPLOYMENT.md) describe the current system. No public deployment or new capability is implied.

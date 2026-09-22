@@ -112,4 +112,17 @@ It submits the synthetic image, corroborates with configured providers, begins r
 
 Real integration would require authoritative jurisdiction boundaries; identity/authentication; RBAC; a durable database; a durable audit log; an official destination registry; secure transport; receiving-system authentication; privacy/data-governance review; retry/delivery guarantees; and legal/operational agreements. None is implemented or implied by this prototype.
 
-Phase 2D remains **MODEL_NOT_ACCEPTED**; no custom model is deployed. This phase adds no ML, scientific QA changes, source attribution, alerts, authority dispatch or Phase 3C work. A next-phase decision should first review demo usability and the receiving contract, then separately scope any production requirements.
+Phase 2D remains **MODEL_NOT_ACCEPTED**; no custom model is deployed. Phase 3B added no ML, scientific QA changes, source attribution, alerts or authority dispatch. Phase 3C's limited receiving-contract and demo review is recorded below; production requirements remain separately scoped.
+
+
+## Independent receiver review (Phase 3C)
+
+The review found the existing exported v1 payload sufficient; no schema fields or semantics changed. IDs are sender-scoped references, not authenticated identities. `event_version` can have gaps; handoff `revision` and mutable audit/hash belong to the envelope, not the frozen payload. Empty FIRMS arrays mean a successful zero-detection query; null means unavailable. Missing satellite observations retain per-product availability. Nullable forecast and source-native units must be handled without substitutions. Report submission, unknown image capture, observation, retrieval, forecast-valid and packet-creation times are distinct. A manual jurisdiction code/reason is not an official recipient or scientific finding.
+
+The standalone [JSON Schema](contracts/pollution_event_v1.schema.json) is generated directly from the backend serialization contract by `apps/api/scripts/export_openapi.py`. Tests compare it with the model; CI checks regeneration. It uses local `$defs` references and no remote registry. The schema requires the complete exported representation, including null/default fields emitted by the backend.
+
+`apps/api/scripts/receive_pollution_event.py` is an independent offline example: copy it and the schema, install `jsonschema==4.26.0`, then run it with `--schema PATH --sha256 EXPECTED_SENDER_DIGEST`. It imports no AirshedOS application code, performs no network calls, limits input to 2 MiB, rejects malformed/duplicate-key/non-finite JSON, validates required schema fields and aware timestamps, checks key cross-field source/review references, verifies exact bytes and emits a minimal summary. It does not parse an untrusted schema supplied inside the packet. The schema file is trusted receiver configuration.
+
+JSON Schema does not encode every Pydantic cross-field/scientific validator. The example independently checks top-level frozen timestamps, source/report relationships, review state and integer versions; it does not rerun scientific rules, validate the truth of provider claims or establish provenance authenticity. Matching bytes/schema is therefore a receiving-contract check, not permission to act on a real allegation. Do not calculate the expected hash from the received file itself and call that trusted comparison. Export/validation is not an import capability.
+
+See [the practical commands](DEMO_CHECKLIST.md) and [final verification](PHASE_3C_VERIFICATION.md). Optional import and all production identity/durability requirements remain deferred.

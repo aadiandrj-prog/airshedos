@@ -184,6 +184,12 @@ export default function CommandCenter() {
             ↻ Refresh
           </button>
         </div>
+        <section className="demo-guide" aria-label="Demo journey">
+          <h2>From a reported observation to a reviewable handoff.</h2>
+          <p>Inspect provider context, interpret a clearly synthetic image, review the evidence, then hand off a frozen packet inside this prototype.</p>
+          <nav aria-label="Demo steps"><a href="#environment-context">1 · Provider context</a><a href="#field-evidence">2 · Synthetic image & interpretation</a><a href="#officer-command">3 · Review & simulated handoff</a></nav>
+          <p className="source-caveat">Provider readings retain live/cached/unavailable status. Gemini provides an AI interpretation; AirshedOS applies deterministic corroboration rules. All handoffs are simulated.</p>
+        </section>
         <OfficerCommandCenter incident={selected ?? null} selectedCase={officerCase} onCase={setOfficerCase} />
         <EnvironmentPanel />
         <CitizenEvidencePanel onCorroborated={enterQueue} />
@@ -258,6 +264,7 @@ export default function CommandCenter() {
                     >
                       <div className="section-label">
                         <h2 id="forecast-title">What may happen next</h2>
+                        <span className="tag demo">ILLUSTRATIVE DEMO FORECAST</span>
                         <span className="tag high">
                           {selected.forecast.risk_level} risk
                         </span>
@@ -505,7 +512,7 @@ export default function CommandCenter() {
         <footer>
           AirshedOS{" "}
           <span>
-            Phase 3B · Simulated jurisdiction handoff · No causal
+            Phase 3C · Demo prototype · No causal
             attribution
           </span>
         </footer>

@@ -1,6 +1,6 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 3B simulated jurisdiction handoff; Phase 2D custom model rejected.**
+**AI Pollution Incident Command — Phase 3C finalized demo prototype; Phase 2D custom model rejected.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
@@ -14,15 +14,25 @@ Phase 3A adds a selected-case Google Map, a deterministic case queue, prototype 
 
 Phase 3B adds a typed **PollutionEvent v1** frozen packet, SHA-256 integrity, manual simulated source/destination inboxes and an ephemeral append-only handoff audit. Delhi, Haryana and Uttar Pradesh are prototype recipients only; no authority is contacted. JSON export preserves normalized evidence/provenance without raw media. See [interoperability](docs/INTEROPERABILITY.md) and [Phase 3B verification](docs/PHASE_3B_VERIFICATION.md).
 
+## Run the final demo
+
+Start with the [system overview](docs/SYSTEM_OVERVIEW.md), then follow the single [demo checklist](docs/DEMO_CHECKLIST.md). The existing synthetic image is the only required media. Provider/AI calls remain genuine; the recipient workflow is explicitly simulated. The read-only preflight and standalone receiver example make preparation and exact-byte verification repeatable.
+
+Public deployment is **prepared, not provisioned**. The current verified setup is local Docker; unrestricted public use needs a separately approved operational/security decision. See [deployment readiness](docs/DEPLOYMENT.md) and [Phase 3C verification](docs/PHASE_3C_VERIFICATION.md). No cloud resources were created during finalization.
+
 ## Current architecture
 
 ```text
-Demo fixture → In-memory repository → FastAPI REST API → Next.js command center
-                                         ↑                    ↓
-                                   Officer actions ← Acknowledge / simulate share
+Citizen image → Gemini interpretation → Deterministic environmental corroboration
+                                               ↓
+Google AQ provider forecast → Separate outlook → Map + manual officer review
+                                               ↓
+                                  Frozen PollutionEvent v1 packet
+                                               ↓
+                                  Simulated inbox + JSON export
 ```
 
-The Python API owns incident data and behavior. Pydantic generates OpenAPI; frontend domain types are generated from that contract. The browser fetches the API directly. Next.js does not duplicate the incident fixture. No database, queue, or login is needed. The demo and configuration states work without keys; real provider readings require backend credentials.
+The Python API owns evidence snapshots and temporary workflow state; the fictional reference incident remains separate. Pydantic generates OpenAPI and the export schema; frontend domain types are generated from that contract. The browser fetches the API directly. Forecast does not feed corroboration support. No database, delivery queue, or login is implemented. The demo and configuration states work without keys; real provider readings require backend credentials. See the maintained [architecture diagram source](docs/architecture.mmd).
 
 ## Repository
 
@@ -194,7 +204,7 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 
 Phase 3A provides spatial presentation and temporary manual review. Phase 3B adds simulated jurisdiction interoperability. Durable records, accounts and real authority integration require separately approved later work.
 
-Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps, ephemeral officer review and simulated PollutionEvent handoff. Future concepts: real authority integration, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Stop after Phase 3B.
+Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps, ephemeral officer review and simulated PollutionEvent handoff. Future concepts: real authority integration, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Phase 3C finalizes reliability and documentation only. Stop after Phase 3C; deck/video/Q&A preparation is the recommended next step.
 
 See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 

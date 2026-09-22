@@ -262,7 +262,7 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
 export function CitizenInterpretation({ analysis, latencyMs }: { analysis: NonNullable<CitizenAnalysis["analysis"]>; latencyMs?: number }) {
   return (
                 <>
-                  <p className="eyebrow">Possible event type</p>
+                  <p className="eyebrow">GEMINI AI INTERPRETATION · Possible event type</p>
                   <h4 className="citizen-event">
                     {label(analysis.event_type)}
                   </h4>

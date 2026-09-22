@@ -92,7 +92,7 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   const showReference = (isProbe: boolean) => {
     ++selection.current; setBusy(false); setActionError(""); onCase(null); setIncoming(null); setSelectedMarker(""); setProbe(isProbe);
   };
-  return <section className="officer-workspace" aria-label="Officer command center">
+  return <section id="officer-command" className="officer-workspace" aria-label="Officer command center">
     <div className="workspace-heading"><span className="eyebrow">SPATIAL COMMAND CENTER</span><h2>Locate. Review. Decide the next step.</h2>
       <p>Manual officer review · temporary state · no authority dispatch</p></div>
     <div className="officer-grid">
