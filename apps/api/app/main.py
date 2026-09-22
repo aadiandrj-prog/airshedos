@@ -25,6 +25,8 @@ from app.environment.providers import (
 from app.environment.router import router as environment_router
 from app.environment.service import EnvironmentService
 from app.environment.settings import EnvironmentSettings
+from app.handoff.repository import HandoffRepository
+from app.handoff.router import router as handoff_router
 from app.models import PollutionIncident, ShareRequest, ShareResponse
 from app.repository import IncidentRepository
 from app.review.repository import OfficerCaseRepository
@@ -56,6 +58,7 @@ def create_app(
             api.state.corroboration_settings
         )
         api.state.officer_cases = OfficerCaseRepository()
+        api.state.handoffs = HandoffRepository()
         try:
             if environment is not None:
                 api.state.environment = environment
@@ -82,18 +85,20 @@ def create_app(
         finally:
             api.state.structured_reports.clear()
             api.state.officer_cases.clear()
+            api.state.handoffs.clear()
 
     api = FastAPI(
         title="AirshedOS API",
-        version="0.7.0",
+        version="0.8.0",
         lifespan=lifespan,
-        description="Phase 3A. Spatial command center and ephemeral officer review. "
+        description="Phase 3B. Simulated jurisdiction handoff and PollutionEvent v1. "
         "No causal attribution. Demo incident sharing is simulated.",
     )
     api.include_router(environment_router)
     api.include_router(citizen_router)
     api.include_router(corroboration_router)
     api.include_router(review_router)
+    api.include_router(handoff_router)
     api.add_middleware(CitizenUploadLimit)
 
     @api.exception_handler(RequestValidationError)

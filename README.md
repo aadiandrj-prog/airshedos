@@ -1,6 +1,6 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 3A spatial officer workflow; Phase 2D custom model rejected.**
+**AI Pollution Incident Command — Phase 3B simulated jurisdiction handoff; Phase 2D custom model rejected.**
 
 Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
 
@@ -11,6 +11,8 @@ Phase 2C adds a separate historical dataset pipeline for OpenAQ and ERA5-Land. *
 Phase 2E adds a separately labelled **Google Air Quality forecast outlook** for the next 6, 12 and 24 hours, both in the coordinate probe and after citizen corroboration. It preserves CPCB index identity, native pollutant units and provenance. Forecast values never increase corroboration support. The custom model remains rejected and undeployed. See [forecast rules and API](docs/FORECASTING.md) and [Phase 2E verification](docs/PHASE_2E_VERIFICATION.md).
 
 Phase 3A adds a selected-case Google Map, a deterministic case queue, prototype jurisdiction labels and ephemeral manual officer review. Evidence, corroboration and Google forecast snapshots cannot be edited by review actions. A separate restricted browser key enables Maps; map failure leaves the textual workflow usable. See [the command-center guide](docs/COMMAND_CENTER.md) and [Phase 3A verification](docs/PHASE_3A_VERIFICATION.md).
+
+Phase 3B adds a typed **PollutionEvent v1** frozen packet, SHA-256 integrity, manual simulated source/destination inboxes and an ephemeral append-only handoff audit. Delhi, Haryana and Uttar Pradesh are prototype recipients only; no authority is contacted. JSON export preserves normalized evidence/provenance without raw media. See [interoperability](docs/INTEROPERABILITY.md) and [Phase 3B verification](docs/PHASE_3B_VERIFICATION.md).
 
 ## Current architecture
 
@@ -190,9 +192,9 @@ These checks cover real API connectivity/actions, reload behavior, evidence, des
 
 ## Planned architecture (not implemented)
 
-Phase 3A provides spatial presentation and temporary manual review. Durable records, accounts and real jurisdiction interoperability require separate later phases.
+Phase 3A provides spatial presentation and temporary manual review. Phase 3B adds simulated jurisdiction interoperability. Durable records, accounts and real authority integration require separately approved later work.
 
-Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps and ephemeral officer review. Future concepts: jurisdiction interoperability, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Stop after Phase 3A.
+Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps, ephemeral officer review and simulated PollutionEvent handoff. Future concepts: real authority integration, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Stop after Phase 3B.
 
 See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
 

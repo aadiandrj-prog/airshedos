@@ -169,6 +169,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/review/cases/{case_id}/handoffs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Handoff */
+        post: operations["create_handoff_api_v1_review_cases__case_id__handoffs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/handoffs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Handoffs */
+        get: operations["list_handoffs_api_v1_handoffs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/handoffs/{handoff_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Handoff */
+        get: operations["get_handoff_api_v1_handoffs__handoff_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/handoffs/{handoff_id}/transition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transition Handoff */
+        post: operations["transition_handoff_api_v1_handoffs__handoff_id__transition_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/handoffs/{handoff_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Handoff */
+        get: operations["export_handoff_api_v1_handoffs__handoff_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -595,6 +680,14 @@ export interface components {
              */
             generated_at: string;
         };
+        /** CreateHandoff */
+        CreateHandoff: {
+            origin_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            destination_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            reason: components["schemas"]["HandoffReason"];
+            /** Expected Case Revision */
+            expected_case_revision: number;
+        };
         /** EnvironmentalContext */
         EnvironmentalContext: {
             /** Latitude */
@@ -686,11 +779,127 @@ export interface components {
             weather: components["schemas"]["ProviderConfiguration"];
             fires: components["schemas"]["ProviderConfiguration"];
         };
+        /** EventEvidence */
+        EventEvidence: {
+            /** Report Id */
+            report_id: string;
+            /** Is Synthetic */
+            is_synthetic: boolean;
+            /**
+             * Citizen Evidence Summary
+             * @constant
+             */
+            citizen_evidence_summary: "Structured visual interpretation; raw image and citizen text omitted.";
+            gemini: components["schemas"]["GeminiEvidenceAnalysis"];
+            /** Source Statuses */
+            source_statuses: components["schemas"]["EventSourceStatus"][];
+            /** Rules */
+            rules: components["schemas"]["EventRule"][];
+            air_quality: components["schemas"]["AirQualityObservation"] | null;
+            weather: components["schemas"]["MeteorologicalObservation"] | null;
+            /** Fires */
+            fires: components["schemas"]["FireObservation"][] | null;
+            /** Fire Search Radius Km */
+            fire_search_radius_km: number;
+            /** Satellite */
+            satellite: components["schemas"]["SatelliteEvidence"][] | null;
+            assessment_provenance: components["schemas"]["Provenance"];
+            /** Source Snapshot Sha256 */
+            source_snapshot_sha256: string;
+        };
         /**
          * EventFamily
          * @enum {string}
          */
         EventFamily: "COMBUSTION" | "DUST" | "ATMOSPHERIC_HAZE" | "TRAFFIC" | "NONE_OR_UNCERTAIN";
+        /** EventForecast */
+        EventForecast: {
+            /**
+             * Provider
+             * @constant
+             */
+            provider: "google_air_quality_forecast";
+            status: components["schemas"]["SourceState"];
+            /** Retrieved At */
+            retrieved_at: string | null;
+            /** Issued At */
+            issued_at: null;
+            /** Summaries */
+            summaries: components["schemas"]["ForecastSummary"][];
+            /** Hourly Forecasts */
+            hourly_forecasts: components["schemas"]["HourlyAirQualityForecast"][];
+            provenance: components["schemas"]["EnvironmentalProvenance"];
+            /** Independence Note */
+            independence_note: string;
+        };
+        /** EventLocation */
+        EventLocation: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Location Precision
+             * @constant
+             */
+            location_precision: "reported_coordinate_accuracy_unknown";
+            jurisdiction_at_location: components["schemas"]["JurisdictionResolution"];
+        };
+        /** EventRule */
+        EventRule: {
+            /** Rule Id */
+            rule_id: string;
+            /** Source */
+            source: string;
+            verdict: components["schemas"]["Verdict"];
+            /** Summary */
+            summary: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Evidence References */
+            evidence_references: components["schemas"]["EvidenceReference"][];
+        };
+        /** EventSourceStatus */
+        EventSourceStatus: {
+            /** Provider */
+            provider: string;
+            status: components["schemas"]["SourceState"];
+            /** Retrieved At */
+            retrieved_at: string | null;
+        };
+        /** EventTemporal */
+        EventTemporal: {
+            /**
+             * Report Submitted At
+             * Format: date-time
+             */
+            report_submitted_at: string;
+            /**
+             * Image Capture Time Known
+             * @constant
+             */
+            image_capture_time_known: false;
+            /** Image Capture Time */
+            image_capture_time: null;
+            /**
+             * Environmental Reference Time
+             * Format: date-time
+             */
+            environmental_reference_time: string;
+            /**
+             * Environmental Context Generated At
+             * Format: date-time
+             */
+            environmental_context_generated_at: string;
+            /**
+             * Temporal Basis
+             * @constant
+             */
+            temporal_basis: "submission_time_proxy";
+        };
         /**
          * EventType
          * @enum {string}
@@ -919,6 +1128,152 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** HandoffAudit */
+        HandoffAudit: {
+            /** Sequence */
+            sequence: number;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Action */
+            action: "CREATED" | components["schemas"]["HandoffState"];
+            state: components["schemas"]["HandoffState"];
+            /** Handoff Revision */
+            handoff_revision: number;
+            /** Event Version */
+            event_version: number;
+            origin_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            destination_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            /** Payload Hash */
+            payload_hash: string;
+            /**
+             * Actor
+             * @enum {string}
+             */
+            actor: "source_control_room" | "destination_control_room";
+        };
+        /**
+         * HandoffJurisdiction
+         * @enum {string}
+         */
+        HandoffJurisdiction: "DELHI" | "HARYANA" | "UTTAR_PRADESH";
+        /**
+         * HandoffReason
+         * @enum {string}
+         */
+        HandoffReason: "CROSS_BORDER_EVENT" | "DOWNWIND_IMPACT" | "JURISDICTION_MISMATCH" | "SHARED_CORRIDOR_CONTEXT" | "MANUAL_OFFICER_HANDOFF";
+        /** HandoffRecord */
+        HandoffRecord: {
+            /** Id */
+            id: string;
+            /** Case Id */
+            case_id: string;
+            /** Event Id */
+            event_id: string;
+            /** Event Version */
+            event_version: number;
+            origin_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            destination_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            reason: components["schemas"]["HandoffReason"];
+            possible_event_type: components["schemas"]["EventType"];
+            corroboration_support: components["schemas"]["SupportLevel"];
+            /** Is Synthetic */
+            is_synthetic: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Sent At */
+            sent_at: string | null;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            state: components["schemas"]["HandoffState"];
+            /** Revision */
+            revision: number;
+            /** Payload Hash */
+            payload_hash: string;
+            /**
+             * Integrity
+             * @enum {string}
+             */
+            integrity: "VERIFIED" | "MISMATCH";
+            /** Allowed Transitions */
+            allowed_transitions: components["schemas"]["HandoffState"][];
+            /**
+             * Simulated
+             * @default true
+             * @constant
+             */
+            simulated: true;
+            payload: components["schemas"]["PollutionEvent"];
+            /** Audit */
+            audit: components["schemas"]["HandoffAudit"][];
+            /**
+             * Audit Notice
+             * @default Ephemeral prototype audit trail; no authenticated identities or external delivery.
+             * @constant
+             */
+            audit_notice: "Ephemeral prototype audit trail; no authenticated identities or external delivery.";
+        };
+        /**
+         * HandoffState
+         * @enum {string}
+         */
+        HandoffState: "DRAFT" | "READY" | "SENT_SIMULATED" | "RECEIVED" | "ACCEPTED" | "REJECTED" | "RETURNED_FOR_REVIEW";
+        /** HandoffSummary */
+        HandoffSummary: {
+            /** Id */
+            id: string;
+            /** Case Id */
+            case_id: string;
+            /** Event Id */
+            event_id: string;
+            /** Event Version */
+            event_version: number;
+            origin_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            destination_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            reason: components["schemas"]["HandoffReason"];
+            possible_event_type: components["schemas"]["EventType"];
+            corroboration_support: components["schemas"]["SupportLevel"];
+            /** Is Synthetic */
+            is_synthetic: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Sent At */
+            sent_at: string | null;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            state: components["schemas"]["HandoffState"];
+            /** Revision */
+            revision: number;
+            /** Payload Hash */
+            payload_hash: string;
+            /**
+             * Integrity
+             * @enum {string}
+             */
+            integrity: "VERIFIED" | "MISMATCH";
+            /** Allowed Transitions */
+            allowed_transitions: components["schemas"]["HandoffState"][];
+            /**
+             * Simulated
+             * @default true
+             * @constant
+             */
+            simulated: true;
+        };
         /** HourlyAirQualityForecast */
         HourlyAirQualityForecast: {
             /**
@@ -1143,6 +1498,70 @@ export interface components {
             full_name: string | null;
             concentration: components["schemas"]["Measurement"] | null;
         };
+        /** PollutionEvent */
+        PollutionEvent: {
+            /**
+             * Schema Version
+             * @constant
+             */
+            schema_version: "pollution_event_v1";
+            /** Event Id */
+            event_id: string;
+            /** Case Id */
+            case_id: string;
+            /** Event Version */
+            event_version: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            origin_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            /**
+             * Origin System
+             * @constant
+             */
+            origin_system: "AirshedOS prototype";
+            /** Origin Case Id */
+            origin_case_id: string;
+            destination_jurisdiction: components["schemas"]["HandoffJurisdiction"];
+            handoff_reason: components["schemas"]["HandoffReason"];
+            /**
+             * Origin Basis
+             * @constant
+             */
+            origin_basis: "manual_prototype_control_room";
+            location: components["schemas"]["EventLocation"];
+            possible_event_type: components["schemas"]["EventType"];
+            event_family: components["schemas"]["EventFamily"];
+            corroboration_support: components["schemas"]["SupportLevel"];
+            advisory_next_step: components["schemas"]["NextStep"];
+            review_state: components["schemas"]["ReviewState"];
+            /** Source Review Revision */
+            source_review_revision: number;
+            temporal: components["schemas"]["EventTemporal"];
+            evidence: components["schemas"]["EventEvidence"];
+            forecast: components["schemas"]["EventForecast"] | null;
+            /** Limitations */
+            limitations: string[];
+            /** Handoff Id */
+            handoff_id: string;
+            /**
+             * Handoff Created At
+             * Format: date-time
+             */
+            handoff_created_at: string;
+            /**
+             * Simulated
+             * @constant
+             */
+            simulated: true;
+        };
         /** PollutionIncident */
         PollutionIncident: {
             /** Id */
@@ -1286,6 +1705,27 @@ export interface components {
              * @default Satellite atmospheric columns are regional context and are not equivalent to ground-level pollutant concentrations.
              */
             measurement_note: string;
+        };
+        /** SatelliteEvidence */
+        SatelliteEvidence: {
+            /**
+             * Product
+             * @enum {string}
+             */
+            product: "no2" | "co" | "aerosol_index";
+            status: components["schemas"]["SourceState"];
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "available" | "no_scene" | "quality_filtered" | "no_usable_pixels" | "not_configured" | "authentication_error" | "configuration_error" | "provider_error" | "timeout" | "busy";
+            /** Collection */
+            collection: string;
+            /** Band */
+            band: string;
+            /** Unit */
+            unit: string;
+            observation: components["schemas"]["SatelliteObservation"] | null;
         };
         /** SatelliteObservation */
         SatelliteObservation: {
@@ -1472,6 +1912,12 @@ export interface components {
          * @enum {string}
          */
         SupportLevel: "STRONG" | "MODERATE" | "WEAK" | "INSUFFICIENT" | "CONFLICTING";
+        /** TransitionHandoff */
+        TransitionHandoff: {
+            state: components["schemas"]["HandoffState"];
+            /** Expected Revision */
+            expected_revision: number;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1793,6 +2239,170 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OfficerCase"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_handoff_api_v1_review_cases__case_id__handoffs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateHandoff"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoffRecord"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_handoffs_api_v1_handoffs_get: {
+        parameters: {
+            query?: {
+                case_id?: string | null;
+                destination?: components["schemas"]["HandoffJurisdiction"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoffSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_handoff_api_v1_handoffs__handoff_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                handoff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoffRecord"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transition_handoff_api_v1_handoffs__handoff_id__transition_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                handoff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionHandoff"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HandoffRecord"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_handoff_api_v1_handoffs__handoff_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                handoff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Exact canonical PollutionEvent UTF-8 bytes; SHA-256 in X-Payload-SHA256. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

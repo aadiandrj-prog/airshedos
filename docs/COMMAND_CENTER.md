@@ -1,4 +1,4 @@
-# Phase 3A spatial command center
+# Spatial command center and simulated handoff
 
 AirshedOS helps an officer locate a reported event, inspect evidence, read Google's operational forecast, and record a manual review state. It does not establish source causality or dispatch an authority. No custom prediction model is deployed; Phase 2D remains `MODEL_NOT_ACCEPTED`.
 
@@ -71,7 +71,7 @@ Outside these interiors, on edges, or in overlapping configuration, jurisdiction
 4. Show the report and any returned fire detections, with the causality limitation. Genuine zero detections are valid.
 5. Expand corroboration and provenance; show Google's separate 6/12/24-hour outlook.
 6. Begin review, then mark monitoring or acknowledge. Support, evidence and forecast remain unchanged.
-7. Explain that jurisdiction interoperability is future work; no authority was contacted.
+7. Optionally continue into the Phase 3B simulated handoff below; no authority is contacted.
 
 The synthetic image is the pre-existing Phase 2A evaluation asset, copied with provenance into `apps/web/public/demo`. The input is fictional; Gemini and environmental requests still use configured services with their individual status labels. The original Phase 1A fixture incident and simulated actions remain separately labeled and unchanged.
 
@@ -85,3 +85,14 @@ apps/api/.venv/bin/python apps/api/scripts/forecast_snapshot.py match --snapshot
 ```
 
 Outputs are one-shot, gitignored local JSON under `data/forecast-evaluation`. A `prospective_google_forecast_v1` snapshot records coordinate, record/retrieval time, unknown issuance time (`null`), hourly forecast-valid times, native PM2.5 units, CPCB index if returned and provenance. A separate `prospective_google_observation_match_v1` file pairs later observed Google AQ only after both retrieval and snapshot recording, at an exactly matching coordinate and valid timestamp, preserving observation/retrieval time, units and provider identity. No interpolation, historical forecast reconstruction, scores, polling or database is added. Unavailable or unmatched data produces no result file. Matching may require a later manual run and is not a phase-completion dependency. Google observations and forecasts share an ecosystem; these pairs are not independent ground truth and make no accuracy claim.
+
+
+## Phase 3B simulated cross-jurisdiction workflow
+
+Use **Use synthetic cross-jurisdiction demo** in citizen intake for the fictional border-area coordinate 28.52, 77.08, interpret, corroborate and begin review. The point has Unknown jurisdiction in the narrow prototype lookup; boundary ownership is unverified. Its synthetic label does not relabel configured provider responses as synthetic.
+
+In **Hand off case**, explicitly choose source control room, a different destination (Delhi/Haryana/Uttar Pradesh), and a controlled reason. Generate a frozen PollutionEvent packet, inspect its assessment/Google outlook/provenance, mark ready and send the **simulated handoff**. Switch **Source cases → Incoming handoffs**, select the demo recipient and open the packet. Opening is read-only. Receive, inspect integrity, then accept, reject or return for review. Both views share consistent state and append-only ephemeral audit. Returned packets can be readied/resend by the source without modifying their frozen evidence. To reflect a later case review state, generate a new version instead.
+
+Incoming selection shows the frozen report coordinate on the existing map and in text. Keyboard controls, stacked mobile layout and map-failure fallback all apply. No boundary overlay, route animation or automatic destination selection is added. Expand frozen evidence/provenance, audit history or JSON preview; **Export PollutionEvent JSON** downloads the exact SHA-256-verified bytes.
+
+Handoff is independent from case review: ACCEPTED does not acknowledge the case, change support or refresh providers. The store holds 128 packets for one hour independently of source-case TTL and is lost on restart/eviction. Each audit is bounded to 128 entries; its actors are generic labels, not authenticated officers. All views explicitly say simulated/prototype. See [the complete contract and limitations](INTEROPERABILITY.md) and [verification](PHASE_3B_VERIFICATION.md). Import, authoritative boundaries and real authority integration are deferred; no Phase 3C work is included.

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api, type CaseSummary, type Incident, type OfficerCase, type ReviewState } from "@/lib/api";
+import { api, type HandoffRecord, type CaseSummary, type Incident, type OfficerCase, type ReviewState } from "@/lib/api";
+import { HandoffComposer, HandoffDetail, HandoffInbox } from "./handoff-panel";
 import { SpatialMap, type MapPoint } from "./spatial-map";
 import { ForecastOutlook } from "./forecast-outlook";
 import { AssessmentView } from "./corroboration-card";
@@ -20,6 +21,10 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   incident: Incident | null; selectedCase: OfficerCase | null;
   onCase: (item: OfficerCase | null) => void;
 }) {
+  const [inbox, setInbox] = useState(false);
+  const [incoming, setIncoming] = useState<HandoffRecord | null>(null);
+  const activeIncoming = selectedCase ? null : incoming;
+  const incomingEvent = activeIncoming?.payload;
   const [queue, setQueue] = useState<CaseSummary[]>([]);
   const [queueError, setQueueError] = useState("");
   const [actionError, setActionError] = useState("");
@@ -43,6 +48,10 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   const report = snapshot?.record.report;
   const context = snapshot?.assessment.environmental_context;
   const points = useMemo<MapPoint[]>(() => {
+    if (incomingEvent) {
+      const event = incomingEvent;
+      return [{ id: event.event_id, role: "REPORT", lat: event.location.latitude, lng: event.location.longitude, label: `SIMULATED HANDOFF REPORT · ${event.event_id}` }];
+    }
     if (snapshot) {
       const r = snapshot.record.report;
       const fires = snapshot.assessment.environmental_context.fires ?? [];
@@ -53,7 +62,7 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
     }
     if (probe || !incident) return [{ id: "probe", role: "PROBE", lat: 28.4595, lng: 77.0266, label: "PROBE · Gurugram coordinate" }];
     return [{ id: incident.id, role: "INCIDENT", lat: incident.latitude, lng: incident.longitude, label: "DEMO INCIDENT · " + incident.id }];
-  }, [snapshot, incident, probe]);
+  }, [snapshot, incident, probe, incomingEvent]);
   const activeMarker = points.some((p) => p.id === selectedMarker) ? selectedMarker : points[0]?.id ?? "";
   const fire = context?.fires?.find((f) => "fire:" + f.source_id === activeMarker);
   const choose = async (id: string) => {
@@ -62,7 +71,7 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
     setBusy(true); setActionError("");
     try {
       const item = await api.case(id);
-      if (version === selection.current && currentCaseId.current === previousId) { onCase(item); setSelectedMarker(""); setProbe(false); }
+      if (version === selection.current && currentCaseId.current === previousId) { onCase(item); setIncoming(null); setSelectedMarker(""); setProbe(false); }
     } catch { if (version === selection.current) setActionError("Case expired or unavailable. Refresh the queue or corroborate a new report."); }
     finally { if (version === selection.current) setBusy(false); }
   };
@@ -81,13 +90,15 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
     finally { if (version === selection.current) setBusy(false); }
   };
   const showReference = (isProbe: boolean) => {
-    ++selection.current; setBusy(false); setActionError(""); onCase(null); setSelectedMarker(""); setProbe(isProbe);
+    ++selection.current; setBusy(false); setActionError(""); onCase(null); setIncoming(null); setSelectedMarker(""); setProbe(isProbe);
   };
   return <section className="officer-workspace" aria-label="Officer command center">
     <div className="workspace-heading"><span className="eyebrow">SPATIAL COMMAND CENTER</span><h2>Locate. Review. Decide the next step.</h2>
       <p>Manual officer review · temporary state · no authority dispatch</p></div>
     <div className="officer-grid">
       <aside className="case-queue" aria-label="Case queue">
+        <div className="review-actions" role="group" aria-label="Queue view"><button type="button" aria-pressed={!inbox} onClick={() => setInbox(false)}>Source cases</button><button type="button" aria-pressed={inbox} onClick={() => setInbox(true)}>Incoming handoffs</button></div>
+        {inbox ? <HandoffInbox selected={activeIncoming} onSelect={item => { ++selection.current; setBusy(false); setActionError(""); onCase(null); setIncoming(item); setSelectedMarker(""); }} /> : <>
         <h3>Case queue</h3><p className="source-caveat">New → under review → acknowledged / monitoring → closed. Newest submission first within each group.</p>
         <button type="button" className="secondary" onClick={() => void refreshQueue()}>Refresh queue</button>
         {queueError && <p role="alert">{queueError}</p>}
@@ -99,17 +110,18 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
           <small>Submitted {time(item.submitted_at)}</small>
         </button>)}
         <h4>Reference workflows</h4>
-        {incident && <button type="button" className="case-choice" aria-pressed={!selectedCase && !probe} onClick={() => showReference(false)}>
+        {incident && <button type="button" className="case-choice" aria-pressed={!selectedCase && !activeIncoming && !probe} onClick={() => showReference(false)}>
           <span className="tag demo">FICTIONAL DEMO</span><strong>{incident.title}</strong>
           <span>{incident.jurisdiction.state} · fixture</span><span>Illustrative support only · {incident.status}</span>
           <small>Scenario time {time(incident.detected_at)}</small>
         </button>}
-        <button type="button" className="case-choice" aria-pressed={!selectedCase && probe} onClick={() => showReference(true)}>Gurugram coordinate probe<span>28.4595, 77.0266 · no reported event</span></button>
+        <button type="button" className="case-choice" aria-pressed={!selectedCase && !activeIncoming && probe} onClick={() => showReference(true)}>Gurugram coordinate probe<span>28.4595, 77.0266 · no reported event</span></button>
+        </>}
       </aside>
       <SpatialMap points={points} selectedId={activeMarker} onSelect={setSelectedMarker} />
       <section className="officer-detail" aria-label="Selected case details" aria-busy={busy}>
         {actionError && <p role="alert">{actionError}</p>}
-        {selectedCase && snapshot && report ? <>
+        {activeIncoming ? <HandoffDetail key={activeIncoming.id} record={activeIncoming} side="destination" onChange={item => setIncoming(previous => previous?.id === item.id ? { ...item, payload: previous.payload } : previous)} /> : selectedCase && snapshot && report ? <>
           <span className="tag">{report.is_synthetic ? "SYNTHETIC INPUT · PROVIDER CONTEXT" : "CITIZEN EVIDENCE · PROVIDER CONTEXT"}</span>
           <h3>{label(snapshot.assessment.event_type)}</h3>
           <dl className="case-facts"><div><dt>Reported location</dt><dd>{report.latitude}, {report.longitude}</dd></div>
@@ -149,6 +161,7 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
             <button type="button" className="secondary" disabled={busy} onClick={() => void choose(selectedCase.id)}>Refresh selected case</button>
             <details><summary>Snapshot integrity</summary><p>Evidence SHA-256: {snapshot.evidence_sha256}</p><p>Review revision {selectedCase.review.revision} · {selectedCase.id}</p></details>
           </section>
+          <HandoffComposer key={selectedCase.id} selectedCase={selectedCase} />
         </> : probe || !incident ? <>
           <span className="tag">COORDINATE PROBE</span><h3>Gurugram</h3><p>28.4595, 77.0266</p>
           <p>No incident is inferred at this coordinate. AQ and satellite context are not physical sensor markers.</p><a href="#environment-context">View live environmental context below</a>
