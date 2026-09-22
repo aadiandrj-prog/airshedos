@@ -114,9 +114,11 @@ The missing-key drill initially used port 3001, correctly rejected by existing C
 | Protected prior verification/model records | **11/11 unchanged**, also compared with merged main |
 | Secret scan | **PASS: 1,876 source/build/artifact files, 0 findings**, including 10 sanitized Phase 3C JSON artifacts |
 | Documentation links | **23 Markdown files checked, 0 missing local targets** |
-| Phase 3C PR/CI | Pending push; this document does not authorize merging |
+| Phase 3C PR/CI | [PR #10](https://github.com/aadiandrj-prog/airshedos/pull/10); push and pull-request backend/frontend/browser/secrets checks are published on its exact head. Confirm those checks before merging; no auto-merge is authorized |
 
 Preflight: `apps/api/.venv/bin/python apps/api/scripts/demo_preflight.py --live`. It reports PASS/WARN/FAIL for health, frontend/fixture, provider states, local configuration presence and Docker detectability without printing secrets or changing credentials. Configuration presence alone is not authentication proof. See [the demo checklist](DEMO_CHECKLIST.md).
+
+Implementation commit: **0bb58572b2dbda45a20e96b494de1cca88fe395b** (`chore: finalize demo and reliability workflow`). Documentation-only follow-up completes the current architecture summary and PR references. The PR's checks remain the authoritative status for its latest revision; this verification record does not merge the branch.
 
 **Public deployment is prepared, not provisioned.** The [deployment plan](DEPLOYMENT.md) provides environment separation, exact-origin CORS/Maps/HTTPS requirements, proposed Cloud Run/registry/secret-manager steps and health semantics. Read-only inventory found those three cloud APIs disabled. No billable infrastructure, IAM change, new credential or public release was created. Separate authorization is required before that plan runs.
 

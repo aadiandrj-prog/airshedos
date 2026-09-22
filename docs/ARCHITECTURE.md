@@ -4,29 +4,30 @@
 
 ```mermaid
 flowchart LR
-  Satellite[Earth Engine / Sentinel-5P] --> Bounded[Bounded synchronous SDK adapter]
-  Bounded --> Cache
-  Providers[Google AQ / Weather / NASA FIRMS] --> Normalize[Async adapters + normalization]
-  Normalize --> Cache[Per-provider TTL cache]
-  Cache --> Context[Environmental context API]
-  Context --> Probe[Independent probe panel]
-  Fixture[Demo fixture] --> Repository[In-memory repository]
-  Repository --> API[FastAPI REST API]
-  API --> Web[Next.js command center]
-  Web --> Action[Officer action]
-  Action --> API
-  API --> Repository
+  Citizen[Citizen photo / report] --> Gemini[Gemini interpretation]
+  Gemini --> Report[Temporary structured evidence]
+  Sources[Google AQ / Weather / FIRMS / Sentinel-5P] --> Context[Normalized context / provider caches]
+  Report --> Rules[Deterministic corroboration]
+  Context --> Rules
+  Rules --> Case[Immutable case snapshot]
+  Forecast[Google AQ forecast] --> Outlook[Separate operational outlook]
+  Outlook --> Case
+  Case --> Web[Map / text / manual review]
+  Web --> Packet[Frozen pollution_event_v1]
+  Packet --> Inbox[Simulated destination inbox]
+  Packet --> Export[JSON / SHA-256 / independent receiver]
+  Fixture[Separate fictional reference incident] --> Demo[Legacy illustrative demo panels]
 ```
 
 FastAPI is the source of API truth. `models.py` defines Pydantic domain models. `openapi.json` is exported from the application, and `api-schema.d.ts` is generated from it. The browser API client imports the generated types. Generated typing is a compile-time contract; it does not validate arbitrary responses at runtime. FastAPI validates its outgoing domain responses.
 
-The app factory creates a fresh repository for each application instance. Routes use dependency injection to access it. The repository contains a single fictional scenario and serializes mutations with a lock; deep copies prevent callers from mutating stored objects accidentally. It is a small concrete boundary rather than a speculative service/plugin framework. Persistence can replace it when a later phase actually needs storage.
+The app factory creates fresh process-local repositories for each application instance. Routes use dependency injection. The legacy incident repository contains a single fictional scenario and serializes mutations with a lock; deep copies prevent callers from mutating stored objects accidentally. Citizen, review and handoff stores have separate bounded lifecycles described below. No persistent database is introduced.
 
 The repository provides list, detail, acknowledgment, and share operations. Acknowledgment is idempotent. Simulated sharing is idempotent per incident/target pair. Each successful mutation appends a structured action and updates the incident timestamp. Acknowledgment means an officer has seen the incident; it is not field verification, confirmation of a source, or resolution. No actions invoke third parties.
 
 `OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](COMMAND_CENTER.md).
 
-## Domain decisions
+## Legacy fictional incident domain
 
 | Concept | Responsibility |
 | --- | --- |
@@ -70,9 +71,9 @@ The user-supplied Stitch ZIP contains multiple landing-page directions. The dark
 
 This intentionally refines the Phase 1A appearance under the user's direct request while preserving its workflows, overriding the attached brief's narrower “Do NOT redesign” direction.
 
-## Planned only
+## Deferred / not implemented
 
-Translation, Vertex AI prediction, BigQuery, source attribution, persistence, application authentication, real authority integration and real notification delivery remain unimplemented. Phase 2E adds the separate provider outlook; Phase 3A adds the selected-workflow map and ephemeral officer review described below.
+Translation, BigQuery, source attribution, persistence, application authentication, real authority integration and notification delivery remain unimplemented and require separate scope decisions. Vertex custom prediction is not deployed: the evaluated model was rejected, and finalization does not resume model selection. The current provider outlook, selected-workflow map, officer review and simulated handoff are described below.
 
 ## Satellite evidence boundary
 
