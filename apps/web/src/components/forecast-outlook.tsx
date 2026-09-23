@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Badge, LoadingState } from "./ui";
 import { api, type ForecastContext, type Measurement } from "@/lib/api";
 
 const units: Record<string, string> = {
@@ -26,9 +27,10 @@ const states = {
 };
 
 export function ForecastOutlook({
-  context,
+  context, compact = false,
 }: {
   context: ForecastContext | null;
+  compact?: boolean;
 }) {
   const [horizon, setHorizon] = useState<6 | 12 | 24>(6);
   const summary = context?.summaries.find((s) => s.horizon_hours === horizon);
@@ -41,7 +43,7 @@ export function ForecastOutlook({
     <section className="forecast-outlook" aria-label="Forecast outlook">
       <div className="environment-heading">
         <div>
-          <span className="eyebrow">FORECAST OUTLOOK</span>
+          <Badge tone="provider">Provider forecast</Badge>
           <h3>Google Air Quality forecast</h3>
           <p>External provider outlook · separate from corroboration</p>
         </div>
@@ -55,21 +57,27 @@ export function ForecastOutlook({
         <p className="source-caveat">Forecast outlook unavailable.</p>
       ) : (
         <>
+          <div className="forecast-key"><span>PM2.5 · <strong>horizon peaks</strong></span><span>Current: {quantity(currentPm)}</span></div>
           <div className="forecast-horizons" aria-label="Forecast horizon">
             {([6, 12, 24] as const).map((hours) => (
               <button
                 key={hours}
                 type="button"
+                aria-label={`Next ${hours} hours`}
+                title={`Maximum PM2.5 within ${hours} hours: ${quantity(context.summaries.find(s => s.horizon_hours === hours)?.max_pm25)}`}
                 aria-pressed={horizon === hours}
                 disabled={
                   !context.summaries.some((s) => s.horizon_hours === hours)
                 }
                 onClick={() => setHorizon(hours)}
               >
-                Next {hours} hours
+                <span>Next {hours} hours</span>
+                <span className="horizon-value">{context.summaries.find(s => s.horizon_hours === hours)?.max_pm25?.value.toLocaleString("en-IN", { maximumFractionDigits: 1 }) ?? "—"}</span>
+                <span className="horizon-unit">{(() => { const m = context.summaries.find(s => s.horizon_hours === hours)?.max_pm25; return m ? units[m.unit] ?? m.unit : "No value"; })()}</span>
               </button>
             ))}
           </div>
+          <p className="source-caveat">Peaks within each window, not readings at the end of it. Units: {summary?.max_pm25 ? units[summary.max_pm25.unit] ?? summary.max_pm25.unit : "not supplied"}.</p>
           {summary && (
             <>
               <p className="forecast-trend">
@@ -77,6 +85,7 @@ export function ForecastOutlook({
                   ? "Comparison unavailable"
                   : summary.outlook.replaceAll("_", " ")}
               </p>
+              <details className="forecast-extra" open={!compact}><summary>Forecast measurements & coverage</summary>
               <p className="source-caveat">
                 Hourly coverage: {summary.available_hours}/{horizon} · PM2.5:{" "}
                 {summary.pm25_hours}/{horizon} · CPCB: {summary.cpcb_hours}/
@@ -139,15 +148,19 @@ export function ForecastOutlook({
                   {context.current_source_status.status.replaceAll("_", " ")}
                 </p>
               )}
+              </details>
             </>
           )}
+          {compact ? <p className="satellite-disclaimer">Provider outlook only; does not change corroboration support or establish event causality.</p> : <>
           <p className="source-caveat">{context.provider_status.message}</p>
           <p className="satellite-disclaimer">
             {context.independence_note} Forecasts do not establish that a
             reported event will cause future pollution.
           </p>
+          </>}
           <details className="source-details">
             <summary>Forecast source, timing and rules</summary>
+            {compact && <><p>{context.provider_status.message}</p><p>{context.independence_note} Forecasts do not establish that a reported event will cause future pollution.</p></>}
             <p>
               {context.provenance.method} · {context.provenance.note}
             </p>
@@ -215,7 +228,7 @@ export function ForecastPanel({ lat, lng }: { lat: number; lng: number }) {
       aria-busy={loading}
     >
       {loading ? (
-        <p role="status">Retrieving Google Air Quality forecast…</p>
+        <LoadingState>Retrieving Google Air Quality forecast…</LoadingState>
       ) : (
         <ForecastOutlook context={context} />
       )}

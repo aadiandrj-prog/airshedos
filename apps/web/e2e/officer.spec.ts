@@ -39,6 +39,8 @@ async function setup(page: Page, fires = true, initiallyQueued = true) {
   return calls;
 }
 async function choose(page: Page) {
+  const selector = page.getByRole("button", { name: "Show case selector", exact: true });
+  if (await selector.isVisible()) await selector.click();
   await page.getByRole("complementary", { name: "Case queue" }).getByRole("button").filter({ hasText: "SYNTHETIC INPUT" }).click();
   await expect(page.getByRole("region", { name: "Selected case details" })).toContainText("Haryana · prototype");
 }

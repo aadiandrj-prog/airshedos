@@ -18,6 +18,8 @@ try {
   await page.getByRole('button', { name: 'Use synthetic cross-jurisdiction demo' }).click();
   await expect(page.getByLabel('Field latitude')).toHaveValue('28.52');
   stage = 'case_queue';
+  const selector = page.getByRole('button', { name: 'Show case selector', exact: true });
+  if (await selector.isVisible()) await selector.click();
   const queue = page.getByRole('complementary', { name: 'Case queue' });
   await queue.getByRole('button').filter({ hasText: 'SYNTHETIC INPUT' }).first().click();
   stage = 'review';

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { EmptyState, LoadingState } from "./ui";
 import { loadMaps, MAP_FAILURE } from "@/lib/maps";
 
 export type MapPoint = {
@@ -29,7 +30,7 @@ export function SpatialMap({ points, selectedId, onSelect }: {
       await google.maps.importLibrary("marker");
       if (!active || failed || !element.current) return;
       map.current = new Map(element.current, {
-        center: { lat: 28.4595, lng: 77.0266 }, zoom: 12,
+        center: { lat: 28.4595, lng: 77.0266 }, zoom: 12, colorScheme: "DARK",
         mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID",
         streetViewControl: false, mapTypeControl: false, fullscreenControl: false,
         gestureHandling: "cooperative", maxZoom: 17, clickableIcons: false,
@@ -79,13 +80,12 @@ export function SpatialMap({ points, selectedId, onSelect }: {
       marker.setAttribute("aria-pressed", String(selected));
     });
   }, [selectedId, points, status]);
-  return <section className="spatial-map" aria-label="Selected workflow map">
-    <h3>Selected location & nearby evidence</h3>
-    <p className="source-caveat">R Report · D Demo incident · F Active fire detection · P Coordinate probe</p>
+  return <section id="spatial-context" tabIndex={-1} className="spatial-map" aria-label="Selected workflow map">
+    <div className="map-heading"><div><span className="eyebrow">Spatial context</span><h3>Selected location & nearby evidence</h3></div><span className="map-compass" aria-label="National Capital Region">NCR</span></div>
     <div className="spatial-map-canvas" ref={element} aria-label="Google operational map" hidden={status === "unavailable"} />
-    {status === "loading" && <p role="status">Loading Google map… Textual evidence and review remain available.</p>}
-    {status === "unavailable" && <p role="status" className="map-unavailable">Map unavailable. Use the location and evidence list below; case review still works.</p>}
-    {status === "ready" && <p className="source-caveat">Google map loaded. Marker selection changes the detail panel only.</p>}
+    {status === "loading" && <LoadingState>Loading Google map… Textual evidence and review remain available.</LoadingState>}
+    {status === "unavailable" && <div role="status" className="map-unavailable"><EmptyState title="Map unavailable.">Use the location and evidence list below; case review still works.</EmptyState></div>}
+    {status === "ready" && <p className="map-status">Google map loaded. <span>R Report · D Demo · F Fire detection · P Probe</span></p>}
     <div className="map-text-points" aria-label="Map locations in text">
       {points.map((point) => <button type="button" key={point.id} aria-pressed={selectedId === point.id} onClick={() => onSelect(point.id)}>
         <strong>{point.label}</strong><span>{point.lat.toFixed(4)}, {point.lng.toFixed(4)}</span>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api, type CitizenAnalysis, type CorroborationAssessment } from "@/lib/api";
 
+import { Badge, LoadingState } from "./ui";
 import { CorroborationCard } from "./corroboration-card";
 
 const label = (text: string) => text.replaceAll("_", " ");
@@ -107,7 +108,7 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
             environmental readings and incidents.
           </p>
         </div>
-        <span className="tag">VISUAL EVIDENCE ONLY</span>
+        <Badge tone="ai">AI interpretation · visual evidence only</Badge>
       </div>
       <div className="citizen-columns">
         <form
@@ -116,7 +117,7 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
           className="citizen-form"
           aria-label="Submit field evidence"
         >
-          <h3>CITIZEN SUBMISSION</h3>
+          <h3>Submit a field observation</h3>
           <fieldset disabled={busy}>
             <label htmlFor="citizen-image">
               Field image <span>JPEG or PNG · up to 5 MiB · 16 MP</span>
@@ -182,8 +183,9 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
             </p>
             {borderDemo && <p className="synthetic-label">SYNTHETIC CROSS-JURISDICTION DEMO · Fictional Delhi–Haryana border-area scenario at 28.52, 77.08. Exact boundary and location ownership are unverified. Choose control rooms manually after review.</p>}
             {synthetic && <p className="synthetic-label">SYNTHETIC IMAGE · Demonstration only. Gemini and provider calls still use live services.</p>}
-            <button type="button" className="secondary" onClick={() => void loadSample()} disabled={busy}>Use synthetic sample image</button>
+            <div className="sample-actions"><button type="button" className="secondary" onClick={() => void loadSample()} disabled={busy}>Use synthetic sample image</button>
             <button type="button" className="secondary" onClick={() => void loadSample(true)} disabled={busy}>Use synthetic cross-jurisdiction demo</button>
+            </div>
             <div className="citizen-actions">
               <button type="submit" disabled={!file || busy}>
                 {busy ? "Interpreting image…" : "Interpret image"}
@@ -197,9 +199,9 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
         <div className="citizen-result" aria-live="polite" aria-busy={busy}>
           <h3>AI INTERPRETATION</h3>
           {busy && (
-            <p role="status">
+            <LoadingState>
               Interpreting visual evidence. This may take up to 30 seconds.
-            </p>
+            </LoadingState>
           )}
           {error && (
             <p role="alert" className="source-caveat">
@@ -262,7 +264,7 @@ export function CitizenEvidencePanel({ onCorroborated }: { onCorroborated?: (ass
 export function CitizenInterpretation({ analysis, latencyMs }: { analysis: NonNullable<CitizenAnalysis["analysis"]>; latencyMs?: number }) {
   return (
                 <>
-                  <p className="eyebrow">GEMINI AI INTERPRETATION · Possible event type</p>
+                  <Badge tone="ai">Gemini AI interpretation</Badge><p className="eyebrow">Possible event type</p>
                   <h4 className="citizen-event">
                     {label(analysis.event_type)}
                   </h4>
