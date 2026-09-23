@@ -147,6 +147,7 @@ export default function CommandCenter() {
 
   return (
     <>
+      <a className="skip-link" href="#officer-command">Skip to command center</a>
       <header className="masthead">
         <Link className="brand" href="/" aria-label="AirshedOS home">
           <span className="brand-mark" aria-hidden="true">
@@ -154,9 +155,10 @@ export default function CommandCenter() {
           </span>
           <span>
             Airshed<span className="brand-light">OS</span>
-            <small>AI Pollution Incident Command</small>
+            <small>Environmental intelligence</small>
           </span>
         </Link>
+        <nav className="primary-nav" aria-label="Workspace navigation"><a href="#officer-command">Workspace</a><a href="#environment-context">Environment</a><a href="#field-evidence">Field evidence</a></nav>
         <span
           className={`system-status ${apiReady && !error ? "connected" : ""}`}
         >
@@ -172,9 +174,9 @@ export default function CommandCenter() {
         <div className="page-heading">
           <div>
             <span className="eyebrow">
-              OPERATIONS / NATIONAL CAPITAL REGION
+              National Capital Region / Operations
             </span>
-            <h1>Air Operations Command Center</h1>
+            <h1>Air operations<span className="page-subtitle">Evidence into perspective.</span></h1>
           </div>
           <button
             className="secondary refresh"
@@ -185,10 +187,9 @@ export default function CommandCenter() {
           </button>
         </div>
         <section className="demo-guide" aria-label="Demo journey">
-          <h2>From a reported observation to a reviewable handoff.</h2>
-          <p>Inspect provider context, interpret a clearly synthetic image, review the evidence, then hand off a frozen packet inside this prototype.</p>
+          <span className="guide-label">Demo journey</span>
           <nav aria-label="Demo steps"><a href="#environment-context">1 · Provider context</a><a href="#field-evidence">2 · Synthetic image & interpretation</a><a href="#officer-command">3 · Review & simulated handoff</a></nav>
-          <p className="source-caveat">Provider readings retain live/cached/unavailable status. Gemini provides an AI interpretation; AirshedOS applies deterministic corroboration rules. All handoffs are simulated.</p>
+          <details className="guide-about"><summary>About this workflow</summary><p>Provider readings retain live/cached/unavailable status. Gemini provides an AI interpretation; AirshedOS applies deterministic corroboration rules. All handoffs are simulated.</p></details>
         </section>
         <OfficerCommandCenter incident={selected ?? null} selectedCase={officerCase} onCase={setOfficerCase} />
         <EnvironmentPanel />

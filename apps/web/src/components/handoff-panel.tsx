@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Badge, EmptyState } from "./ui";
 import { api, type HandoffRecord, type HandoffSummary, type HandoffJurisdiction, type HandoffReason, type HandoffState, type OfficerCase } from "@/lib/api";
 
 const jurisdictions: HandoffJurisdiction[] = ["DELHI", "HARYANA", "UTTAR_PRADESH"];
@@ -48,20 +49,18 @@ export function HandoffDetail({ record, side, onChange }: {
     finally { setBusy(false); }
   }
   return <section className="handoff-detail" aria-label="Handoff review panel" aria-busy={busy}>
-    <span className="tag demo">SIMULATED HANDOFF · PROTOTYPE RECIPIENT</span>
+    <Badge tone="caution">SIMULATED HANDOFF · PROTOTYPE RECIPIENT</Badge>
     {event.evidence.is_synthetic && <p className="synthetic-label">SYNTHETIC CROSS-JURISDICTION DEMO · Not a real allegation.</p>}
-    <h3>Interoperable case packet</h3>
+    <h3>Jurisdiction handoff</h3>
+    <div className="handoff-route"><div><span>From</span><strong>{label(event.origin_jurisdiction).toLowerCase()}</strong></div><span aria-hidden="true">→</span><div><span>To</span><strong>{label(event.destination_jurisdiction).toLowerCase()}</strong></div></div>
     <dl className="case-facts">
-      <div><dt>From / To</dt><dd>{label(event.origin_jurisdiction)} → {label(event.destination_jurisdiction)}</dd></div>
       <div><dt>Reason selected by officer</dt><dd>{label(event.handoff_reason)}</dd></div>
       <div><dt>Possible event</dt><dd>{label(event.possible_event_type)}</dd></div>
       <div><dt>Corroboration</dt><dd>{event.corroboration_support} support</dd></div>
       <div><dt>Frozen case review state</dt><dd>{label(event.review_state)} · revision {event.source_review_revision}</dd></div>
       <div><dt>Location</dt><dd>{event.location.latitude}, {event.location.longitude} · {event.location.jurisdiction_at_location.state} (prototype lookup)</dd></div>
       <div><dt>Handoff state</dt><dd><strong>{label(record.state)}</strong> · revision {record.revision}</dd></div>
-      <div><dt>Packet</dt><dd>{event.schema_version} · event version {event.event_version}</dd></div>
       <div><dt>Integrity</dt><dd role="status">INTEGRITY {record.integrity}</dd></div>
-      <div><dt>Created / simulated send</dt><dd>{time(record.created_at)} / {record.sent_at ? time(record.sent_at) : "Not sent"}</dd></div>
     </dl>
     <p>Google AQ forecast: {event.forecast ? `${event.forecast.status} · ${event.forecast.summaries.map(s => `${s.horizon_hours}h ${label(s.outlook)}`).join(" · ")}` : "Unavailable in frozen packet"}. Separate from corroboration.</p>
     <p className="source-caveat">Origin is a manually selected prototype control room, not verified jurisdiction ownership. No government system receives this packet. Receipt does not refresh evidence.</p>
@@ -69,6 +68,7 @@ export function HandoffDetail({ record, side, onChange }: {
     <div className="review-actions">{permitted.map(state => <button type="button" key={state} disabled={busy || record.integrity !== "VERIFIED"} onClick={() => void act(state)}>{actionLabels[state]}</button>)}</div>
     <button type="button" className="secondary" disabled={busy} onClick={() => void refresh()}>Refresh handoff</button>{" "}
     <button type="button" className="secondary" disabled={busy || record.integrity !== "VERIFIED"} onClick={() => void download()}>Export PollutionEvent JSON</button>
+    <details><summary>View packet details</summary><p>{label(event.origin_jurisdiction)} → {label(event.destination_jurisdiction)}</p><p>{event.schema_version} · event version {event.event_version}</p><p>Created {time(record.created_at)} · Simulated send {record.sent_at ? time(record.sent_at) : "Not sent"}</p><p>Packet {record.id} · revision {record.revision}</p></details>
     <details><summary>Frozen evidence & provenance</summary>
       <p>Submitted {time(event.temporal.report_submitted_at)} · image capture time unknown.</p>
       <p>Gemini: {event.evidence.gemini.provenance.model} · prompt {event.evidence.gemini.provenance.prompt_version} · ordinal confidence {event.evidence.gemini.event_type_confidence}.</p>
@@ -152,7 +152,7 @@ export function HandoffInbox({ selected, onSelect }: { selected: HandoffRecord |
     <label>Demo recipient jurisdiction<select value={destination} onChange={e => { ++selection.current; setItems([]); setError(""); setDestination(e.target.value as HandoffJurisdiction); }}>{jurisdictions.map(j => <option key={j} value={j}>{label(j)}</option>)}</select></label>
     <button className="secondary" onClick={() => setRefresh(v => v + 1)}>Refresh inbox</button>
     {error && <p role="alert">{error}</p>}
-    {!items.length && !error && <p>No simulated handoffs for this destination.</p>}
+    {!items.length && !error && <EmptyState title="No simulated handoffs for this destination.">Sent packets appear here for manual receipt and review. No authority is connected.</EmptyState>}
     {items.map(item => <button className="case-choice" key={item.id} aria-pressed={selected?.id === item.id} onClick={() => void open(item.id)}>
       <span className="tag demo">SIMULATED {item.is_synthetic && "· SYNTHETIC"}</span>
       <strong>{label(item.possible_event_type)} · {item.corroboration_support} support</strong>

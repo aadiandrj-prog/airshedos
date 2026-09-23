@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api, type CorroborationAssessment } from "@/lib/api";
 
+import { Badge, LoadingState } from "./ui";
 import { ForecastOutlook } from "./forecast-outlook";
 
 const label = (text: string) => text.replaceAll("_", " ");
@@ -97,10 +98,10 @@ export function CorroborationCard({
         </p>
       </div>
       {busy && (
-        <p role="status">
+        <LoadingState>
           Looking up environmental sources, then applying the evidence
           checklist. Satellite retrieval can take around 25 seconds; the separate Google forecast follows. Missing sources will remain visible.
-        </p>
+        </LoadingState>
       )}
       {error && (
         <p role="alert" className="source-caveat">
@@ -122,7 +123,7 @@ export function AssessmentView({ result, reportId, showForecast = true }: { resu
           aria-labelledby={`fusion-${reportId}`}
           aria-live="polite"
         >
-          <span className="eyebrow">EVIDENCE FUSION CARD</span><p className="source-caveat">DETERMINISTIC AIRSHEDOS ANALYSIS · rule-based support, not confirmation of an event.</p>
+          <div className="badge-row"><Badge>Deterministic</Badge><span className="eyebrow">EVIDENCE FUSION CARD</span></div><p className="source-caveat">Rule-based support, not confirmation of an event.</p>
           <div className="fusion-heading">
             <div>
               <p className="eyebrow">Possible event</p>
@@ -140,7 +141,7 @@ export function AssessmentView({ result, reportId, showForecast = true }: { resu
               </strong>
             </div>
           </div>
-          <p>{result.aggregation_explanation}</p>
+          <span className="eyebrow">Why this result</span><p>{result.aggregation_explanation}</p>
           <p className="source-caveat">
             Checklist category, not a probability. Assessed{" "}
             {time(result.generated_at)}.
@@ -233,14 +234,14 @@ export function AssessmentView({ result, reportId, showForecast = true }: { resu
             <p>No incident or authority task has been created.</p>
           </div>
           {showForecast && <ForecastOutlook context={result.forecast_outlook ?? null} />}
-          <div className="context-footnote">
-            <span>LIMITATIONS</span>
+          <details className="context-footnote" open={!(["STRONG", "MODERATE"].includes(result.support_level))}>
+            <summary>Limitations</summary>
             <ul>
               {result.limitations.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
-          </div>
+          </details>
           <details>
             <summary>Assessment provenance</summary>
             <p className="source-caveat">

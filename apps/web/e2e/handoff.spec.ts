@@ -41,6 +41,8 @@ async function setup(page: Page) {
   });
   await page.route(`**/api/v1/handoffs/${fixture.id}/export`, r => r.fulfill({ contentType: "application/json", body: canonical }));
   await page.goto("/");
+  const selector = page.getByRole("button", { name: "Show case selector", exact: true });
+  if (await selector.isVisible()) await selector.click();
   await page.getByRole("complementary", { name: "Case queue" }).getByRole("button").filter({ hasText: "SYNTHETIC INPUT" }).click();
   return calls;
 }

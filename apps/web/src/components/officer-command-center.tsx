@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { api, type HandoffRecord, type CaseSummary, type Incident, type OfficerCase, type ReviewState } from "@/lib/api";
 import { HandoffComposer, HandoffDetail, HandoffInbox } from "./handoff-panel";
 import { SpatialMap, type MapPoint } from "./spatial-map";
@@ -8,6 +8,7 @@ import { ForecastOutlook } from "./forecast-outlook";
 import { AssessmentView } from "./corroboration-card";
 import { CitizenInterpretation } from "./citizen-evidence-panel";
 import { EnvironmentReadings } from "./environment-panel";
+import { Badge, EmptyState } from "./ui";
 import { SatelliteReadings } from "./satellite-panel";
 
 const label = (s: string) => s.replaceAll("_", " ");
@@ -21,6 +22,9 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   incident: Incident | null; selectedCase: OfficerCase | null;
   onCase: (item: OfficerCase | null) => void;
 }) {
+  const detailRef = useRef<HTMLElement>(null);
+  const fireRef = useRef<HTMLElement>(null);
+  const [queueOpen, setQueueOpen] = useState(false);
   const [inbox, setInbox] = useState(false);
   const [incoming, setIncoming] = useState<HandoffRecord | null>(null);
   const activeIncoming = selectedCase ? null : incoming;
@@ -65,6 +69,15 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   }, [snapshot, incident, probe, incomingEvent]);
   const activeMarker = points.some((p) => p.id === selectedMarker) ? selectedMarker : points[0]?.id ?? "";
   const fire = context?.fires?.find((f) => "fire:" + f.source_id === activeMarker);
+  useLayoutEffect(() => {
+    if (detailRef.current) detailRef.current.scrollTop = 0;
+    if ((selectedCase?.id || activeIncoming?.id) && window.matchMedia("(max-width: 767px)").matches) {
+      detailRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+  }, [selectedCase?.id, activeIncoming?.id, probe, incident?.id]);
+  useEffect(() => {
+    if (fire) fireRef.current?.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, [fire]);
   const choose = async (id: string) => {
     const previousId = currentCaseId.current;
     const version = ++selection.current;
@@ -92,21 +105,21 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
   const showReference = (isProbe: boolean) => {
     ++selection.current; setBusy(false); setActionError(""); onCase(null); setIncoming(null); setSelectedMarker(""); setProbe(isProbe);
   };
-  return <section id="officer-command" className="officer-workspace" aria-label="Officer command center">
-    <div className="workspace-heading"><span className="eyebrow">SPATIAL COMMAND CENTER</span><h2>Locate. Review. Decide the next step.</h2>
-      <p>Manual officer review · temporary state · no authority dispatch</p></div>
+  return <section id="officer-command" tabIndex={-1} className="officer-workspace" aria-label="Officer command center">
+    <div className="workspace-heading workspace-toolbar"><div><span className="workspace-dot" aria-hidden="true" /><h2>Spatial command center</h2><span className="toolbar-note">Manual review · no authority dispatch</span></div><a className="text-action" href="#field-evidence">Add field evidence <span aria-hidden="true">↗</span></a></div>
+    <div className="queue-toggle-bar"><button type="button" className="secondary" aria-expanded={queueOpen} aria-controls="case-selector" onClick={() => setQueueOpen(v => !v)}>{queueOpen ? "Hide case selector" : "Show case selector"}</button><span>{selectedCase ? label(selectedCase.snapshot.assessment.event_type) : activeIncoming ? "Incoming handoff" : "Reference workflow"}</span></div>
     <div className="officer-grid">
-      <aside className="case-queue" aria-label="Case queue">
+      <aside id="case-selector" className={`case-queue ${queueOpen ? "queue-expanded" : "queue-collapsed"}`} aria-label="Case queue">
         <div className="review-actions" role="group" aria-label="Queue view"><button type="button" aria-pressed={!inbox} onClick={() => setInbox(false)}>Source cases</button><button type="button" aria-pressed={inbox} onClick={() => setInbox(true)}>Incoming handoffs</button></div>
         {inbox ? <HandoffInbox selected={activeIncoming} onSelect={item => { ++selection.current; setBusy(false); setActionError(""); onCase(null); setIncoming(item); setSelectedMarker(""); }} /> : <>
-        <h3>Case queue</h3><p className="source-caveat">New → under review → acknowledged / monitoring → closed. Newest submission first within each group.</p>
+        <div className="queue-heading"><h3>Case queue</h3><span className="count">{queue.length}</span></div><details className="queue-order"><summary>Review order</summary><p>New → under review → acknowledged / monitoring → closed. Newest submission first within each group.</p></details>
         <button type="button" className="secondary" onClick={() => void refreshQueue()}>Refresh queue</button>
         {queueError && <p role="alert">{queueError}</p>}
-        {!queue.length && !queueError && <p>No citizen assessments yet. Submit evidence and corroborate below.</p>}
+        {!queue.length && !queueError && <EmptyState title="No citizen assessments yet.">Submit evidence and corroborate below to begin officer review.</EmptyState>}
         {queue.map((item) => <button type="button" className="case-choice" key={item.id} aria-pressed={selectedCase?.id === item.id} disabled={busy} onClick={() => void choose(item.id)}>
-          <span className="tag">{item.is_synthetic ? "SYNTHETIC INPUT" : "CITIZEN REPORT"}</span>
+          <Badge tone={item.is_synthetic ? "caution" : "neutral"}>{item.is_synthetic ? "SYNTHETIC INPUT" : "CITIZEN REPORT"}</Badge>
           <strong>{label(item.event_type)}</strong><span>{item.jurisdiction.state} · prototype</span>
-          <span>{item.support_level} corroboration</span><span>{label(item.review.state)}</span>
+          <span className="queue-status"><span>{item.support_level} support</span><span className="queue-state">{label(item.review.state)}</span></span>
           <small>Submitted {time(item.submitted_at)}</small>
         </button>)}
         <h4>Reference workflows</h4>
@@ -119,19 +132,31 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
         </>}
       </aside>
       <SpatialMap points={points} selectedId={activeMarker} onSelect={setSelectedMarker} />
-      <section className="officer-detail" aria-label="Selected case details" aria-busy={busy}>
+      <section ref={detailRef} className="officer-detail" aria-label="Selected case details" aria-busy={busy}>
         {actionError && <p role="alert">{actionError}</p>}
         {activeIncoming ? <HandoffDetail key={activeIncoming.id} record={activeIncoming} side="destination" onChange={item => setIncoming(previous => previous?.id === item.id ? { ...item, payload: previous.payload } : previous)} /> : selectedCase && snapshot && report ? <>
-          <span className="tag">{report.is_synthetic ? "SYNTHETIC INPUT · PROVIDER CONTEXT" : "CITIZEN EVIDENCE · PROVIDER CONTEXT"}</span>
-          <h3>{label(snapshot.assessment.event_type)}</h3>
-          <dl className="case-facts"><div><dt>Reported location</dt><dd>{report.latitude}, {report.longitude}</dd></div>
-            <div><dt>Submitted</dt><dd>{time(report.created_at)}</dd></div><div><dt>Image capture time</dt><dd>Unknown</dd></div>
-            <div><dt>Jurisdiction</dt><dd>{snapshot.jurisdiction.state} · prototype</dd></div>
-            <div><dt>Review state</dt><dd>{label(selectedCase.review.state)}</dd></div></dl>
-          <p className="source-caveat">{snapshot.jurisdiction.note}</p>
-          {report.is_synthetic && <p className="synthetic-label">This image is synthetic, not a real reported event. Each environmental source retains its own live/cached/unavailable status.</p>}
+          <div className="case-intro">
+            <div className="badge-row"><Badge tone={report.is_synthetic ? "caution" : "neutral"}>{report.is_synthetic ? "SYNTHETIC INPUT" : "CITIZEN EVIDENCE"}</Badge><Badge tone="provider">Provider context</Badge></div>
+            <span className="eyebrow">Possible event</span><h3>{label(snapshot.assessment.event_type)}</h3>
+            <p className="case-location">{snapshot.jurisdiction.state} · prototype <span><a href="#spatial-context" aria-label="View report location on map">{report.latitude}, {report.longitude} ↗</a></span></p>
+            <Badge>{label(selectedCase.review.state)}</Badge>
+            <nav className="case-shortcuts" aria-label="Selected case sections"><a href="#case-assessment">Assessment</a><a href="#case-evidence">Evidence</a><a href="#case-actions">Review & handoff ↓</a></nav>
+          </div>
+          <section id="case-assessment" tabIndex={-1} className="assessment-overview" aria-label="Corroboration overview">
+            <span className="eyebrow">Deterministic corroboration</span>
+            <strong className={`support-display ${snapshot.assessment.support_level.toLowerCase()}`}>{label(snapshot.assessment.support_level)}<small>{["STRONG", "MODERATE", "WEAK"].includes(snapshot.assessment.support_level) ? "support" : "evidence"}</small></strong>
+            <p>{snapshot.assessment.aggregation_explanation}</p>
+            <span className="source-caveat">Rule-based support, not a probability or confirmation.</span>
+          </section>
+          <ForecastOutlook context={snapshot.assessment.forecast_outlook ?? null} compact />
+          <div id="case-evidence" className="detail-section-heading"><h4>Evidence & reasoning</h4><span>Source snapshots</span></div>
+          <details className="case-metadata"><summary>Report details & time semantics</summary>
+            <dl className="case-facts"><div><dt>Reported location</dt><dd>{report.latitude}, {report.longitude}</dd></div><div><dt>Submitted</dt><dd>{time(report.created_at)}</dd></div><div><dt>Image capture time</dt><dd>Unknown</dd></div><div><dt>Jurisdiction</dt><dd>{snapshot.jurisdiction.state} · prototype</dd></div></dl>
+            <p className="source-caveat">{snapshot.jurisdiction.note}</p>
+          </details>
+          {report.is_synthetic && <p className="synthetic-label">Synthetic image, not a real reported event. Provider availability remains independently labelled.</p>}
           <p className="source-caveat">FIRMS: {context?.fires == null ? "Unavailable response" : context.fires.length === 0 ? "No nearby active-fire detections returned" : `${context.fires.length} active-fire detections returned`}. Satellite fire detection does not establish pollution causality.</p>
-          {fire && <section className="selected-fire" aria-label="Selected active fire detection">
+          {fire && <section ref={fireRef} className="selected-fire" aria-label="Selected active fire detection">
             <h4>ACTIVE FIRE DETECTION</h4><p>Satellite fire detection; does not establish pollution causality.</p>
             <p>Acquired {time(fire.observed_at)} · {fire.distance_from_query_km.toFixed(2)} km from report</p>
             <p>{fire.satellite ?? "Satellite unspecified"} / {fire.instrument ?? "Instrument unspecified"} · Source confidence: {fire.confidence ?? "Not supplied"}</p>
@@ -145,15 +170,14 @@ export function OfficerCommandCenter({ incident, selectedCase, onCase }: {
           <details><summary>Corroboration · {snapshot.assessment.support_level} support · explanations & provenance</summary>
             <AssessmentView result={snapshot.assessment} reportId={report.id} showForecast={false} />
           </details>
-          <ForecastOutlook context={snapshot.assessment.forecast_outlook ?? null} />
           <details><summary>Environmental context at assessment</summary>
             <EnvironmentReadings context={snapshot.assessment.environmental_context} />
             {context?.satellite ? <SatelliteReadings context={context.satellite} /> : <p>Satellite context unavailable.</p>}
             <p>FIRMS: {context?.fires == null ? "Unavailable response" : context.fires.length === 0 ? "No nearby active-fire detections returned" : `${context.fires.length} detections returned`}. Up to 50 nearby detections appear on the map.</p>
             <ul>{context?.fires?.map((f) => <li key={f.source_id}>ACTIVE FIRE DETECTION · {f.latitude}, {f.longitude} · acquired {time(f.observed_at)} · {f.distance_from_query_km.toFixed(2)} km · {f.source_id}</li>)}</ul>
           </details>
-          <section className="officer-review" aria-label="Officer review controls">
-            <h4>Officer review</h4><p>Workflow state only. Evidence, corroboration and provider forecast stay unchanged.</p>
+          <section id="case-actions" tabIndex={-1} className="officer-review" aria-label="Officer review controls">
+            <div className="detail-section-heading"><h4>Officer review</h4><Badge>Manual action</Badge></div><p className="source-caveat">Workflow state only. Evidence, corroboration and provider forecast stay unchanged.</p>
             <strong>{label(selectedCase.review.state)}</strong>
             <div className="review-actions">{selectedCase.review.allowed_transitions.map((state) => <button type="button" key={state} disabled={busy} onClick={() => void act(state)}>{state === "UNDER_REVIEW" && selectedCase.review.state !== "NEW" ? "Return to review" : actions[state]}</button>)}</div>
             {selectedCase.review.action_at && <p>Review action at {time(selectedCase.review.action_at)}</p>}

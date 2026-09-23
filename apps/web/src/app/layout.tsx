@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "AirshedOS | Air Operations Command Center",
   description:
-    "Phase 1A local demo of an evidence-led pollution incident command center.",
+    "Environmental evidence, provider outlook and manual officer review. A prototype with explicitly simulated jurisdiction handoffs.",
 };
 
 export default function RootLayout({

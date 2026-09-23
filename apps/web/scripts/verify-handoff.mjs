@@ -7,7 +7,8 @@ import { spawnSync } from 'node:child_process';
 
 (async () => {
   const final = process.argv.includes('--final');
-  const prefix = final ? 'phase3c' : 'phase3b';
+  const redesign = process.argv.includes('--redesign');
+  const prefix = redesign ? 'ui-redesign' : final ? 'phase3c' : 'phase3b';
   const started = performance.now();
   const timings = {};
   const directory = 'data/verification';
@@ -27,6 +28,11 @@ import { spawnSync } from 'node:child_process';
   try {
     await page.goto('http://localhost:3000');
     if (final) await expect(page.getByText('Loading Google map…', { exact: false })).toHaveCount(0, { timeout: 20000 });
+    if (redesign) {
+      // Capture after viewport tiles have painted, without altering provider readiness.
+      await page.waitForTimeout(1500);
+      await page.screenshot({ path: `${directory}/${prefix}-command-desktop.png` });
+    }
     timings.page_map_readiness = Math.round(performance.now() - started);
     stage = 'synthetic_input';
     await page.getByRole('button', { name: 'Use synthetic cross-jurisdiction demo' }).click();
@@ -52,6 +58,14 @@ import { spawnSync } from 'node:child_process';
     result.satellite_status = assessment.environmental_context.satellite?.provider_status.status ?? 'unavailable';
     result.satellite_products = assessment.environmental_context.satellite?.products.map(p => ({ product: p.product, availability: p.availability })) ?? [];
     await expect(page.locator('.officer-detail')).toContainText('SYNTHETIC INPUT', { timeout: 10000 });
+    if (redesign) {
+      await page.locator('.officer-detail').evaluate(e => e.scrollTop = 0);
+      await page.locator('.officer-workspace').screenshot({ path: `${directory}/${prefix}-case-desktop.png` });
+      await page.setViewportSize({ width: 390, height: 844 });
+      if (redesign) await page.waitForTimeout(1500);
+      await page.locator('.officer-workspace').screenshot({ path: `${directory}/${prefix}-case-mobile.png` });
+      await page.setViewportSize({ width: 1440, height: 1000 });
+    }
     stage = 'review';
     await page.getByRole('region', { name: 'Officer review controls' }).getByRole('button', { name: 'Begin review' }).click();
     await expect(page.getByRole('region', { name: 'Officer review controls' })).toContainText('UNDER REVIEW');
@@ -118,6 +132,7 @@ import { spawnSync } from 'node:child_process';
     await page.waitForTimeout(1500);
     await page.locator('.officer-workspace').screenshot({ path: `${directory}/${prefix}-desktop.png` });
     await page.setViewportSize({ width: 390, height: 844 });
+      if (redesign) await page.waitForTimeout(1500);
     result.mobile_no_overflow = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
     await page.locator('.officer-workspace').screenshot({ path: `${directory}/${prefix}-mobile.png` });
     if (!result.mobile_no_overflow) throw new Error('Mobile overflow');
