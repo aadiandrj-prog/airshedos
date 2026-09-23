@@ -21,7 +21,7 @@ jobs:
       - run: pip install -r requirements-dev.lock -r requirements-model.lock
       - run: ruff check . && ruff format --check .
       - run: pytest -q
-      - run: python scripts/export_openapi.py && git diff --exit-code -- openapi.json
+      - run: python scripts/export_openapi.py && git diff --exit-code -- openapi.json ../../docs/contracts/pollution_event_v1.schema.json
   frontend:
     runs-on: ubuntu-latest
     defaults:

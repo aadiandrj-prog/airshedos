@@ -178,3 +178,12 @@ test("late incoming response cannot override a newly selected source workflow", 
   await expect(page.locator('.officer-detail')).toContainText('COORDINATE PROBE');
   await expect(panel(page)).toHaveCount(0);
 });
+
+test("browser refresh preserves sent handoff and requires explicit receipt", async ({ page }) => {
+  await setup(page); await send(page);
+  await page.reload();
+  await incoming(page);
+  await expect(panel(page)).toContainText("SENT SIMULATED");
+  await expect(panel(page).getByRole("button", { name: "Receive in demo inbox" })).toBeEnabled();
+  await expect(panel(page).getByRole("button", { name: "Accept handoff" })).toHaveCount(0);
+});

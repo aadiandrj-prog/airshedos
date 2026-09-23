@@ -1,0 +1,2116 @@
+{
+  "$defs": {
+    "AirQualityIndex": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "dominant_pollutant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dominant Pollutant"
+        }
+      },
+      "required": [
+        "code",
+        "display_name",
+        "value",
+        "category",
+        "dominant_pollutant"
+      ],
+      "title": "AirQualityIndex",
+      "type": "object"
+    },
+    "AirQualityObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "status": {
+          "default": "live",
+          "enum": [
+            "live",
+            "cached"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/EnvironmentalProvenance"
+        },
+        "region_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region Code"
+        },
+        "indexes": {
+          "items": {
+            "$ref": "#/$defs/AirQualityIndex"
+          },
+          "title": "Indexes",
+          "type": "array"
+        },
+        "pollutants": {
+          "items": {
+            "$ref": "#/$defs/PollutantMeasurement"
+          },
+          "title": "Pollutants",
+          "type": "array"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "observed_at",
+        "retrieved_at",
+        "status",
+        "provenance",
+        "region_code",
+        "indexes",
+        "pollutants"
+      ],
+      "title": "AirQualityObservation",
+      "type": "object"
+    },
+    "EnvironmentalProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "is_demo": {
+          "const": false,
+          "default": false,
+          "title": "Is Demo",
+          "type": "boolean"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "documentation_url": {
+          "title": "Documentation Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "method",
+        "is_demo",
+        "note",
+        "documentation_url"
+      ],
+      "title": "EnvironmentalProvenance",
+      "type": "object"
+    },
+    "EventEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "report_id": {
+          "title": "Report Id",
+          "type": "string"
+        },
+        "is_synthetic": {
+          "title": "Is Synthetic",
+          "type": "boolean"
+        },
+        "citizen_evidence_summary": {
+          "const": "Structured visual interpretation; raw image and citizen text omitted.",
+          "title": "Citizen Evidence Summary",
+          "type": "string"
+        },
+        "gemini": {
+          "$ref": "#/$defs/GeminiEvidenceAnalysis"
+        },
+        "source_statuses": {
+          "items": {
+            "$ref": "#/$defs/EventSourceStatus"
+          },
+          "title": "Source Statuses",
+          "type": "array"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/EventRule"
+          },
+          "title": "Rules",
+          "type": "array"
+        },
+        "air_quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AirQualityObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weather": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeteorologicalObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fires": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/FireObservation"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fires"
+        },
+        "fire_search_radius_km": {
+          "title": "Fire Search Radius Km",
+          "type": "number"
+        },
+        "satellite": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SatelliteEvidence"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Satellite"
+        },
+        "assessment_provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "source_snapshot_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Snapshot Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id",
+        "is_synthetic",
+        "citizen_evidence_summary",
+        "gemini",
+        "source_statuses",
+        "rules",
+        "air_quality",
+        "weather",
+        "fires",
+        "fire_search_radius_km",
+        "satellite",
+        "assessment_provenance",
+        "source_snapshot_sha256"
+      ],
+      "title": "EventEvidence",
+      "type": "object"
+    },
+    "EventFamily": {
+      "enum": [
+        "COMBUSTION",
+        "DUST",
+        "ATMOSPHERIC_HAZE",
+        "TRAFFIC",
+        "NONE_OR_UNCERTAIN"
+      ],
+      "title": "EventFamily",
+      "type": "string"
+    },
+    "EventForecast": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "const": "google_air_quality_forecast",
+          "title": "Provider",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SourceState"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Retrieved At"
+        },
+        "issued_at": {
+          "title": "Issued At",
+          "type": "null"
+        },
+        "summaries": {
+          "items": {
+            "$ref": "#/$defs/ForecastSummary"
+          },
+          "title": "Summaries",
+          "type": "array"
+        },
+        "hourly_forecasts": {
+          "items": {
+            "$ref": "#/$defs/HourlyAirQualityForecast"
+          },
+          "title": "Hourly Forecasts",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/EnvironmentalProvenance"
+        },
+        "independence_note": {
+          "title": "Independence Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "status",
+        "retrieved_at",
+        "issued_at",
+        "summaries",
+        "hourly_forecasts",
+        "provenance",
+        "independence_note"
+      ],
+      "title": "EventForecast",
+      "type": "object"
+    },
+    "EventLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "location_precision": {
+          "const": "reported_coordinate_accuracy_unknown",
+          "title": "Location Precision",
+          "type": "string"
+        },
+        "jurisdiction_at_location": {
+          "$ref": "#/$defs/JurisdictionResolution"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "location_precision",
+        "jurisdiction_at_location"
+      ],
+      "title": "EventLocation",
+      "type": "object"
+    },
+    "EventRule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "verdict": {
+          "$ref": "#/$defs/Verdict"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "evidence_references": {
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source",
+        "verdict",
+        "summary",
+        "generated_at",
+        "evidence_references"
+      ],
+      "title": "EventRule",
+      "type": "object"
+    },
+    "EventSourceStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SourceState"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Retrieved At"
+        }
+      },
+      "required": [
+        "provider",
+        "status",
+        "retrieved_at"
+      ],
+      "title": "EventSourceStatus",
+      "type": "object"
+    },
+    "EventTemporal": {
+      "additionalProperties": false,
+      "properties": {
+        "report_submitted_at": {
+          "format": "date-time",
+          "title": "Report Submitted At",
+          "type": "string"
+        },
+        "image_capture_time_known": {
+          "const": false,
+          "title": "Image Capture Time Known",
+          "type": "boolean"
+        },
+        "image_capture_time": {
+          "title": "Image Capture Time",
+          "type": "null"
+        },
+        "environmental_reference_time": {
+          "format": "date-time",
+          "title": "Environmental Reference Time",
+          "type": "string"
+        },
+        "environmental_context_generated_at": {
+          "format": "date-time",
+          "title": "Environmental Context Generated At",
+          "type": "string"
+        },
+        "temporal_basis": {
+          "const": "submission_time_proxy",
+          "title": "Temporal Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_submitted_at",
+        "image_capture_time_known",
+        "image_capture_time",
+        "environmental_reference_time",
+        "environmental_context_generated_at",
+        "temporal_basis"
+      ],
+      "title": "EventTemporal",
+      "type": "object"
+    },
+    "EventType": {
+      "enum": [
+        "open_burning",
+        "industrial_smoke",
+        "construction_dust",
+        "road_dust",
+        "vehicular_emissions",
+        "fire_or_combustion",
+        "haze_or_smog",
+        "no_visible_pollution",
+        "uncertain",
+        "other"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Observed At"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "age_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Age Seconds"
+        },
+        "submission_offset_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Submission Offset Seconds"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModelProvenance"
+            },
+            {
+              "$ref": "#/$defs/EnvironmentalProvenance"
+            },
+            {
+              "$ref": "#/$defs/Provenance"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "source_id",
+        "observed_at",
+        "retrieved_at",
+        "age_seconds",
+        "submission_offset_seconds",
+        "provenance"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "FireObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "status": {
+          "default": "live",
+          "enum": [
+            "live",
+            "cached"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/EnvironmentalProvenance"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "description": {
+          "const": "Nearby active-fire detection",
+          "default": "Nearby active-fire detection",
+          "title": "Description",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "enum": [
+                "l",
+                "n",
+                "h"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "satellite": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Satellite"
+        },
+        "instrument": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instrument"
+        },
+        "brightness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fire_radiative_power": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "distance_from_query_km": {
+          "minimum": 0,
+          "title": "Distance From Query Km",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "observed_at",
+        "retrieved_at",
+        "status",
+        "provenance",
+        "source_id",
+        "description",
+        "confidence",
+        "satellite",
+        "instrument",
+        "brightness",
+        "fire_radiative_power",
+        "distance_from_query_km"
+      ],
+      "title": "FireObservation",
+      "type": "object"
+    },
+    "ForecastSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "horizon_hours": {
+          "enum": [
+            6,
+            12,
+            24
+          ],
+          "title": "Horizon Hours",
+          "type": "integer"
+        },
+        "window": {
+          "$ref": "#/$defs/ForecastWindow"
+        },
+        "available_hours": {
+          "minimum": 0,
+          "title": "Available Hours",
+          "type": "integer"
+        },
+        "pm25_hours": {
+          "minimum": 0,
+          "title": "Pm25 Hours",
+          "type": "integer"
+        },
+        "cpcb_hours": {
+          "minimum": 0,
+          "title": "Cpcb Hours",
+          "type": "integer"
+        },
+        "coverage": {
+          "enum": [
+            "complete",
+            "partial",
+            "none"
+          ],
+          "title": "Coverage",
+          "type": "string"
+        },
+        "max_cpcb_aqi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Cpcb Aqi"
+        },
+        "max_pm25": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_pm10": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "worst_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Worst Category"
+        },
+        "peak_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Peak At"
+        },
+        "peak_basis": {
+          "anyOf": [
+            {
+              "enum": [
+                "pm25",
+                "ind_cpcb"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Peak Basis"
+        },
+        "cpcb_peak_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cpcb Peak At"
+        },
+        "pm10_peak_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pm10 Peak At"
+        },
+        "delta_pm25_vs_current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relative_pm25_change_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relative Pm25 Change Percent"
+        },
+        "outlook": {
+          "enum": [
+            "IMPROVING",
+            "STABLE",
+            "WORSENING",
+            "SHARPLY_WORSENING",
+            "UNAVAILABLE"
+          ],
+          "title": "Outlook",
+          "type": "string"
+        },
+        "comparison_note": {
+          "title": "Comparison Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "horizon_hours",
+        "window",
+        "available_hours",
+        "pm25_hours",
+        "cpcb_hours",
+        "coverage",
+        "max_cpcb_aqi",
+        "max_pm25",
+        "max_pm10",
+        "worst_category",
+        "peak_at",
+        "peak_basis",
+        "cpcb_peak_at",
+        "pm10_peak_at",
+        "delta_pm25_vs_current",
+        "relative_pm25_change_percent",
+        "outlook",
+        "comparison_note"
+      ],
+      "title": "ForecastSummary",
+      "type": "object"
+    },
+    "ForecastWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "end_inclusive": {
+          "const": true,
+          "default": true,
+          "title": "End Inclusive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "end_inclusive"
+      ],
+      "title": "ForecastWindow",
+      "type": "object"
+    },
+    "GeminiEvidenceAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "event_type": {
+          "$ref": "#/$defs/EventType"
+        },
+        "event_type_confidence": {
+          "$ref": "#/$defs/VisualConfidence"
+        },
+        "visible_smoke": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Visible Smoke"
+        },
+        "visible_flames": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Visible Flames"
+        },
+        "visible_dust": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Visible Dust"
+        },
+        "industrial_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Industrial Context"
+        },
+        "construction_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Construction Context"
+        },
+        "waste_burning_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Waste Burning Context"
+        },
+        "vegetation_burning_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Vegetation Burning Context"
+        },
+        "traffic_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Traffic Context"
+        },
+        "scene_type": {
+          "enum": [
+            "outdoor",
+            "indoor",
+            "unclear"
+          ],
+          "title": "Scene Type",
+          "type": "string"
+        },
+        "apparent_scale": {
+          "enum": [
+            "localized",
+            "widespread_in_frame",
+            "unclear"
+          ],
+          "title": "Apparent Scale",
+          "type": "string"
+        },
+        "visual_observations": {
+          "items": {
+            "$ref": "#/$defs/VisualObservation"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Visual Observations",
+          "type": "array"
+        },
+        "uncertainty_reasons": {
+          "items": {
+            "$ref": "#/$defs/VisualUncertainty"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Uncertainty Reasons",
+          "type": "array"
+        },
+        "insufficient_evidence": {
+          "description": "True only when visual ambiguity prevents choosing an event category. False for a clear no_visible_pollution scene. True requires uncertain with low confidence.",
+          "title": "Insufficient Evidence",
+          "type": "boolean"
+        },
+        "source_report_id": {
+          "title": "Source Report Id",
+          "type": "string"
+        },
+        "analyzed_at": {
+          "format": "date-time",
+          "title": "Analyzed At",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/ModelProvenance"
+        },
+        "safety_note": {
+          "const": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+          "default": "AI interpretation — requires environmental corroboration. Visual evidence only; an image cannot establish pollutant concentration, source causality or a violation.",
+          "title": "Safety Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_type",
+        "event_type_confidence",
+        "visible_smoke",
+        "visible_flames",
+        "visible_dust",
+        "industrial_context",
+        "construction_context",
+        "waste_burning_context",
+        "vegetation_burning_context",
+        "traffic_context",
+        "scene_type",
+        "apparent_scale",
+        "visual_observations",
+        "uncertainty_reasons",
+        "insufficient_evidence",
+        "source_report_id",
+        "analyzed_at",
+        "provenance",
+        "safety_note"
+      ],
+      "title": "GeminiEvidenceAnalysis",
+      "type": "object"
+    },
+    "HandoffJurisdiction": {
+      "enum": [
+        "DELHI",
+        "HARYANA",
+        "UTTAR_PRADESH"
+      ],
+      "title": "HandoffJurisdiction",
+      "type": "string"
+    },
+    "HandoffReason": {
+      "enum": [
+        "CROSS_BORDER_EVENT",
+        "DOWNWIND_IMPACT",
+        "JURISDICTION_MISMATCH",
+        "SHARED_CORRIDOR_CONTEXT",
+        "MANUAL_OFFICER_HANDOFF"
+      ],
+      "title": "HandoffReason",
+      "type": "string"
+    },
+    "HourlyAirQualityForecast": {
+      "additionalProperties": false,
+      "properties": {
+        "forecast_at": {
+          "format": "date-time",
+          "title": "Forecast At",
+          "type": "string"
+        },
+        "indexes": {
+          "items": {
+            "$ref": "#/$defs/AirQualityIndex"
+          },
+          "title": "Indexes",
+          "type": "array"
+        },
+        "pollutants": {
+          "items": {
+            "$ref": "#/$defs/PollutantMeasurement"
+          },
+          "title": "Pollutants",
+          "type": "array"
+        },
+        "dominant_pollutant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dominant Pollutant"
+        }
+      },
+      "required": [
+        "forecast_at",
+        "indexes",
+        "pollutants",
+        "dominant_pollutant"
+      ],
+      "title": "HourlyAirQualityForecast",
+      "type": "object"
+    },
+    "JurisdictionResolution": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "Delhi",
+            "Haryana",
+            "Uttar Pradesh",
+            "Unknown"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "area": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "method": {
+          "const": "prototype_lookup_area_v1",
+          "default": "prototype_lookup_area_v1",
+          "title": "Method",
+          "type": "string"
+        },
+        "authoritative": {
+          "const": false,
+          "default": false,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "note": {
+          "default": "Configuration-backed prototype area, not an official administrative boundary. Informational only; verify jurisdiction independently. No authority routing.",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "area",
+        "method",
+        "authoritative",
+        "note"
+      ],
+      "title": "JurisdictionResolution",
+      "type": "object"
+    },
+    "Measurement": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Measurement",
+      "type": "object"
+    },
+    "MeteorologicalObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "status": {
+          "default": "live",
+          "enum": [
+            "live",
+            "cached"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/EnvironmentalProvenance"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "relative_humidity_percent": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relative Humidity Percent"
+        },
+        "wind_speed": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wind_from_degrees": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 360,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wind From Degrees"
+        },
+        "wind_cardinal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wind Cardinal"
+        },
+        "sea_level_pressure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "precipitation_probability_percent": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Precipitation Probability Percent"
+        },
+        "precipitation_qpf": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cloud_cover_percent": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cloud Cover Percent"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "observed_at",
+        "retrieved_at",
+        "status",
+        "provenance",
+        "temperature",
+        "relative_humidity_percent",
+        "wind_speed",
+        "wind_from_degrees",
+        "wind_cardinal",
+        "sea_level_pressure",
+        "precipitation_probability_percent",
+        "precipitation_qpf",
+        "cloud_cover_percent"
+      ],
+      "title": "MeteorologicalObservation",
+      "type": "object"
+    },
+    "ModelProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "is_demo": {
+          "title": "Is Demo",
+          "type": "boolean"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "model_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model Version"
+        },
+        "prompt_version": {
+          "const": "citizen_evidence_v1",
+          "default": "citizen_evidence_v1",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "source_report_id": {
+          "title": "Source Report Id",
+          "type": "string"
+        },
+        "derived": {
+          "const": true,
+          "default": true,
+          "title": "Derived",
+          "type": "boolean"
+        },
+        "author": {
+          "const": "model",
+          "default": "model",
+          "title": "Author",
+          "type": "string"
+        },
+        "confidence_basis": {
+          "const": "model_estimated_ordinal_not_calibrated",
+          "default": "model_estimated_ordinal_not_calibrated",
+          "title": "Confidence Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "method",
+        "is_demo",
+        "note",
+        "model",
+        "model_version",
+        "prompt_version",
+        "generated_at",
+        "source_report_id",
+        "derived",
+        "author",
+        "confidence_basis"
+      ],
+      "title": "ModelProvenance",
+      "type": "object"
+    },
+    "NextStep": {
+      "enum": [
+        "FIELD_VERIFICATION",
+        "MONITOR",
+        "REVIEW",
+        "NO_ACTION_FROM_CURRENT_EVIDENCE"
+      ],
+      "title": "NextStep",
+      "type": "string"
+    },
+    "PollutantMeasurement": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "concentration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "code",
+        "name",
+        "full_name",
+        "concentration"
+      ],
+      "title": "PollutantMeasurement",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "is_demo": {
+          "title": "Is Demo",
+          "type": "boolean"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "method",
+        "is_demo",
+        "note"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ReviewState": {
+      "enum": [
+        "NEW",
+        "UNDER_REVIEW",
+        "ACKNOWLEDGED",
+        "MONITORING",
+        "CLOSED_NO_ACTION"
+      ],
+      "title": "ReviewState",
+      "type": "string"
+    },
+    "SatelliteEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "product": {
+          "enum": [
+            "no2",
+            "co",
+            "aerosol_index"
+          ],
+          "title": "Product",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SourceState"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "no_scene",
+            "quality_filtered",
+            "no_usable_pixels",
+            "not_configured",
+            "authentication_error",
+            "configuration_error",
+            "provider_error",
+            "timeout",
+            "busy"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "band": {
+          "title": "Band",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "observation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SatelliteObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "product",
+        "status",
+        "availability",
+        "collection",
+        "band",
+        "unit",
+        "observation"
+      ],
+      "title": "SatelliteEvidence",
+      "type": "object"
+    },
+    "SatelliteObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "product": {
+          "enum": [
+            "no2",
+            "co",
+            "aerosol_index"
+          ],
+          "title": "Product",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "enum": [
+            "mol/m²",
+            "dimensionless"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "age_seconds": {
+          "minimum": 0,
+          "title": "Age Seconds",
+          "type": "number"
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string"
+        },
+        "band": {
+          "title": "Band",
+          "type": "string"
+        },
+        "image_id": {
+          "title": "Image Id",
+          "type": "string"
+        },
+        "source_product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Product Id"
+        },
+        "grid_scale_m": {
+          "title": "Grid Scale M",
+          "type": "number"
+        },
+        "native_footprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Native Footprint"
+        },
+        "retrieval_radius_km": {
+          "title": "Retrieval Radius Km",
+          "type": "number"
+        },
+        "statistic": {
+          "const": "mean",
+          "default": "mean",
+          "title": "Statistic",
+          "type": "string"
+        },
+        "quality": {
+          "$ref": "#/$defs/SatelliteQuality"
+        },
+        "provenance": {
+          "$ref": "#/$defs/EnvironmentalProvenance"
+        }
+      },
+      "required": [
+        "product",
+        "value",
+        "unit",
+        "observed_at",
+        "retrieved_at",
+        "age_seconds",
+        "collection",
+        "band",
+        "image_id",
+        "source_product_id",
+        "grid_scale_m",
+        "native_footprint",
+        "retrieval_radius_km",
+        "statistic",
+        "quality",
+        "provenance"
+      ],
+      "title": "SatelliteObservation",
+      "type": "object"
+    },
+    "SatelliteQuality": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "usable",
+          "default": "usable",
+          "title": "Status",
+          "type": "string"
+        },
+        "catalog_qa_rule": {
+          "title": "Catalog Qa Rule",
+          "type": "string"
+        },
+        "scene_quality": {
+          "enum": [
+            "Nominal",
+            "NOMINAL"
+          ],
+          "title": "Scene Quality",
+          "type": "string"
+        },
+        "processing_status": {
+          "enum": [
+            "Nominal",
+            "NRTI-processing product"
+          ],
+          "title": "Processing Status",
+          "type": "string"
+        },
+        "valid_grid_cells": {
+          "exclusiveMinimum": 0,
+          "title": "Valid Grid Cells",
+          "type": "integer"
+        },
+        "applied_filters": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Applied Filters",
+          "type": "array"
+        },
+        "note": {
+          "default": "L3 ingestion QA is upstream; original per-pixel QA is not exposed. Not a confidence score.",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "catalog_qa_rule",
+        "scene_quality",
+        "processing_status",
+        "valid_grid_cells",
+        "applied_filters",
+        "note"
+      ],
+      "title": "SatelliteQuality",
+      "type": "object"
+    },
+    "SourceState": {
+      "enum": [
+        "live",
+        "cached",
+        "unavailable",
+        "not_configured",
+        "error"
+      ],
+      "title": "SourceState",
+      "type": "string"
+    },
+    "SupportLevel": {
+      "enum": [
+        "STRONG",
+        "MODERATE",
+        "WEAK",
+        "INSUFFICIENT",
+        "CONFLICTING"
+      ],
+      "title": "SupportLevel",
+      "type": "string"
+    },
+    "Verdict": {
+      "enum": [
+        "SUPPORTS",
+        "WEAKLY_SUPPORTS",
+        "NEUTRAL",
+        "CONTRADICTS",
+        "UNAVAILABLE",
+        "STALE",
+        "NOT_APPLICABLE"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "VisualConfidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "VisualConfidence",
+      "type": "string"
+    },
+    "VisualObservation": {
+      "enum": [
+        "Gray plume or cloud-like feature visible.",
+        "Dark plume-like feature visible.",
+        "Flame-like features visible.",
+        "Tan dust-like cloud visible.",
+        "Reduced visibility or diffuse haze visible.",
+        "Cloud or fog-like features visible.",
+        "Open ground visible.",
+        "Buildings or structures visible.",
+        "Industrial-looking structures visible.",
+        "Construction equipment or exposed earth visible.",
+        "Vehicles or roadway visible.",
+        "Vegetation visible.",
+        "Pile of material visible; composition unknown.",
+        "No clear smoke, flame or dust-like feature visible.",
+        "Indoor objects visible.",
+        "Low light limits visible detail.",
+        "Blur or low resolution limits visible detail."
+      ],
+      "title": "VisualObservation",
+      "type": "string"
+    },
+    "VisualUncertainty": {
+      "enum": [
+        "Image alone cannot establish source or pollutant type.",
+        "Material composition cannot be established visually.",
+        "Smoke, dust, cloud and fog can look similar.",
+        "Distant or obscured features limit interpretation.",
+        "Lighting, blur or resolution limits interpretation.",
+        "Citizen description is unverified context, not visual evidence.",
+        "Image alone cannot establish pollutant concentration or air quality.",
+        "No clear pollution-related event can be inferred from this image.",
+        "The image appears illustrative or synthetic; real conditions cannot be established."
+      ],
+      "title": "VisualUncertainty",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "pollution_event_v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "event_version": {
+      "minimum": 1,
+      "title": "Event Version",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "origin_jurisdiction": {
+      "$ref": "#/$defs/HandoffJurisdiction"
+    },
+    "origin_system": {
+      "const": "AirshedOS prototype",
+      "title": "Origin System",
+      "type": "string"
+    },
+    "origin_case_id": {
+      "title": "Origin Case Id",
+      "type": "string"
+    },
+    "destination_jurisdiction": {
+      "$ref": "#/$defs/HandoffJurisdiction"
+    },
+    "handoff_reason": {
+      "$ref": "#/$defs/HandoffReason"
+    },
+    "origin_basis": {
+      "const": "manual_prototype_control_room",
+      "title": "Origin Basis",
+      "type": "string"
+    },
+    "location": {
+      "$ref": "#/$defs/EventLocation"
+    },
+    "possible_event_type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "event_family": {
+      "$ref": "#/$defs/EventFamily"
+    },
+    "corroboration_support": {
+      "$ref": "#/$defs/SupportLevel"
+    },
+    "advisory_next_step": {
+      "$ref": "#/$defs/NextStep"
+    },
+    "review_state": {
+      "$ref": "#/$defs/ReviewState"
+    },
+    "source_review_revision": {
+      "minimum": 0,
+      "title": "Source Review Revision",
+      "type": "integer"
+    },
+    "temporal": {
+      "$ref": "#/$defs/EventTemporal"
+    },
+    "evidence": {
+      "$ref": "#/$defs/EventEvidence"
+    },
+    "forecast": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EventForecast"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "handoff_id": {
+      "title": "Handoff Id",
+      "type": "string"
+    },
+    "handoff_created_at": {
+      "format": "date-time",
+      "title": "Handoff Created At",
+      "type": "string"
+    },
+    "simulated": {
+      "const": true,
+      "title": "Simulated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "case_id",
+    "event_version",
+    "created_at",
+    "updated_at",
+    "origin_jurisdiction",
+    "origin_system",
+    "origin_case_id",
+    "destination_jurisdiction",
+    "handoff_reason",
+    "origin_basis",
+    "location",
+    "possible_event_type",
+    "event_family",
+    "corroboration_support",
+    "advisory_next_step",
+    "review_state",
+    "source_review_revision",
+    "temporal",
+    "evidence",
+    "forecast",
+    "limitations",
+    "handoff_id",
+    "handoff_created_at",
+    "simulated"
+  ],
+  "title": "PollutionEvent",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:airshedos:pollution_event_v1"
+}

@@ -1,0 +1,21 @@
+flowchart TD
+  Input[Citizen photo/report — demo input explicitly synthetic] --> Gemini[Gemini structured visual interpretation]
+  Gemini --> Report[Ephemeral structured citizen evidence]
+  AQ[Google current AQ] --> Environment[Normalized environmental context / independent source states]
+  Weather[Google Weather] --> Environment
+  Fire[NASA FIRMS active-fire detections] --> Environment
+  Satellite[Earth Engine Sentinel-5P regional columns] --> Environment
+  Report --> Rules[Transparent deterministic corroboration rules]
+  Environment --> Rules
+  Rules --> Assessment[Support / explanations / limitations]
+  Assessment --> Case[Immutable case evidence snapshot]
+  Forecast[Google AQ forecast — related provider ecosystem] --> Outlook[Separate 6 / 12 / 24 hour operational outlook]
+  Outlook --> Case
+  Case --> UI[Selected-case map + text + officer review]
+  UI --> Packet[Versioned pollution_event_v1 / canonical JSON / SHA-256]
+  Packet --> Handoff[Manual simulated jurisdiction handoff]
+  Handoff --> Inbox[Prototype destination receives / accepts / rejects / returns]
+  Handoff --> Audit[Ephemeral append-only audit]
+  Packet --> Export[JSON export / standalone receiver verification]
+  Research[Isolated custom-model research: MODEL_NOT_ACCEPTED / not deployed]
+  Demo[Separate legacy fictional incident / illustrative values]

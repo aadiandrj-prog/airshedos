@@ -99,7 +99,7 @@ export function CorroborationCard({
       {busy && (
         <p role="status">
           Looking up environmental sources, then applying the evidence
-          checklist. Missing sources will remain visible.
+          checklist. Satellite retrieval can take around 25 seconds; the separate Google forecast follows. Missing sources will remain visible.
         </p>
       )}
       {error && (
@@ -107,7 +107,7 @@ export function CorroborationCard({
           {error}
         </p>
       )}
-      {inQueue && <p className="feedback">Assessment added to the officer queue above. Select the case to review it.</p>}
+      {inQueue && <p className="feedback">Assessment added to the officer queue above. <a href="#officer-command">Open the selected case to review and hand off.</a></p>}
       {result && !inQueue && (
         <AssessmentView result={result} reportId={reportId} />
       )}
@@ -122,7 +122,7 @@ export function AssessmentView({ result, reportId, showForecast = true }: { resu
           aria-labelledby={`fusion-${reportId}`}
           aria-live="polite"
         >
-          <span className="eyebrow">EVIDENCE FUSION CARD</span>
+          <span className="eyebrow">EVIDENCE FUSION CARD</span><p className="source-caveat">DETERMINISTIC AIRSHEDOS ANALYSIS · rule-based support, not confirmation of an event.</p>
           <div className="fusion-heading">
             <div>
               <p className="eyebrow">Possible event</p>
