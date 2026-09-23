@@ -42,7 +42,9 @@ Final genuine Google Maps / provider screenshots are local, gitignored artifacts
 
 - `data/verification/ui-redesign-command-desktop.png`
 - `data/verification/ui-redesign-case-desktop.png`
+- `data/verification/ui-redesign-command-mobile.png`
 - `data/verification/ui-redesign-case-mobile.png`
+- `data/verification/ui-redesign-case-mobile-viewport.png`
 - `data/verification/ui-redesign-desktop.png` — accepted destination inbox
 - `data/verification/ui-redesign-mobile.png` — accepted handoff on mobile
 
@@ -53,14 +55,14 @@ Final fixture-based visual checks are under `data/verification/ui-redesign/`: de
 | Check | Result |
 | --- | --- |
 | Full backend regression | **536 passed**, 2 existing dependency deprecation warnings, 27.95s |
-| Full production browser suite | **57 passed**, 1.1m: all 54 prior tests plus 3 viewport/keyboard/hierarchy tests |
+| Full production browser suite | **57 passed**, 1.0m: all 54 prior tests plus 3 viewport/keyboard/hierarchy tests |
 | Frontend lint | PASS |
 | Frontend typecheck | PASS |
 | Frontend production build | PASS |
 | Ruff / format | PASS; 92 files already formatted |
 | OpenAPI, frontend generated types, PollutionEvent JSON Schema | Regeneration byte-identical |
 | Docker rebuild / startup / health | API and web healthy |
-| Secret scan, including compiled frontend and sanitized live artifacts | PASS; zero findings |
+| Secret scan, including compiled frontend and sanitized live artifacts | PASS; 1,910 files, zero findings |
 | Protected records | All 11 manifest records plus Phase 3C verification unchanged: **12/12** |
 | Backend/domain diff | None |
 
