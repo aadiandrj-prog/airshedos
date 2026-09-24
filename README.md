@@ -1,286 +1,78 @@
 # AirshedOS
 
-**AI Pollution Incident Command — Phase 3C finalized demo prototype; Phase 2D custom model rejected.**
-
-Indian cities receive fragmented citizen, air-quality, fire, weather, and satellite signals. AirshedOS is an incident command concept for combining that evidence, communicating uncertainty, and coordinating a response across jurisdictions.
-
-The command center preserves **one fictional Delhi–Gurugram-border incident**, served by FastAPI to a Next.js command center. It includes evidence provenance, an illustrative six-hour risk forecast, acknowledgment, and simulated jurisdiction sharing. **This incident remains a demo.** A separate coordinate probe now retrieves current Google Air Quality, Google Weather, and NASA FIRMS context through backend adapters, plus latest usable Sentinel-5P NO₂, CO and UV Aerosol Index evidence through Google Earth Engine. Missing keys produce explicit `not_configured` states; no substitute readings are shown. A separate citizen intake panel now sends one image and context to Vertex AI Gemini for a structured visual interpretation. An explicit corroboration step now joins the server-owned interpretation with environmental context through a deterministic checklist. It creates an advisory assessment, not an incident. Real notifications remain unimplemented.
-
-Phase 2C adds a separate historical dataset pipeline for OpenAQ and ERA5-Land. **Real acceptance built five coverage-selected stations over 316 days, with 8,926 complete operational rows and a separate research frame.** Its default operational profile uses a configurable AQ availability buffer and excludes ERA5. A separate research profile is explicitly not deployment-safe. Historical publication times and revisions remain unverified; buffered availability is a conditional contract. Phase 2D evaluated Ridge, histogram gradient boosting and XGBoost, but **MODEL_NOT_ACCEPTED**: none passed the October baseline gate. The final test period remains untouched by candidate evaluation; no model is integrated or deployed. See [the model protocol](docs/PREDICTION_MODEL.md) and [Phase 2D results](docs/PHASE_2D_VERIFICATION.md). See [the data contract](docs/PREDICTION_DATASET.md) and [verification report](docs/PHASE_2C_VERIFICATION.md).
-
-Phase 2E adds a separately labelled **Google Air Quality forecast outlook** for the next 6, 12 and 24 hours, both in the coordinate probe and after citizen corroboration. It preserves CPCB index identity, native pollutant units and provenance. Forecast values never increase corroboration support. The custom model remains rejected and undeployed. See [forecast rules and API](docs/FORECASTING.md) and [Phase 2E verification](docs/PHASE_2E_VERIFICATION.md).
-
-Phase 3A adds a selected-case Google Map, a deterministic case queue, prototype jurisdiction labels and ephemeral manual officer review. Evidence, corroboration and Google forecast snapshots cannot be edited by review actions. A separate restricted browser key enables Maps; map failure leaves the textual workflow usable. See [the command-center guide](docs/COMMAND_CENTER.md) and [Phase 3A verification](docs/PHASE_3A_VERIFICATION.md).
+**A clearer picture of a reported pollution event.**
 
-Phase 3B adds a typed **PollutionEvent v1** frozen packet, SHA-256 integrity, manual simulated source/destination inboxes and an ephemeral append-only handoff audit. Delhi, Haryana and Uttar Pradesh are prototype recipients only; no authority is contacted. JSON export preserves normalized evidence/provenance without raw media. See [interoperability](docs/INTEROPERABILITY.md) and [Phase 3B verification](docs/PHASE_3B_VERIFICATION.md).
-
-## Run the final demo
-
-Start with the [system overview](docs/SYSTEM_OVERVIEW.md), then follow the single [demo checklist](docs/DEMO_CHECKLIST.md). The existing synthetic image is the only required media. Provider/AI calls remain genuine; the recipient workflow is explicitly simulated. The read-only preflight and standalone receiver example make preparation and exact-byte verification repeatable.
-
-Public deployment is **prepared, not provisioned**. The current verified setup is local Docker; unrestricted public use needs a separately approved operational/security decision. See [deployment readiness](docs/DEPLOYMENT.md) and [Phase 3C verification](docs/PHASE_3C_VERIFICATION.md). No cloud resources were created during finalization.
+AirshedOS helps an environmental control-room officer bring a citizen's report, nearby environmental readings, and an air-quality forecast into one place. It shows what the available evidence supports, what is uncertain, and what the officer can review next.
 
-## Current architecture
+It is a working demonstration, not an official pollution reporting or emergency service.
 
-```text
-Citizen image → Gemini interpretation → Deterministic environmental corroboration
-                                               ↓
-Google AQ provider forecast → Separate outlook → Map + manual officer review
-                                               ↓
-                                  Frozen PollutionEvent v1 packet
-                                               ↓
-                                  Simulated inbox + JSON export
-```
+## What can you do with it?
 
-The Python API owns evidence snapshots and temporary workflow state; the fictional reference incident remains separate. Pydantic generates OpenAPI and the export schema; frontend domain types are generated from that contract. The browser fetches the API directly. Forecast does not feed corroboration support. No database, delivery queue, or login is implemented. The demo and configuration states work without keys; real provider readings require backend credentials. See the maintained [architecture diagram source](docs/architecture.mmd).
-
-## Repository
-
-```text
-apps/
-  api/
-    app/                  # Models, fictional fixture, repository, routes, environment adapters
-    prediction/           # Offline historical research frame; never imported by FastAPI
-    tests/                # Endpoint, schema, state, and concurrency tests
-    scripts/              # OpenAPI export, manual verification and synthetic image evaluation
-    openapi.json          # Generated API contract
-    pyproject.toml
-    requirements*.lock    # Exact Python dependency versions
-    Dockerfile
-  web/
-    src/app/              # Single command-center page and responsive styles
-    src/components/       # Operational map, evidence, forecast and officer review
-    src/lib/              # API client and generated domain types
-    e2e/                  # Browser checks against the running API
-    package.json
-    package-lock.json
-    Dockerfile
-docs/
-  ARCHITECTURE.md
-  VERIFICATION.md         # Historical Phase 1A result
-  PHASE_1B_VERIFICATION.md
-  PHASE_1C_VERIFICATION.md
-  PHASE_2A_VERIFICATION.md
-  PHASE_2B_VERIFICATION.md
-  PHASE_2C_VERIFICATION.md
-  PREDICTION_DATASET.md
-  CORROBORATION_RULES.md
-  DATA_SOURCES.md
-  screenshots/
-.github/workflows/ci.yml
-.env.example
-docker-compose.yml
-```
-
-## Run locally
-
-Prerequisites: **Node.js 22 or newer**, npm, **Python 3.12 or newer** (3.13 recommended). Use one backend worker: state is process-local.
-
-Terminal 1, from the repository root:
-
-```sh
-cd apps/api
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.lock -r requirements-dataset.lock
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-On Windows, activate with `.venv\Scripts\activate`.
-
-Terminal 2, from the repository root:
-
-```sh
-cp apps/web/.env.example apps/web/.env.local
-cd apps/web
-npm install
-npm run dev
-```
-
-Open [the command center](http://localhost:3000) and [interactive API docs](http://localhost:8000/docs). The default API URL works without creating an environment file. Ground-source and incident UI timestamps use IST; satellite timestamps use explicitly labelled UTC. API timestamps include a timezone.
-
-For live providers, copy root `.env.example` to root `.env`, set `GOOGLE_MAPS_PLATFORM_API_KEY` and `NASA_FIRMS_MAP_KEY`, then add `--env-file ../../.env` to the backend command above. Enable Google Air Quality and Weather for the key. See [data sources](docs/DATA_SOURCES.md). **Never copy backend keys into the frontend directory.** Next.js reads only `apps/web/.env.local`; Compose and the manual verification script read root `.env`. Without an env file, backend settings come from the shell. Set `CORS_ORIGINS` when using a different browser origin, for example:
-
-```sh
-CORS_ORIGINS=http://localhost:3001 uvicorn app.main:app --port 8000
-```
+- **Look at local conditions.** See air quality, weather, nearby satellite fire detections, and regional atmospheric observations.
+- **Submit a photo.** Google's Gemini AI describes visible signs that might be relevant. It also states uncertainty: a photo alone cannot prove pollution or identify its cause.
+- **Check the supporting evidence.** AirshedOS applies a transparent checklist to the photo interpretation and environmental information. The result is a support category—not a probability or a confirmed finding.
+- **See what may happen next.** Google's air-quality forecast provides separate outlooks for the next 6, 12, and 24 hours.
+- **Review a case on a map.** Begin review, acknowledge a case, or mark it for monitoring.
+- **Try a simulated handoff.** Send a frozen case summary between prototype jurisdiction inboxes and export it for another system to read. No real authority is contacted.
 
-`NEXT_PUBLIC_API_BASE_URL` is public browser configuration, never a place for secrets. It is compiled into production builds; rebuild when changing it.
+## Try the demo
 
-## Docker
+The demonstration includes a clearly labeled fictional case and a synthetic sample image. You do not need a real citizen report.
 
-From the root, with Docker Desktop/Engine and Compose available:
+1. Open the command center and look at the environmental conditions.
+2. Under **Field evidence**, choose **Use synthetic cross-jurisdiction demo**.
+3. Select **Interpret image**, then **Corroborate with environmental data** to check the supporting evidence.
+4. Review the location, evidence, and Google forecast in the case panel.
+5. Select **Begin review**. You can then try the simulated handoff and receiving inbox.
 
-```sh
-docker compose up --build -d --wait
-docker compose ps
-docker compose down
-```
+For the complete walkthrough and backup plan, see the [demo checklist](docs/DEMO_CHECKLIST.md).
 
-The frontend is at [localhost:3000](http://localhost:3000); API at [localhost:8000](http://localhost:8000). Only two containers run. Both have health checks and non-root users. Ports bind to loopback. No cloud credentials or persistent volumes are required. Compose optionally reads a root `.env` copied from `.env.example`.
+**Hosting setup is in progress.** The requested arrangement is Vercel for the website, Render for its backend, and an empty Neon database reserved for later use. Public links will be added after deployment is verified. For now, see [local setup](docs/DEVELOPMENT.md) or the [hosting guide](docs/HOSTING.md).
 
-The browser accesses `localhost:8000`, **not** the Docker service name `api`. If ports are occupied, use consistent overrides:
+## How to read the labels
 
-```sh
-API_PORT=8001 WEB_PORT=3001 NEXT_PUBLIC_API_BASE_URL=http://localhost:8001 CORS_ORIGINS=http://localhost:3001 docker compose up --build -d --wait
-```
+| Label | What it means |
+| --- | --- |
+| Live / cached | A response from an external provider, either newly retrieved or reused from a recent request. Check its observation time. |
+| AI interpretation | Gemini's interpretation of the image, with stated uncertainty. |
+| Deterministic / rule-based | A result from AirshedOS's explicit evidence checklist. |
+| Provider forecast | An outlook supplied by Google Air Quality, not a model trained by AirshedOS. |
+| Synthetic / demo | An invented image or case used to demonstrate the workflow. |
+| Simulated | A workflow inside this prototype; nothing has been sent to a government system. |
+| Unavailable / not configured | That source could not provide information. AirshedOS does not invent a replacement reading. |
 
-## API routes
+## Where does the information come from?
 
-| Method | Route | Result |
-| --- | --- | --- |
-| GET | `/health` | `{"status":"ok"}` |
-| GET | `/ready` | Readiness, in-memory storage, demo mode |
-| GET | `/api/v1/incidents` | Incident list |
-| GET | `/api/v1/incidents/{incident_id}` | Evidence, forecast, reports, jurisdiction, actions |
-| POST | `/api/v1/incidents/{incident_id}/acknowledge` | Updated incident; repeated calls do not duplicate actions |
-| POST | `/api/v1/incidents/{incident_id}/share` | Simulated result, action, and updated incident |
-| GET | `/api/v1/environment/context?lat=28.4595&lng=77.0266` | Independent normalized current environmental context, including partial failures |
-| GET | `/api/v1/environment/satellite?lat=28.4595&lng=77.0266` | Latest usable satellite observations, product availability, QA and provenance |
-| GET | `/api/v1/environment/sources` | Configuration state only; no provider request or credentials |
-| GET | `/openapi.json` | Machine-readable API contract |
-| GET | `/docs` | Swagger UI |
+| Source | What it contributes |
+| --- | --- |
+| Citizen report and Gemini | A location, optional description, and AI interpretation of visible evidence |
+| Google Air Quality | Current air-quality information and a separate forecast |
+| Google Weather | Current weather context |
+| NASA FIRMS | Nearby satellite fire detections |
+| Sentinel-5P through Google Earth Engine | Recent usable regional atmospheric observations |
 
-Example:
+A fire detection does not establish pollution causality. Satellite atmospheric columns are not the same as ground-level pollutant concentrations. Expand the source details in the app to see where a value came from and when it was observed.
 
-```sh
-curl http://localhost:8000/health
-curl http://localhost:8000/api/v1/incidents/AS-DEL-001
-curl -X POST http://localhost:8000/api/v1/incidents/AS-DEL-001/acknowledge
-curl -X POST http://localhost:8000/api/v1/incidents/AS-DEL-001/share \
-  -H 'Content-Type: application/json' \
-  -d '{"target_jurisdiction_id":"south-west-delhi"}'
-```
+## Important limits
 
-Missing incidents return 404. Missing/invalid/extra share fields or a target outside the affected jurisdictions return 422. The owning jurisdiction is not a share target. Repeated sharing to the same jurisdiction returns the existing simulated action. Acknowledgment does not resolve an incident or remove its priority.
+- **A person makes the decision.** AirshedOS does not confirm violations, issue enforcement decisions, or automatically dispatch anyone.
+- **Forecasts are separate from evidence support.** Google current AQ and Google forecast are related outputs; the forecast does not count as another independent vote.
+- **The map's jurisdiction labels are prototypes**, not official administrative boundaries.
+- **Records are temporary and shared within the prototype.** Reports, review states, and handoffs can expire or disappear when the backend restarts. The requested empty Neon database will not change this behavior.
+- **There are no user accounts or private case spaces.** Use the synthetic sample for demonstrations, and avoid images with faces, plates, or other identifying details. Submitted images and context are processed by Google for interpretation.
+- **Sources may be unavailable.** Maps or one provider can fail while the rest of the review workflow remains usable.
+- **No custom prediction model is deployed.** An internal model was evaluated and rejected because it underperformed the baseline. Its recorded result remains `MODEL_NOT_ACCEPTED`.
 
-## Quality checks
+## Learn more
 
-Backend, from `apps/api` with the virtual environment activated:
+- [Simple system overview](docs/SYSTEM_OVERVIEW.md)
+- [Officer workflow and map guide](docs/COMMAND_CENTER.md)
+- [How evidence is assessed](docs/CORROBORATION_RULES.md)
+- [How forecasts should be understood](docs/FORECASTING.md)
+- [Simulated handoffs and exported case summaries](docs/INTEROPERABILITY.md)
+- [Developer setup and checks](docs/DEVELOPMENT.md)
+- [Vercel, Render, and Neon hosting](docs/HOSTING.md)
+- [Architecture and technical documentation](docs/ARCHITECTURE.md)
+- [Latest visual redesign and verification](docs/UI_REDESIGN.md)
 
-```sh
-ruff check .
-ruff format --check .
-pytest -q
-python scripts/export_openapi.py
-```
-
-Frontend, from `apps/web`:
-
-```sh
-npm ci
-npm run generate:api
-npm run lint
-npm run typecheck
-npm run build
-```
-
-After model changes, regenerate both OpenAPI and TypeScript definitions and commit them together. CI detects stale generated files. Backend, frontend, browser/Docker and secret checks run on every push and pull request.
-
-Browser checks require both apps running, ideally after a fresh backend start so the first test exercises both mutations:
-
-```sh
-cd apps/web
-npx playwright install chromium
-npm run test:e2e
-```
-
-These checks cover real API connectivity/actions, reload behavior, evidence, desktop/mobile screenshots, connection failure, loading, empty state, and failed actions. Browser regression screenshots are saved under ignored `apps/web/test-results`; curated verification captures are under `docs/screenshots`. Environmental display tests also intercept explicitly synthetic provider fixtures to verify readings, units, cached states, partial responses, and zero detections; these are not live integration evidence. CI also runs browser checks against credential-free Docker containers and runs the repository secret scanner.
-
-## Data and limitations
-
-- The incident workspace’s environmental values, locations, evidence scores, and forecasts are hand-authored fixtures. The fixed scenario date is 10 September 2026; it does not refresh to masquerade as a live observation.
-- Confidence and probabilities use 0–1 in the API and percentages in the UI. The 86% confidence and 81% spike risk are illustrative, not calibrated model outputs.
-- The fictional incident’s satellite evidence remains unavailable. The independent satellite probe can retrieve real regional observations; it never changes the demo incident or assigns confidence.
-- State resets when the API restarts, including on development reload. A single process is required; there is no persistence or multi-worker coordination.
-- Acknowledgment is stored locally. Sharing records a simulation and sends nothing externally.
-- The selected-workflow map shows coordinates and returned FIRMS detections, not pollution causality. Prototype jurisdiction areas are not official boundaries.
-- Environmental providers are independent of incident evidence. They do not alter demo confidence, forecasts, or actions. The probe fetches on page load and on **Check conditions**; there is no background monitoring.
-- Provider outages and missing credentials are expected. FIRMS `null` means unavailable; an empty list means a valid query returned zero nearby detections.
-- Optional timezone-aware `at` remains reference metadata for AQ/weather/FIRMS, which still query current conditions. For satellite only, it specifies the exclusive search-window end.
-- No authentication, production deployment, historical storage, or automatic attribution is included.
-
-## Planned architecture (not implemented)
-
-Phase 3A provides spatial presentation and temporary manual review. Phase 3B adds simulated jurisdiction interoperability. Durable records, accounts and real authority integration require separately approved later work.
-
-Current: Google AQ, Weather, FIRMS, Sentinel-5P, Gemini citizen interpretation, deterministic corroboration, Google operational forecast, Google Maps, ephemeral officer review and simulated PollutionEvent handoff. Future concepts: real authority integration, durable authorized workflows and notifications. Gemini interpretation alone is not corroboration. No source attribution or custom predictive model is deployed. Phase 2D remains MODEL_NOT_ACCEPTED; no renewed model search is planned in this phase. Phase 3C finalizes reliability and documentation only. Stop after Phase 3C; deck/video/Q&A preparation is the recommended next step.
-
-See [Phase 1C verification](docs/PHASE_1C_VERIFICATION.md), [architecture](docs/ARCHITECTURE.md), [data sources and setup](docs/DATA_SOURCES.md), [Phase 1B verification](docs/PHASE_1B_VERIFICATION.md), and the historical [Phase 1A record](docs/VERIFICATION.md).
-
-Manual provider check, from `apps/api` with the virtual environment activated:
-
-```sh
-python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
-# Add --json for complete normalized values, timestamps, and provenance.
-```
-
-This developer-only command is never run in CI. The **Phase 1B** live verification gate passed on 11 September 2026: all three providers returned HTTP 200 for the fixed NCR probe, followed by verified cache reuse and a controlled partial failure. Run the command with `--gate --json` to repeat the developer-only gate. See the verification report for timestamped results, which are not ongoing monitoring.
-
-## Earth Engine setup (backend only)
-
-Use an Earth Engine enabled and registered Google Cloud project, preferably the existing Google project. Set `EARTH_ENGINE_PROJECT` in root `.env`, or reuse `GOOGLE_CLOUD_PROJECT` as its fallback. The Maps API key does **not** authenticate Earth Engine. Configure local Application Default Credentials (ADC); the application initializes the official Python SDK lazily and keeps startup healthy without credentials.
-
-See [detailed ADC setup and datasets](docs/DATA_SOURCES.md#earth-engine--sentinel-5p). Default query: a 10 km neighborhood, 72-hour lookback ending at the current UTC hour, mean of usable pixels, latest usable scene independently per product. Cache: one hour. Satellite columns retain `mol/m²`; aerosol index is dimensionless. **These are not ground-level concentrations or AQI.**
-
-The full context endpoint includes `satellite` by default. The browser requests ground context with `include_satellite=false`, and `/environment/satellite` independently, so slow satellite queries do not hold up ground cards. Satellite observations and source QA appear in a separate section, with no charts or imagery.
-
-```sh
-# From apps/api, after ADC and the project are configured:
-python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --satellite-only --gate --json
-```
-
-The full manual gate now covers all sources; exit 1 indicates a ground regression, exit 2 an unmet satellite gate. Genuine empty/filtered satellite searches are valid; configuration and authentication failures are not missing coverage. A wider `--lookback-hours` or explicit `--at` is a separate debug query and must be labelled as such.
-
-Secret checks from the repository root: `python3 scripts/scan_secrets.py --include-build`. The scanner checks Git-visible files and optionally compiled frontend output, with generic token signatures plus exact local provider-key comparisons; it never prints secret values.
-
-
-## Citizen evidence / Gemini (Phase 2A)
-
-Use **SUBMIT FIELD EVIDENCE** below the environmental probe. Submit one JPEG/PNG, latitude, longitude and optional description. The result separates the original citizen description from a derived interpretation, ordinal confidence, observed features, uncertainty, model and prompt provenance. No incident is created and no environmental query is triggered by submission.
-
-Backend `.env` configuration (never place these in `apps/web`):
-
-```dotenv
-GOOGLE_CLOUD_PROJECT=your-existing-project
-GOOGLE_CLOUD_LOCATION=global
-GEMINI_MODEL=gemini-3.1-flash-lite
-GEMINI_TIMEOUT_SECONDS=30
-```
-
-Empty location/model values use these defaults; no project returns `not_configured`. Use existing backend Application Default Credentials. Ensure `aiplatform.googleapis.com` is enabled in that project and the principal has Vertex prediction permission (`aiplatform.endpoints.predict`, commonly via `roles/aiplatform.user`), plus service usage access as applicable. No service-account key is needed. The official Google Gen AI Python SDK is pinned in the backend dependency locks. [Google's model documentation](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/3-1-flash-lite) lists image input, structured output and the global endpoint; model choice remains configurable.
-
-```sh
-# Only if API enablement or local ADC setup is needed:
-gcloud services enable aiplatform.googleapis.com --project YOUR_PROJECT_ID
-gcloud auth application-default login
-# Manual live evaluation; never run in CI:
-apps/api/.venv/bin/python apps/api/scripts/evaluate_citizen_evidence.py \
-  --output docs/verification/phase2a-gemini-live.json
-```
-
-For Docker, the existing optional `docker-compose.earth-engine.yml` ADC mount is shared by both Earth Engine and Gemini; `EARTH_ENGINE_ADC_FILE` keeps its established name. Use `-f docker-compose.yml -f docker-compose.earth-engine.yml` and point that variable at the existing host ADC file. No credentials are copied into images. Default Compose health works without ADC, with explicit analysis authentication failures when a project is configured. Restart the backend after changing configuration.
-
-`POST /api/v1/citizen-reports/analyze` accepts multipart fields `image`, `latitude`, `longitude`, `description` (optional, at most 2,000 characters). JPEG/PNG only, at most **5 MiB / 16 MP**, one still frame. Malformed input returns a safe 422; oversize uploads return 413. A valid submission returns HTTP 200 with `status`, original `report`, nullable `analysis` and `evidence`, a safe message, request ID and inference latency. Provider failure never invents an interpretation.
-
-Images are decoded, oriented, stripped of metadata and resized to at most 2048 pixels per edge before inference. AirshedOS retains no images. Phase 2B holds structured report metadata and interpretation in bounded server memory for 30 minutes (up to 256 reports), with earlier capacity eviction or restart loss. Multipart files may spool temporarily above 1 MiB and are closed/deleted within the request; cleaned images stay in memory. The browser preview remains only until clear/replacement/navigation. Google processes the submitted image/context under its service policies; this does not assert zero retention by the cloud provider. Avoid identifying content. No facial/plate recognition, identity inference, database or upload gallery is implemented.
-
-See [Phase 2A verification](docs/PHASE_2A_VERIFICATION.md) for live results, limitations and exact regression checks, and [synthetic fixture provenance](apps/api/scripts/citizen-evaluation/README.md).
-
-## Transparent corroboration (Phase 2B)
-
-After interpretation, click **Corroborate with environmental data**. The backend retrieves its temporary structured report by ID, looks up AQ/weather/FIRMS/Sentinel-5P concurrently using the existing provider caches, and applies the [versioned checklist](docs/CORROBORATION_RULES.md). The Evidence Fusion Card shows a categorical result, each source's contribution or absence, an advisory next step and expandable provenance.
-
-```text
-Image → Gemini → structured report (memory, no image)
-                         ↓ explicit corroborate
-          AQ / Weather / FIRMS / Sentinel-5P
-                         ↓ deterministic checklist
-            assessment → Evidence Fusion Card
-```
-
-`POST /api/v1/citizen-reports/{report_id}/corroborate` takes no body. It does not accept browser-supplied analysis, reupload an image or rerun Gemini. Expired/unavailable IDs return 404; successful analyses expose `structured_report_ttl_seconds` additively. The temporary repository resets with the API and requires the existing single worker. No demo incident, authority task or notification is created.
-
-Image capture time is unknown. Environmental evidence uses **submission_time_proxy**, with current-service semantics for ground providers and an explicit satellite window. All satellite products retain native units and remain context-only. Missing evidence is not a contradiction. STRONG/MODERATE/WEAK/INSUFFICIENT/CONFLICTING are checklist categories, never probabilities, source confirmation or legal findings.
-
-Configuration defaults and exact aggregation are in [CORROBORATION_RULES.md](docs/CORROBORATION_RULES.md). See [Phase 2B verification](docs/PHASE_2B_VERIFICATION.md) for automated checks and the separately labeled synthetic live transport test. Prediction, BigQuery, mapping and persistent operational workflows are future work.
+The earlier [phase verification records](docs/PHASE_3C_VERIFICATION.md) document the checks performed at each stage; they are historical results, not a claim that providers are continuously available.

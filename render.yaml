@@ -1,0 +1,30 @@
+# Prototype hosting: no persistent database is connected to the application.
+services:
+  - type: web
+    name: airshedos-api
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    rootDir: apps/api
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /ready
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PORT
+        value: '8000'
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GOOGLE_MAPS_PLATFORM_API_KEY
+        sync: false
+      - key: NASA_FIRMS_MAP_KEY
+        sync: false
+      - key: GOOGLE_CLOUD_PROJECT
+        sync: false
+      - key: EARTH_ENGINE_PROJECT
+        sync: false
+      - key: GOOGLE_CLOUD_LOCATION
+        value: global
+      - key: GEMINI_MODEL
+        value: gemini-3.1-flash-lite
