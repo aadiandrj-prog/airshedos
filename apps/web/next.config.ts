@@ -10,5 +10,10 @@ for (const name of ["NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY", "NEXT_PUBLIC_GOOGLE_M
   const line = lines.find((entry) => entry.startsWith(`${name}=`));
   publicEnv[name] = process.env[name] ?? line?.slice(name.length + 1).trim().replace(/^['"]|['"]$/g, "") ?? "";
 }
-const config: NextConfig = { output: "standalone", agentRules: false, env: publicEnv };
+const config: NextConfig = {
+  // Vercel supplies its own adapter; Docker still needs a standalone server.
+  output: process.env.VERCEL === "1" ? undefined : "standalone",
+  agentRules: false,
+  env: publicEnv,
+};
 export default config;

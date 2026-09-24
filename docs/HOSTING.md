@@ -4,8 +4,8 @@ Requested hosting arrangement:
 
 | Service | Role | Current status |
 | --- | --- | --- |
-| Vercel | Next.js website | Setup in progress; no verified public URL yet |
-| Render | FastAPI backend | Setup in progress; no verified public URL yet |
+| Vercel | Next.js website | Project exists; public application verification pending |
+| Render | FastAPI backend | [Backend](https://airshedos-api.onrender.com) `/health` and `/ready` verified; external-provider verification pending |
 | Neon | Empty PostgreSQL database reserved for later | Provisioning pending; deliberately not connected to the app |
 
 This is a supervised demo prototype. There are no accounts, private case spaces or rate limits. Use only synthetic demonstration material. Provider calls consume the configured Google/FIRMS quota. Free hosting can pause when idle; restarting the backend clears temporary workflow records. The empty Neon database does not change that.
@@ -32,6 +32,8 @@ Gemini and Earth Engine require a dedicated server-side Google identity as well 
 ## Website on Vercel
 
 Import the same repository, selecting root directory **`apps/web`** and the **Next.js** preset. The app's `vercel.json` defines the install/build commands. Use Node 22 or newer.
+
+Vercel builds use its native adapter (`VERCEL=1`); other builds retain standalone output for Docker. This avoids the Next.js 16.3 standalone/adapter packaging conflict without changing the container runtime.
 
 Public build-time variables:
 
