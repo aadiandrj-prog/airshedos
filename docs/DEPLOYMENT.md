@@ -1,4 +1,6 @@
-# Deployment readiness — approval required
+# Earlier Cloud Run deployment proposal
+
+> The current requested hosting target is Vercel + Render, with an empty Neon database. See [HOSTING.md](HOSTING.md) for the current deployment status. The proposal below records the earlier Cloud Run option; it is not the active deployment plan.
 
 **Current status: locally verified prototype, not publicly deployed by this work.** Repository configuration uses localhost API/web origins and the existing browser key allows local origins only. Read-only inventory on 22 September 2026 found Cloud Run, Artifact Registry and Secret Manager APIs disabled in the configured Google Cloud project. No APIs were enabled, resources created, keys changed or public URL invented.
 

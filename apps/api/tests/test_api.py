@@ -148,6 +148,10 @@ def test_cors_limits_browser_origins(client):
     response = client.options(f"{INCIDENT}/acknowledge", headers=headers)
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+    headers["Origin"] = "https://airshedos.vercel.app"
+    response = client.options(f"{INCIDENT}/acknowledge", headers=headers)
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == headers["Origin"]
     headers["Origin"] = "https://unrelated.example"
     assert client.options(f"{INCIDENT}/acknowledge", headers=headers).status_code == 400
 

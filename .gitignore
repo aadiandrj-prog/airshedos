@@ -23,3 +23,6 @@ credentials.json
 
 # Generated historical datasets and source caches (never commit large data).
 /data/
+
+# Local hosting CLI project links and deployment state.
+.vercel/
