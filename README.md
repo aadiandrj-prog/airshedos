@@ -27,7 +27,7 @@ The demonstration includes a clearly labeled fictional case and a synthetic samp
 
 For the complete walkthrough and backup plan, see the [demo checklist](docs/DEMO_CHECKLIST.md).
 
-**Hosting setup is in progress.** The requested arrangement is Vercel for the website, Render for its backend, and an empty Neon database reserved for later use. Public links will be added after deployment is verified. For now, see [local setup](docs/DEVELOPMENT.md) or the [hosting guide](docs/HOSTING.md).
+**[Open the public demo](https://airshedos.vercel.app).** The website runs on Vercel and its backend runs on Render. The free demo server may take about a minute to wake. Some live sources can be unavailable; see the [hosting status and setup guide](docs/HOSTING.md) for current limitations. Neon is reserved for future use and does not store cases. [Local setup](docs/DEVELOPMENT.md) is also available.
 
 ## How to read the labels
 

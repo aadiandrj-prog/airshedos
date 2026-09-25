@@ -1,5 +1,16 @@
 import { expect, test } from "./test";
 
+test("a sleeping hosted backend can wake without a premature connection error", async ({ page }) => {
+  await page.route("**/ready", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 11000));
+    await route.fulfill({ json: { status: "ready" } });
+  });
+  await page.goto("/");
+  await expect(page.getByText("The demo server may take up to a minute to wake.", { exact: false })).toBeVisible();
+  await expect(page.getByText("API operational")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByRole("heading", { name: "Connection unavailable" })).toHaveCount(0);
+});
+
 test("backend incident, evidence, acknowledgment and simulated sharing", async ({
   page,
 }) => {

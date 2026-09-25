@@ -212,7 +212,7 @@ export default function CommandCenter() {
         {loading ? (
           <section className="state-panel" role="status">
             <h2>Loading incident evidence…</h2>
-            <p>Connecting to the local operations API.</p>
+            <p>Connecting to the operations API. The demo server may take up to a minute to wake.</p>
           </section>
         ) : error ? (
           <section className="state-panel" role="alert">

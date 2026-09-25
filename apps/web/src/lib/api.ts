@@ -35,7 +35,9 @@ const API_BASE = (
 async function request<T>(
   path: string,
   options?: RequestInit,
-  timeoutMs = 10000,
+  // Free hosting can take over 50 seconds to wake. Allow read-only loading
+  // requests to wait without retrying workflow mutations.
+  timeoutMs = options?.method && options.method !== "GET" ? 10000 : 70000,
 ): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
