@@ -336,3 +336,7 @@ including three subsequently added non-finite cases; signed identity/proxies 8 p
 production HTTPS browser public/resident/reviewer 16 passed; lint/type/build, generated
 contracts, Ruff, protected-record hashes and build-inclusive secret scan passed. New
 screens inspected. Remote checks and hosted release remain to verify in FINAL_EXPERIENCE.md.
+Initial GitHub browser setup failed on the runner's Ubuntu mirror DNS before tests.
+A CI-only direct-official-archive prerequisite preserves signed packages and all browser
+suites; replacement remote checks are required. This is recorded as a setup failure,
+not a passed regression run or application defect.

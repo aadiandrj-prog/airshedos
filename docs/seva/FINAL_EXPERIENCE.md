@@ -106,3 +106,15 @@ Official provider references previously consulted in this session:
 
 Stop boundary: no new forecast research, plume modelling, live sensor mesh, public case
 feed, municipal dispatch, notifications, new hosting service or fabricated pilot results.
+
+
+Initial remote runs 43051640487/43051650428 passed frontend/secrets and Vercel preview,
+but browser setup failed before tests ran: azure.archive.ubuntu.com DNS failed while
+installing Chromium's Ubuntu font dependencies. The CI prerequisite now rewrites only
+Ubuntu mirror URIs to the direct official HTTPS archive/security hosts on disposable
+GitHub Linux runners. Suites, components, keyring/signature verification and all actual
+Playwright installs/tests remain unchanged; network waits/retries are bounded. No browser
+check was removed or treated as passed. Local rewrite checks cover idempotence and
+preserved suite/signature text; replacement remote runs are required before release.
+The installed locked Playwright is 1.63.0; its official CI setup instructions and the
+Geolocation API documentation were consulted. No dependency upgrade was introduced.
