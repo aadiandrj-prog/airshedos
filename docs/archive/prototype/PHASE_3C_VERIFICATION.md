@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 3C — finalization verification
 
 Verified locally on **23 September 2026 IST** (captures on 22 September UTC). Scope is demo reliability, claim clarity, receiver validation and deployment preparation. No major capability or post-3C work was added. Phase 2D remains **MODEL_NOT_ACCEPTED**; no custom model is deployed or retuned, and the locked test set was not opened.
@@ -35,7 +37,7 @@ Queue labels, loading/disabled actions, no selected/new case, no fire, unavailab
 
 **PollutionEvent v1 is unchanged.** The review confirmed sender-scoped identifiers, event versions versus envelope revisions, UTC time roles, nullable/unavailable semantics, native units, explicit prototype jurisdiction/reason, frozen review state, Google forecast valid times and provenance references. Hash stays outside the payload; receivers hash exact exported bytes without reserializing. Python canonical encoding is documented and is not described as RFC 8785/JCS.
 
-`docs/contracts/pollution_event_v1.schema.json` is generated from the backend serialization model with local `$defs`. CI checks regeneration and tests compare it with the model. `apps/api/scripts/receive_pollution_event.py` runs offline, imports no application code, verifies the sender's expected SHA-256, validates schema/version/required fields/aware timestamps and selected cross-field references, then prints a minimal summary. It rejects malformed/duplicate-key/non-finite JSON and bounds input at 2 MiB. It does not import, dispatch, establish authenticity or rerun scientific analysis. See [receiver semantics and limitations](INTEROPERABILITY.md#independent-receiver-review-phase-3c).
+`docs/contracts/pollution_event_v1.schema.json` is generated from the backend serialization model with local `$defs`. CI checks regeneration and tests compare it with the model. `apps/api/scripts/receive_pollution_event.py` runs offline, imports no application code, verifies the sender's expected SHA-256, validates schema/version/required fields/aware timestamps and selected cross-field references, then prints a minimal summary. It rejects malformed/duplicate-key/non-finite JSON and bounds input at 2 MiB. It does not import, dispatch, establish authenticity or rerun scientific analysis. See [receiver semantics and limitations](../../INTEROPERABILITY.md#independent-receiver-review-phase-3c).
 
 Both real rehearsal exports passed this validator in an isolated Python process. The second packet digest was:
 
@@ -130,4 +132,4 @@ Implementation commit: **0bb58572b2dbda45a20e96b494de1cca88fe395b** (`chore: fin
 - The offline receiver validates schema and selected cross-field consistency, not every nested scientific rule or truth of external claims.
 - No public reset, hidden synthetic model output, persistent evaluation service or major feature was added. Existing local forecast snapshot tooling remains unchanged.
 
-Recommended next work: **FINAL DECK / DEMO VIDEO / JUDGE Q&A PREP**, using the maintained [system overview](SYSTEM_OVERVIEW.md), [diagram source](architecture.mmd) and [single demo checklist](DEMO_CHECKLIST.md). Stop after Phase 3C; no next product phase begins automatically.
+Recommended next work: **FINAL DECK / DEMO VIDEO / JUDGE Q&A PREP**, using the maintained [system overview](SYSTEM_OVERVIEW.md), [diagram source](../../architecture.mmd) and [single demo checklist](DEMO_CHECKLIST.md). Stop after Phase 3C; no next product phase begins automatically.

@@ -1,0 +1,15 @@
+{
+  "kind": "synthetic_local_recovery",
+  "samples": 1,
+  "source_reports": 3,
+  "archived_objects": 2,
+  "dump_bytes": 91623,
+  "dump_seconds": 0.1236,
+  "restore_seconds": 0.1504,
+  "replay_cleanup_seconds": 0.0905,
+  "post_backup_report_deletions": 1,
+  "post_backup_media_deletions": 1,
+  "expired_reports": 1,
+  "provider_calls": 0,
+  "production_backup_tested": false
+}

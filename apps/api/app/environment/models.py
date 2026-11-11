@@ -79,6 +79,7 @@ class FireObservation(EnvironmentalObservation):
 
 
 class EnvironmentalSourceStatus(DomainModel):
+    retryable: bool = False
     provider: str
     configured: bool
     status: SourceState

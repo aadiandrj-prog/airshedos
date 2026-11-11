@@ -1,0 +1,3 @@
+# Preserve supplied design originals byte-for-byte; application files retain whitespace checks.
+docs/seva/design-references/DESIGN_supplied.md -whitespace
+docs/seva/design-references/stitch-01/code.html -whitespace

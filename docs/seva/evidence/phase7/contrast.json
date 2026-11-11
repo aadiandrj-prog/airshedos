@@ -1,0 +1,25 @@
+{
+  "condition": "computed pilot tokens; separate rendered axe checks",
+  "pairs": [
+    {
+      "name": "body/white",
+      "ratio": 17.85253496299567
+    },
+    {
+      "name": "secondary/canvas",
+      "ratio": 7.242510935504382
+    },
+    {
+      "name": "interactive/white",
+      "ratio": 5.933638668604332
+    },
+    {
+      "name": "focus/canvas",
+      "ratio": 5.671199357509169
+    },
+    {
+      "name": "status chip",
+      "ratio": 6.848125691415893
+    }
+  ]
+}

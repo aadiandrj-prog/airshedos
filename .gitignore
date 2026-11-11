@@ -26,3 +26,10 @@ credentials.json
 
 # Local hosting CLI project links and deployment state.
 .vercel/
+
+# Local presentation/output scratch artifacts; preserve on disk, exclude from Git.
+.airshed-*-build/
+.chart-data-*/
+/AirshedOS Deck/
+/AirshedOS-speaker-notes.md
+/output/

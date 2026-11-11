@@ -1,0 +1,21 @@
+{
+  "kind": "synthetic_in_process_http",
+  "samples": 6,
+  "concurrency": 1,
+  "residents": 2,
+  "photos": 0,
+  "live_provider_calls": 0,
+  "milliseconds": [
+    40.669,
+    13.092,
+    11.307,
+    13.67,
+    11.401,
+    13.144
+  ],
+  "median_ms": 13.118,
+  "minimum_ms": 11.307,
+  "maximum_ms": 40.669,
+  "conditions": "FastAPI TestClient, signed synthetic token/session, local Docker PostgreSQL 18, no network/AI work in acceptance",
+  "inference": "No production capacity, cost, incident accuracy or human time savings established"
+}

@@ -1,6 +1,44 @@
 # AirshedOS architecture
 
-## Current: Phase 3C finalization
+## Resident and reviewer platform
+
+The current application uses explicit `APP_MODE=pilot` over shared
+Next.js/FastAPI apps. Its implementation and live limits are recorded in
+[phase status](seva/PHASE_STATUS.md) and [resident implementation](seva/PHASE_3_RESIDENT.md).
+A separate hosted pilot API and database are configured; current sign-in and operating limits are tracked there.
+
+Managed Auth0 login uses Next.js server sessions sealed in PostgreSQL; the browser
+holds an opaque HttpOnly cookie. The same-origin allowlisted BFF applies CSRF checks,
+and FastAPI independently verifies access tokens, session binding and current
+ownership/unit membership. Pilot mode denies legacy v1 endpoints.
+
+Authenticated resident reports commit to PostgreSQL before a receipt is returned,
+with one case, an idempotency record and transactional pending processing jobs.
+Optional cleaned images use an approved private R2 adapter; all media reads pass
+through authorization and retention checks. Published updates/information requests
+and append-only resident supplements are distinct from internal notes and frozen
+evidence. Local AQ/weather is optional volatile context. A separate PostgreSQL worker
+claims leased jobs, performs bounded retries and fences immutable publication; the
+resident interface shows the latest logical run independently of human review.
+The Phase 4 unit-scoped authority workspace adds reasoned review, assignment, private
+notes, field follow-up, explicit reporter publication and scoped metadata export.
+Reviewer enrichment now queues durable refreshes; provider IO runs outside database
+locks and never changes human review automatically. See [processing reliability](seva/PHASE_5_PROCESSING.md) and
+[the authority report](seva/PHASE_4_AUTHORITY.md). No hosted pilot deployment,
+storage, scheduler or real government delivery is claimed.
+
+Phase 6 adds a quarantined recovery UUID binding, separate worker/cleanup readiness
+signals, approved triage checks, expiry clearing in resident/queue views, withdrawn-media
+denial and opt-in pilot maps. A restored target replays current erasure manifests and
+physically purges before release; sessions, leases and authority grants are invalidated.
+The local production-build HTTPS rehearsal uses synthetic signed identity and separate
+API/worker processes. It is not a hosted production validation. See
+[validation](seva/PHASE_6_VALIDATION.md) and [private pilot runbook](seva/PILOT_RUNBOOK.md).
+
+## Prototype — historical Phase 3C finalization
+
+The following sections describe the default `APP_MODE=prototype` path. Its
+process-local storage and absence of app authentication do not describe pilot v2.
 
 ```mermaid
 flowchart LR
@@ -25,7 +63,7 @@ The app factory creates fresh process-local repositories for each application in
 
 The repository provides list, detail, acknowledgment, and share operations. Acknowledgment is idempotent. Simulated sharing is idempotent per incident/target pair. Each successful mutation appends a structured action and updates the incident timestamp. Acknowledgment means an officer has seen the incident; it is not field verification, confirmation of a source, or resolution. No actions invoke third parties.
 
-`OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](COMMAND_CENTER.md).
+`OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](archive/prototype/COMMAND_CENTER.md).
 
 ## Legacy fictional incident domain
 
@@ -218,4 +256,4 @@ The product and `pollution_event_v1` wire contract are unchanged. Targeted UI co
 
 `demo_preflight.py` reports health/configuration and optionally performs genuine provider queries. It never changes credentials or seeds provider results. The existing browser verifier's `--final` mode runs the same synthetic journey, records timings, invokes the isolated receiver, and measures a separately identified cached-corroboration diagnostic. There is no public reset endpoint; a documented local API restart deliberately resets ephemeral state/caches before preparation.
 
-Protected prior verification/model files are checksum-pinned in `contracts/protected-records.json` and tested for unchanged contents. Historical records describe their original phase; later merge status belongs to the later verification record. [Final diagram source](architecture.mmd), [judge-friendly overview](SYSTEM_OVERVIEW.md), [demo checklist](DEMO_CHECKLIST.md) and [deployment readiness](DEPLOYMENT.md) describe the current system. No public deployment or new capability is implied.
+Protected prior verification/model files are checksum-pinned in `contracts/protected-records.json` and tested for unchanged contents. Historical records describe their original phase; later merge status belongs to the later verification record. [Final diagram source](architecture.mmd), [judge-friendly overview](archive/prototype/SYSTEM_OVERVIEW.md), [demo checklist](archive/prototype/DEMO_CHECKLIST.md) and [deployment readiness](archive/prototype/DEPLOYMENT.md) describe the current system. No public deployment or new capability is implied.

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./pilot.css";
 
 export const metadata: Metadata = {
-  title: "AirshedOS | Air Operations Command Center",
+  title: "AirshedOS | Report, understand, review",
   description:
-    "Environmental evidence, provider outlook and manual officer review. A prototype with explicitly simulated jurisdiction handoffs.",
+    "Private resident reporting and approved-unit review, with advisory environmental evidence and explicit limitations.",
 };
 
 export default function RootLayout({

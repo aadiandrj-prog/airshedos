@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"inverse-on-surface":"#f1effa","primary-container":"#0d5c75","primary-fixed-dim":"#90cfec","tertiary-fixed":"#eaddff","primary":"#004357","error":"#ba1a1a","on-error":"#ffffff","tertiary-fixed-dim":"#d2bbff","on-tertiary-container":"#d5bfff","surface":"#fbf8ff","on-primary-container":"#93d3ef","on-tertiary":"#ffffff","secondary-fixed":"#d8e2ff","background":"#fbf8ff","on-tertiary-fixed-variant":"#5a00c6","on-primary-fixed":"#001f2a","on-secondary-container":"#fefcff","surface-container-high":"#e8e7f1","outline-variant":"#bfc8cd","on-secondary":"#ffffff","on-secondary-fixed-variant":"#004395","surface-dim":"#dad9e3","surface-container-low":"#f4f2fd","error-container":"#ffdad6","surface-bright":"#fbf8ff","tertiary-container":"#691dda","on-tertiary-fixed":"#25005a","surface-variant":"#e3e1ec","surface-tint":"#1e667f","inverse-primary":"#90cfec","secondary-fixed-dim":"#adc6ff","surface-container-lowest":"#ffffff","on-primary-fixed-variant":"#004d64","primary-fixed":"#bde9ff","secondary-container":"#2170e4","on-surface-variant":"#40484c","on-secondary-fixed":"#001a42","on-error-container":"#93000a","on-background":"#1a1b22","inverse-surface":"#2f3038","tertiary":"#4f00af","on-surface":"#1a1b22","on-primary":"#ffffff","surface-container":"#eeedf7","secondary":"#0058be","surface-container-highest":"#e3e1ec","outline":"#70787d"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"gutter-mobile":"0.75rem","space-xl":"3rem",gutter:"1.5rem","space-md":"1rem","space-xs":"0.25rem",margin:"3rem","margin-mobile":"1.25rem","space-sm":"0.5rem","space-lg":"1.75rem"},fontFamily:{"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"title-lg":["Geist"],"headline-lg-mobile":["Geist"],"headline-lg":["Geist"],"label-xs":["Geist"],"title-sm":["Geist"],"body-lg":["Geist"],"headline-md":["Geist"],"body-md":["Geist"],"label-md":["Geist"]},fontSize:{"display-lg":["56px",{lineHeight:"64px",letterSpacing:"-0.03em",fontWeight:"400"}],"display-lg-mobile":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"400"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"400"}],"title-lg":["18px",{lineHeight:"26px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-lg-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.015em",fontWeight:"500"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"500"}],"label-xs":["10px",{lineHeight:"14px",letterSpacing:"0.06em",fontWeight:"600"}],"title-sm":["15px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"-0.005em",fontWeight:"400"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"500"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0em",fontWeight:"400"}],"label-md":["13px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}]}}}}</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-16 max-w-7xl mx-auto px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><a class="flex items-center gap-space-xs group" data-path="live-telemetry" href="#"><div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div><span class="font-title-lg text-title-lg tracking-tight text-on-surface group-hover:text-primary transition-colors">AirshedOS</span></a></div><nav class="hidden lg:flex items-center gap-space-xs p-1 rounded-full bg-surface-container-low/70" data-active-classes="bg-surface-container text-primary font-title-sm shadow-[0_1px_4px_rgba(0,0,0,0.04)]"><a aria-current="page" class="px-space-md py-1.5 rounded-full transition-all bg-surface-container text-primary font-title-sm shadow-[0_1px_4px_rgba(0,0,0,0.04)]" data-path="live-telemetry" href="#">Live Telemetry</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-all" data-path="civic-network" href="#">Civic Network</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-all" data-path="methodology" href="#">Methodology</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-all" data-path="transparency" href="#">Transparency</a><a class="px-space-md py-1.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-all" data-path="documentation" href="#">Documentation</a></nav><div class="flex items-center gap-space-md"><a class="hidden sm:inline-block font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="resident-sign-in" href="#">Resident Sign In</a><a class="px-space-md py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-[0_1px_4px_rgba(0,67,87,0.15)] hover:bg-primary-container hover:text-on-primary-container transition-all flex items-center gap-space-xs" data-path="authority-portal" href="#"><span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span><span>Authority Portal</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full relative overflow-hidden bg-background">
+<!-- Soft Ambient Atmospheric Gradient Aura -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[980px] h-[580px] pointer-events-none opacity-60 blur-[130px] rounded-full bg-gradient-to-tr from-secondary-fixed via-primary-fixed to-tertiary-fixed -z-10"></div>
+<div class="absolute top-[680px] right-[-140px] w-[620px] h-[620px] pointer-events-none opacity-40 blur-[150px] rounded-full bg-gradient-to-bl from-primary-fixed-dim via-surface-container-low to-tertiary-fixed-dim -z-10"></div>
+<!-- Hero Section -->
+<section class="w-full max-w-7xl mx-auto px-margin pt-space-xl pb-space-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-end mb-space-xl">
+<div class="lg:col-span-7 flex flex-col space-y-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-sm self-start">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-primary font-semibold">Civic Telemetry Release 4.2</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight leading-tight">
+          Atmospheric intelligence for civic environmental action.
+        </h1>
+</div>
+<div class="lg:col-span-5 flex flex-col space-y-space-md pb-1">
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          Bridging hyper-local community pollution signals with calibrated regulatory casework and continuous municipal sensor mesh telemetry.
+        </p>
+<div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+<a class="px-space-lg py-3 rounded-full bg-on-surface text-surface-container-lowest font-label-md text-label-md shadow-md hover:bg-primary transition-all flex items-center gap-space-xs" data-path="civic-network" href="#">
+<span>Report a Concern</span>
+<span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+<a class="px-space-lg py-3 rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container-low transition-all flex items-center gap-space-xs" data-path="authority-portal" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>Authority Sign-in</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Centerpiece Interactive Glass Telemetry Stage -->
+<div class="w-full relative mt-space-md">
+<div class="relative w-full rounded-xl bg-surface-container-lowest/70 backdrop-blur-2xl shadow-xl p-space-md md:p-space-lg overflow-hidden">
+<!-- Subtle Glow Layer -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary-fixed/20 via-transparent to-transparent pointer-events-none"></div>
+<!-- Upper Bar: Metric Header & Station Scrub -->
+<div class="relative flex flex-col md:flex-row md:items-center justify-between gap-space-md pb-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">air</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-title-sm text-title-sm text-on-surface">Tri-Valley Basin Sensor Clustered Array</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-xs text-label-xs">Node #419</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Continuous optical laser particle count • Calibrated 3m ago</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container/60 text-on-surface font-label-xs text-label-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>AQI 38 · Low Risk</span>
+</div>
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs">
+<span class="material-symbols-outlined text-[14px]">navigation</span>
+<span>Vector: NW 8.4 mph</span>
+</div>
+<div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs">
+<span>RH: 44%</span>
+</div>
+</div>
+</div>
+<!-- Waveform Visualization & Environmental Scrim -->
+<div class="relative w-full h-56 sm:h-72 rounded-lg bg-surface-container-low/50 overflow-hidden flex flex-col justify-end p-space-md">
+<!-- Atmospheric Telemetry SVG Chart -->
+<div class="absolute inset-0 w-full h-full flex items-center justify-center">
+<svg class="w-full h-full text-primary" fill="none" preserveaspectratio="none" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="airshedGlow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="currentColor" stop-opacity="0.32"></stop>
+<stop offset="65%" stop-color="currentColor" stop-opacity="0.08"></stop>
+<stop offset="100%" stop-color="currentColor" stop-opacity="0"></stop>
+</lineargradient>
+<lineargradient id="lineAccent" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0%" stop-color="#0058be"></stop>
+<stop offset="45%" stop-color="#004357"></stop>
+<stop offset="85%" stop-color="#2170e4"></stop>
+</lineargradient>
+</defs>
+<path d="M0,170 C120,165 180,110 280,125 C380,140 420,70 520,85 C620,100 680,145 780,130 C880,115 940,60 1000,75 L1000,240 L0,240 Z" fill="url(#airshedGlow)"></path>
+<path d="M0,170 C120,165 180,110 280,125 C380,140 420,70 520,85 C620,100 680,145 780,130 C880,115 940,60 1000,75" stroke="url(#lineAccent)" stroke-linecap="round" stroke-width="2.5" vector-effect="non-scaling-stroke"></path>
+<!-- Anomaly Marker Callout -->
+<circle class="animate-pulse" cx="520" cy="85" fill="#004357" r="5"></circle>
+<circle cx="520" cy="85" opacity="0.6" r="14" stroke="#90cfec" stroke-width="1.5"></circle>
+</svg>
+</div>
+<!-- Micro Floater Tooltip Over Waveform -->
+<div class="relative z-10 self-start sm:ml-48 mb-6 p-space-sm rounded-lg bg-surface-container-lowest/90 backdrop-blur-xl shadow-md max-w-xs">
+<div class="flex items-center justify-between gap-space-md mb-1">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">Laser Photometry</span>
+<span class="font-label-xs text-label-xs text-primary font-semibold">14:42 PST</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface">8.4</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">µg/m³ PM2.5</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Cross-verified by 6 municipal stations within 2.4 km radius.</p>
+</div>
+<!-- Interactive Scrub Bar Baseline -->
+<div class="relative z-10 w-full flex items-center justify-between pt-space-xs border-t border-outline-variant/30 text-outline font-label-xs text-label-xs">
+<span>06:00 DAWN</span>
+<span>09:00 TRAFFIC PEAK</span>
+<span class="text-primary font-semibold">12:00 SOLAR PEAK</span>
+<span>15:00 OZONE SHIFT</span>
+<span>18:00 INVERSION</span>
+<span>21:00 DUSK</span>
+</div>
+</div>
+<!-- Lower Quick Metric Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-md">
+<div class="p-space-sm rounded-lg bg-surface-container-low/70">
+<span class="font-label-xs text-label-xs uppercase text-outline">Ozone (O₃)</span>
+<div class="font-title-lg text-title-lg text-on-surface mt-0.5">24 ppb</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Baseline optimal</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low/70">
+<span class="font-label-xs text-label-xs uppercase text-outline">Nitrogen Dioxide</span>
+<div class="font-title-lg text-title-lg text-on-surface mt-0.5">11.2 ppb</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">-18% vs weekly avg</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low/70">
+<span class="font-label-xs text-label-xs uppercase text-outline">Dispersion Index</span>
+<div class="font-title-lg text-title-lg text-on-surface mt-0.5">A+ High</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Favorable vertical mixing</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low/70">
+<span class="font-label-xs text-label-xs uppercase text-outline">Civic Observers</span>
+<div class="font-title-lg text-title-lg text-on-surface mt-0.5">14 Active</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">3 reports closed</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Minimalist Trust Strip / Marquee -->
+<section class="w-full py-space-lg bg-surface-container-lowest/50">
+<div class="max-w-7xl mx-auto px-margin flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<span class="font-label-xs text-label-xs uppercase tracking-widest text-outline whitespace-nowrap">
+        Engineered with civic air districts & research collectives
+      </span>
+<div class="flex items-center flex-wrap gap-space-lg text-on-surface-variant font-label-md text-label-md">
+<span class="opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">hub</span> Bay Airshed District
+        </span>
+<span class="opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">verified</span> Clean Canopy Alliance
+        </span>
+<span class="opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">waves</span> Metro Regional Health
+        </span>
+<span class="opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">sensors</span> CivicNode Network
+        </span>
+</div>
+</div>
+</section>
+<!-- Dual Pathway System: "Two systems, one shared intelligence layer" -->
+<section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+<div class="flex flex-col space-y-space-xs mb-space-lg">
+<span class="font-label-xs text-label-xs uppercase tracking-widest text-primary font-semibold">Dual Operating Architecture</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Two systems, one shared intelligence layer.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+        Designed to dissolve friction between neighborhood residents reporting visible plume episodes and municipal authorities requiring evidentiary containment records.
+      </p>
+</div>
+<!-- Dual Split Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-space-xl">
+<!-- Card A: Resident Intake & Verification -->
+<div class="rounded-xl bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-space-md py-1 rounded-full bg-surface-container text-tertiary font-label-xs text-label-xs font-semibold">PATHWAY 01</span>
+<span class="font-label-xs text-label-xs text-outline">ZERO BUREAUCRACY</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-space-xs">Resident Intake & Anomaly Logging</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+            Effortless GPS-stamped observations, optical camera capture, and immediate hyper-local radius lookup without complex forms.
+          </p>
+</div>
+<!-- Micro UI Representation of Resident Card -->
+<div class="rounded-lg bg-surface-container-low/70 p-space-md space-y-space-sm mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-tertiary">location_on</span>
+<span class="font-title-sm text-title-sm text-on-surface">Oakridge Freight Corridor</span>
+</div>
+<span class="font-label-xs text-label-xs px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant">Validated 4m ago</span>
+</div>
+<div class="flex items-center gap-space-md text-body-sm text-on-surface-variant">
+<span>Visual: Heavy white smoke plume</span>
+<span>•</span>
+<span>Sulfur odor flagged</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full w-4/5"></div>
+</div>
+<div class="flex justify-between items-center text-label-xs text-outline">
+<span>Mesh Correlation Status</span>
+<span class="text-tertiary font-semibold">82% Confidence Match</span>
+</div>
+</div>
+<a class="inline-flex items-center gap-space-xs text-primary font-label-md text-label-md hover:gap-space-sm transition-all" data-path="civic-network" href="#">
+<span>Explore civic intake workflow</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Card B: Regulatory Caseworker Terminal -->
+<div class="rounded-xl bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16"></div>
+<div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-space-md py-1 rounded-full bg-surface-container text-primary font-label-xs text-label-xs font-semibold">PATHWAY 02</span>
+<span class="font-label-xs text-label-xs text-outline">REGULATORY COMPLIANT</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-space-xs">Regulatory Caseworker Terminal</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+            Automated sensor triangulation, meteorological plume forward-projection, and audit-ready statutory dossiers ready for field dispatch.
+          </p>
+</div>
+<!-- Micro UI Representation of Regulatory Desk -->
+<div class="rounded-lg bg-surface-container-low/70 p-space-md space-y-space-sm mb-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">policy</span>
+<span class="font-title-sm text-title-sm text-on-surface">Case #AQ-2025-0814</span>
+</div>
+<span class="font-label-xs text-label-xs px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container">Dispatch Assigned</span>
+</div>
+<div class="flex items-center gap-space-md text-body-sm text-on-surface-variant">
+<span>Source: Point-source industrial exhaust</span>
+<span>•</span>
+<span>EPA Method 9 Verified</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full w-full"></div>
+</div>
+<div class="flex justify-between items-center text-label-xs text-outline">
+<span>Enforcement Trail</span>
+<span class="text-primary font-semibold">Immutable Hash #7a8f...39b</span>
+</div>
+</div>
+<a class="inline-flex items-center gap-space-xs text-primary font-label-md text-label-md hover:gap-space-sm transition-all" data-path="authority-portal" href="#">
+<span>Inspect regulatory console</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Center Workstation Preview Banner (Glass Plume Dispersion) -->
+<div class="w-full rounded-xl bg-surface-container-lowest/80 backdrop-blur-2xl shadow-lg p-space-lg flex flex-col md:flex-row items-center justify-between gap-space-lg">
+<div class="flex flex-col space-y-space-xs max-w-xl">
+<div class="flex items-center gap-space-xs text-primary font-label-xs text-label-xs uppercase">
+<span class="material-symbols-outlined text-[16px]">timeline</span>
+<span>Forward-Look Dispersion Simulation</span>
+</div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Real-Time Gaussian Plume Mapping</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Predicts atmospheric drift patterns 180 minutes in advance, enabling school districts and municipal crews to preempt exposure windows before ground saturation.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm w-full md:w-auto shrink-0">
+<div class="p-space-md rounded-lg bg-surface-container-low text-center flex-1 md:flex-initial">
+<span class="font-label-xs text-label-xs text-outline uppercase">Projected Drift</span>
+<div class="font-headline-md text-headline-md text-on-surface font-semibold">2.8 km</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Downwind sweep</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low text-center flex-1 md:flex-initial">
+<span class="font-label-xs text-label-xs text-outline uppercase">Confidence</span>
+<div class="font-headline-md text-headline-md text-primary font-semibold">96.4%</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dual-model fit</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Editorial Section: Field Photography & Civic Reality -->
+<section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-5 flex flex-col space-y-space-md">
+<span class="font-label-xs text-label-xs uppercase tracking-widest text-primary font-semibold">Ground Truth Verification</span>
+<h3 class="font-headline-lg text-headline-lg text-on-surface leading-tight">
+          Where atmospheric data meets lived human experience.
+        </h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Environmental injustice often hides in the gaps between distant government monitoring stations. AirshedOS decentralizes sensing by outfitting school roofs, community gardens, and civic volunteers with laboratory-grade edge nodes.
+        </p>
+<div class="pt-space-xs space-y-space-xs">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Sub-meter optical particulate classification (PM1.0, PM2.5, PM10)</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Thermal inversion boundary layer detection</span>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Immediate public disclosure via unalterable event ledgers</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 relative">
+<div class="w-full h-96 sm:h-[440px] rounded-xl overflow-hidden shadow-lg relative bg-cover bg-center" data-alt="A clean, minimalist high-key architectural view of a sleek, white solar-powered environmental sensor node installed on a modern concrete school building rooftop overlooking an urban valley. Soft morning sunlight, clear atmosphere with soft pastel sky tones, quiet minimalism and understated precision engineering." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDI_qzN4nAmGVwLNRMnUfuD1UMOTTXfOWw8UyML_qh40cA7gEUCJkMDEjwXFX1gD6E7o_Z_OD3HXq25KMxP3sggUi-H8l83z8E_5fhDBoIBsdbyRf1KRU0p7fCW7NXXkghdCFJeC_MRr3V8BHkMiabmkjB0k8p1APH27Ioj4YKuZ0U2Ty3TeX_sKj1zzJkmpys5KwkeXbeHI9eKs4XHhKxgVp3g1aNLZCEUMTrOGw')">
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-space-md left-space-md right-space-md flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm text-surface-container-lowest">
+<div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider opacity-80">Rooftop Station Array #88</span>
+<p class="font-title-sm text-title-sm">Mission District Community Learning Center</p>
+</div>
+<div class="px-space-md py-1 rounded-full bg-surface-container-lowest/20 backdrop-blur-md font-label-xs text-label-xs self-start sm:self-auto">
+              Real-time Uplink: 99.98%
+            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Exploration & Workstation Modules -->
+<section class="w-full max-w-7xl mx-auto px-margin py-space-xl">
+<div class="text-center max-w-2xl mx-auto mb-space-xl">
+<span class="font-label-xs text-label-xs uppercase tracking-widest text-primary font-semibold">Integrity Protocol</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Intelligent air monitoring built for community trust.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+        Every sensor spike, field observation, and regulatory response is bound by a transparent verification pipeline.
+      </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Feature 1 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest/70 backdrop-blur-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-space-md">
+<span class="material-symbols-outlined text-[20px]">scatter_plot</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Instant Plume Correlation</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Cross-references physical telemetry against automated anemometer readings to verify source direction within 12 seconds.
+          </p>
+</div>
+<div class="pt-space-md text-primary font-label-xs text-label-xs uppercase tracking-wider font-semibold">
+          Auto-triangulated
+        </div>
+</div>
+<!-- Feature 2 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest/70 backdrop-blur-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary mb-space-md">
+<span class="material-symbols-outlined text-[20px]">encrypted</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Cryptographic Chain</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Evidence packages are sealed with time-locked cryptographic proofs, ensuring community reports cannot be altered or silenced.
+          </p>
+</div>
+<div class="pt-space-md text-secondary font-label-xs text-label-xs uppercase tracking-wider font-semibold">
+          EPA standard ready
+        </div>
+</div>
+<!-- Feature 3 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest/70 backdrop-blur-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary mb-space-md">
+<span class="material-symbols-outlined text-[20px]">send_time_extension</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Field Dispatch Sync</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Direct routing to on-call air inspectors with hyper-targeted perimeter coordinates to catch intermittent emission violations.
+          </p>
+</div>
+<div class="pt-space-md text-tertiary font-label-xs text-label-xs uppercase tracking-wider font-semibold">
+          Sub-hour response
+        </div>
+</div>
+<!-- Feature 4 -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest/70 backdrop-blur-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface mb-space-md">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-on-surface mb-1">Human-in-the-Loop</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Algorithmic outputs are peer-reviewed by neighborhood environmental chairs before statutory enforcement motions are filed.
+          </p>
+</div>
+<div class="pt-space-md text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider font-semibold">
+          Democratic oversight
+        </div>
+</div>
+</div>
+</section>
+<!-- Interactive Civic Airshed Map Micro-Section -->
+<section class="w-full max-w-7xl mx-auto px-margin py-space-lg">
+<div class="w-full rounded-xl bg-surface-container-lowest/80 backdrop-blur-2xl shadow-sm p-space-lg flex flex-col md:flex-row items-center justify-between gap-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[28px]">explore</span>
+</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Explore Hyper-Local Sensor Spatial Coverage</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Search your neighborhood, postal code, or regional watershed to inspect station density and real-time alerts.
+          </p>
+</div>
+</div>
+<div class="w-full md:w-auto flex items-center gap-space-xs">
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">search</span>
+<input class="w-full pl-9 pr-4 py-2 rounded-full bg-surface-container-low text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Enter zip or district..." type="text"/>
+</div>
+<button class="px-space-md py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap hover:bg-primary-container transition-all">
+          Locate Mesh
+        </button>
+</div>
+</div>
+</section>
+<!-- Minimalist Final Sign-off CTA -->
+<section class="w-full py-space-xl my-space-lg relative">
+<div class="max-w-4xl mx-auto px-margin text-center relative z-10 flex flex-col items-center">
+<div class="w-12 h-12 rounded-full bg-primary-fixed/80 flex items-center justify-center text-primary mb-space-md shadow-sm">
+<span class="material-symbols-outlined text-[24px]">filter_drama</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight max-w-xl">
+        The future of civic air defense starts here.
+      </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs mb-space-lg max-w-lg">
+        Join over 140 regional observation stations actively monitoring the airsheds that sustain our communities.
+      </p>
+<div class="flex flex-wrap items-center justify-center gap-space-sm">
+<a class="px-space-lg py-3 rounded-full bg-on-surface text-surface-container-lowest font-label-md text-label-md shadow-md hover:bg-primary transition-all flex items-center gap-space-xs" data-path="civic-network" href="#">
+<span>Report an Observation</span>
+<span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+<a class="px-space-lg py-3 rounded-full bg-surface-container-lowest text-primary font-label-md text-label-md shadow-sm hover:bg-surface-container-low transition-all" data-path="authority-portal" href="#">
+          Access Authority Desk
+        </a>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 py-space-xl"><div class="max-w-7xl mx-auto px-margin"><div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-space-xl"><div class="md:col-span-5 space-y-space-sm"><div class="flex items-center gap-space-xs"><div class="w-2 h-2 rounded-full bg-primary"></div><span class="font-title-lg text-title-lg tracking-tight text-on-surface">AirshedOS</span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Open-access atmospheric modeling, microclimate telemetry, and civic containment coordination. Engineered for hyper-local environmental transparency.</p><div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-low border border-outline-variant/40"><span class="w-2 h-2 rounded-full bg-primary animate-ping"></span><span class="font-label-xs text-label-xs text-primary tracking-wide uppercase">Network Active: 142 Stations Nominal</span></div></div><div class="md:col-span-2 space-y-space-sm"><span class="font-label-xs text-label-xs tracking-wider uppercase text-outline">Sensing</span><div class="flex flex-col space-y-space-xs"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="live-telemetry" href="#">Live Telemetry</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="civic-network" href="#">Civic Network</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="anomalies-index" href="#">Anomalies Index</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="sensor-mesh" href="#">Sensor Mesh</a></div></div><div class="md:col-span-2 space-y-space-sm"><span class="font-label-xs text-label-xs tracking-wider uppercase text-outline">Governance</span><div class="flex flex-col space-y-space-xs"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="methodology" href="#">Methodology</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="transparency" href="#">Transparency</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="containment-protocols" href="#">Containment Protocols</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="documentation" href="#">Documentation</a></div></div><div class="md:col-span-3 space-y-space-sm"><span class="font-label-xs text-label-xs tracking-wider uppercase text-outline">Access Portals</span><div class="flex flex-col space-y-space-xs"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="resident-sign-in" href="#">Resident Observer Sign In</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="authority-portal" href="#">Municipal Authority Portal</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="data-licensing" href="#">Open Data Licensing</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="system-telemetry-feed" href="#">Raw Telemetry Feed (JSON)</a></div></div></div><div class="pt-space-lg border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-outline"><p>© 2025 AirshedOS Collective. Continuous public telemetry under CC-BY-4.0.</p><div class="flex items-center gap-space-lg"><a class="hover:text-on-surface transition-colors" data-path="transparency" href="#">Privacy Framework</a><a class="hover:text-on-surface transition-colors" data-path="methodology" href="#">Calibration Standards</a><a class="hover:text-on-surface transition-colors" data-path="documentation" href="#">API Architecture</a></div></div></div></footer></body></html>

@@ -1,0 +1,23 @@
+{
+  "schema_version": "seva_evaluation_split_v1",
+  "cases_sha256": "9e5771d69f71281cc1fdf8568bf0ad8e945461a8b94563ac18f362445a6a2f82",
+  "development_ids": [
+    "SYN-01",
+    "SYN-02",
+    "SYN-03",
+    "SYN-04",
+    "SYN-05",
+    "SYN-06",
+    "SYN-07",
+    "SYN-08"
+  ],
+  "reserved_ids": [
+    "SYN-09",
+    "SYN-10",
+    "SYN-11",
+    "SYN-12"
+  ],
+  "reserved_status": "UNUSED; do not use for implementation tuning or claim a blinded human evaluation",
+  "field_evidence_status": "NONE_PROVIDED_OR_RECRUITED",
+  "performance_claim": "NO_HUMAN_TIME_SAVINGS_OR_INCIDENT_ACCURACY_ESTABLISHED"
+}
