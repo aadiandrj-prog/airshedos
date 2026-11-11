@@ -14,7 +14,8 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 - The phase reports describe their historical local handoffs. Current publication and
   hosting checks are tracked in [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md).
   The owner-approved initial Neon migration is complete; no paid provisioning or external
-  message has occurred. Hosted pilot access remains quarantined.
+  message has occurred. The subsequently approved empty recovery activation is complete;
+  hosted pilot readiness still requires reviewer and worker/cleanup setup.
 
 ## Phase ledger
 
@@ -271,3 +272,11 @@ credentials are in owner-only Git-ignored local files. No recovery release or ho
 reviewer bootstrap, worker/cleanup start or paid provisioning occurred. The user confirmed
 four public Vercel variables added and the preview redeployed; private bindings and pilot API
 remain pending. DEPLOYMENT_STATUS.md records the precise permissions and connection checks.
+
+Latest hosted state (11 November, 17:15 IST): separate Free pilot API is deployed at
+airshedos-pilot-api.onrender.com. Explicit container CA configuration resolved database TLS.
+Following explicit approval, empty recovery activation committed and was read back with
+zero users/reports. API /ready confirms database/recovery ready and correctly remains 503
+for missing reviewer/worker/cleanup. No paid process or reviewer grant was created. Vercel
+has its private settings saved; pilot API binding/redeploy and first Auth0 app login are next.
+See RECOVERY_ACTIVATION.md for the approval, guarded command and actual read-back evidence.

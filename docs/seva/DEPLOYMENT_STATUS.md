@@ -130,6 +130,21 @@ Vercel private settings, pilot API binding, recovery bootstrap and local demo pr
 remain pending; current BACKEND_API_BASE_URL must be replaced with the selected pilot API
 before activating the full preview. No live Auth0 login has been verified.
 
+Subsequent API/activation update: the user created the separate Free web service
+https://airshedos-pilot-api.onrender.com on the preview branch. /health returns 200.
+Initial readiness showed database=unavailable with sslrootcert=system. An explicit installed
+Certifi CA path in the private API DATABASE_URL resolved the hosted connection while
+preserving verify-full. The existing API container independently confirmed that CA path.
+The owner explicitly approved the separate recovery-state activation after automatic
+review rejected an attempt without that explicit permission (the rejected command did not
+execute). At 17:15 IST the checked empty bootstrap committed; fresh DB reads confirmed
+READY/matching epoch and zero users/reports. Hosted /ready independently confirms
+database=ready and recovery=ready, but returns 503 for missing reviewer/worker/cleanup.
+No paid services/processes, real reports or reviewer grants were created. See
+RECOVERY_ACTIVATION.md. Next user action: set Preview BACKEND_API_BASE_URL to this pilot
+API, redeploy the branch preview, and perform the first managed app login. Identity remains
+configured_not_live_verified until that signed journey is evidenced.
+
 ## Helium inspection checklist
 
 1. Vercel → AirshedOS → Settings → Environments → Production → Branch Tracking shows
