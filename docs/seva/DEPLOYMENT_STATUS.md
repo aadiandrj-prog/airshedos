@@ -22,6 +22,21 @@ in service. Fourteen obsolete fully merged remote branches were removed, retaini
 and codex/seva-phase-7 for active preview/API dependencies. Git history was preserved.
 No .tech domain is registered yet; no registrar/DNS or paid-service action occurred.
 
+## Environmental overview follow-up
+
+Source 934d86a merged through PR #16 as 994d0d1 after all source-head and merge-preview
+checks passed. /explore adds public fixed-area context using existing providers and design,
+shared PostgreSQL admission and volatile expiry. See [implementation and verification](ENVIRONMENT_OVERVIEW.md).
+Original-host Google AQ/weather/forecast and NASA FIRMS were live-checked successfully.
+The new pilot host still reports those provider credentials unavailable. The owner reports
+Render dashboard maintenance; adding its five private overview settings and changing its
+branch to main remains pending. No new service/migration/auth configuration is required.
+Do not claim new-host live readings until the post-configuration bounded check succeeds.
+Vercel Production succeeded for 994d0d1; public /, /explore, /privacy and /terms independently
+returned 200 with expected content. Anonymous private account access remained 401/no-store.
+The public same-origin proxy returns the old pilot API's honest 404/no-store until its
+new code/settings are deployed. The published interface is distinct from activated sources.
+
 ## Earlier publication and probe history
 
 Published application foundation: `6d95f5db0336c614a9cae4e8d014138472e734cb`.

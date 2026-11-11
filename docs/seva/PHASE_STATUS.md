@@ -306,3 +306,16 @@ passed. HTTPS production browser: 12 passed; final readiness/overview subset: 25
 Ruff and build-inclusive secret scan pass (3,461 files, zero findings).
 Remote checks and deployment outcome are recorded in ENVIRONMENT_OVERVIEW.md.
 No model research, paid-service provisioning, schema migration or reviewer bootstrap.
+
+Follow-up publication: source 934d86a merged as 994d0d1 via PR #16. Exact-head and
+merge-preview GitHub checks passed backend, frontend, secrets and all 62 legacy browser
+regressions; resident/public/reviewer rehearsals passed in development and production HTTPS.
+Implementation is complete and locally/remotely verified. New-host source activation is
+externally pending: owner reports Render dashboard maintenance, so its five overview
+settings and branch switch have not been confirmed. Old-host provider success does not
+imply new-host configuration. No database/Auth0 setup needs repeating.
+Vercel Production succeeded for 994d0d1; public home/explore/privacy/terms 200 and
+private account 401/no-store were independently checked. The public proxy's expected
+404/no-store confirms the unchanged pilot API is not presenting invented source data.
+Published interface: https://airshedos.vercel.app/explore. Source activation/live new-host
+verification remains pending Render; no new paid-provider request was made there.

@@ -17,6 +17,7 @@ Gemini and environmental sources are advisory and optional. A provider failure d
 ## Deployment and demo status
 
 - Website: [airshedos.vercel.app](https://airshedos.vercel.app) — the new interface and configured sign-in are deployed on the clean production URL.
+- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — interface published; activating source readings on the separate pilot API awaits its Render settings update after owner-reported dashboard maintenance. Existing original-host Google/NASA checks succeeded.
 - Pilot API: [airshedos-pilot-api.onrender.com](https://airshedos-pilot-api.onrender.com/health).
 - Neon: PostgreSQL 18 with the application schema and restricted service accounts.
 - Preview sign-in was confirmed by the owner after correcting the session database variable’s environment scope. Production redirects to the correct Auth0 tenant and callback; a complete production resident/reviewer rehearsal remains pending.

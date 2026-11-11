@@ -110,3 +110,38 @@ Release uses the existing Vercel project and pilot Render API, no new broker/wor
 The pilot API must track main and have the five settings from the private overview file.
 Verify one new-host public response, no-store headers, source status and public page before
 claiming live overview. Private reporting still has separate reviewer/worker/cleanup gates.
+
+## Publication and remaining external check
+
+Source commit 934d86ab6cceeb5431c1410ec18c69a07780b025 merged through
+[PR #16](https://github.com/aadiandrj-prog/airshedos/pull/16) as
+994d0d1a4679524f4625fba95a55952eaf9b6495 on 11 November 2026, 18:49:45 IST.
+Both the [source-head run](https://github.com/aadiandrj-prog/airshedos/actions/runs/43026646497)
+and [merge-preview run](https://github.com/aadiandrj-prog/airshedos/actions/runs/43026659814)
+passed all four jobs. The latter independently recorded 669 backend tests (81.08s),
+10 resident/public + 2 reviewer browser tests in development and again in production HTTPS
+(40.6s + 44.2s for production), all 62 legacy browser tests (1.5m), signed identity/proxy,
+generated contracts, frontend lint/type/build and secret checks. Software-test counts are
+not incident-accuracy, participant or capacity evidence.
+
+The owner reported Render dashboard maintenance before installing the five overview
+settings or switching the pilot service to main. The separate pilot /ready probe confirmed
+database/recovery ready but Google/FIRMS unavailable; no new-host provider availability
+is claimed. Overall 503 still reflects the independent reviewer/worker/cleanup dependencies.
+Render completion steps remain: add the five private overview entries on airshedos-pilot-api,
+select main, keep Free, then save/redeploy. Leave the old airshedos-api unchanged. Do not
+repeat schema migration, recovery activation or Auth0 setup. After that, verify one bounded
+Gurugram request on the new host before claiming live overview readings.
+
+Vercel production deployment verification is recorded separately below. The disposable local
+PostgreSQL container was stopped after verification. No paid hosting, new migration,
+reviewer grant, custom model work or outreach occurred.
+
+Vercel reported successful Production deployment for merge 994d0d1. Independent public
+HTTPS probes then returned 200 with the expected new content for /, /explore, /privacy
+and /terms on https://airshedos.vercel.app. Anonymous /api/app/v2/me remained 401/no-store.
+One same-origin public proxy request returned the old pilot API's expected 404 with only
+a static detail field and private,no-store, confirming that missing API deployment is
+not misrepresented as live source data. No new-host paid provider call was made.
+The page is published at https://airshedos.vercel.app/explore; source activation remains
+pending the owner-operated Render settings step and subsequent live verification.
