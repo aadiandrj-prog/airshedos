@@ -8,8 +8,8 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 
 - Selected checkout: `<authorised AirshedOS checkout>`.
 - Audited base: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
-- Published deployment branch before the prerequisite follow-up: `e86abac66ac2efee269e8d45ee0c94942f65db4a`.
-- Local branch: `codex/seva-phase-7`, preserving the prior Phase 0–6 worktree.
+- Production merge: `a5ead73ec2dc8bdaf751a20e7ab618dd4fcbd58b`, PR #15; verified source head `05e08af`.
+- Local branch: `main`. `codex/seva-phase-7` is retained for the active preview/API.
 - Phase 0–7 implementation committed for GitHub publication; unrelated presentations/output are preserved.
 - The phase reports describe their historical local handoffs. Current publication and
   hosting checks are tracked in [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md).
@@ -280,3 +280,15 @@ zero users/reports. API /ready confirms database/recovery ready and correctly re
 for missing reviewer/worker/cleanup. No paid process or reviewer grant was created. Vercel
 has its private settings saved; pilot API binding/redeploy and first Auth0 app login are next.
 See RECOVERY_ACTIVATION.md for the approval, guarded command and actual read-back evidence.
+
+Production promotion/cleanup (11 November): PR #15 merged to main after both exact-head
+and merge-preview backend/browser/frontend/secret runs passed. The protected-record path
+regression was corrected by restoring all 11 records byte-for-byte; manifest/gates unchanged.
+Local identity 6/6, finalisation 19/19, lint/typecheck/build, Markdown links, branding and
+secret checks passed. The user fixed Preview SESSION_DATABASE_URL scope and confirmed
+successful sign-in, configured Production variables/Auth0 URLs, and paused retired Render
+auto-deployment. Vercel production succeeded. Public HTTPS checks confirm the new home,
+configured sign-in, correct Auth0 production callback/audience redirect, and anonymous BFF/
+API 401 denial. Fourteen fully merged obsolete remote branches were removed; their commits
+remain in main history. Production login completion, reviewer setup and laptop worker/cleanup
+rehearsal remain separate pending checks. No .tech domain has been registered/changed.

@@ -15,10 +15,10 @@ Gemini and environmental sources are advisory and optional. A provider failure d
 
 ## Deployment and demo status
 
-- Website: [airshedos.vercel.app](https://airshedos.vercel.app) — production transition is in progress; see the current status before assuming the new sign-in flow is live.
+- Website: [airshedos.vercel.app](https://airshedos.vercel.app) — the new interface and configured sign-in are deployed on the clean production URL.
 - Pilot API: [airshedos-pilot-api.onrender.com](https://airshedos-pilot-api.onrender.com/health).
 - Neon: PostgreSQL 18 with the application schema and restricted service accounts.
-- Auth0 dashboard configuration is prepared; hosted sign-in is being diagnosed.
+- Preview sign-in was confirmed by the owner after correcting the session database variable’s environment scope. Production redirects to the correct Auth0 tenant and callback; a complete production resident/reviewer rehearsal remains pending.
 - The hosted connection currently supports text-only setup. Private image storage, an approved reviewer unit and worker/cleanup operation remain deployment dependencies.
 
 For a hackathon demonstration, the processing worker and cleanup can be prepared to run on the presenter's laptop with hosted frontend/API/database services. This arrangement still needs a full rehearsal; it is not an independently running hosted pilot. An isolated local synthetic browser harness already verifies both journeys without paid provider calls. The previous command-center demo and its records are separate historical material.

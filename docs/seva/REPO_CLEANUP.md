@@ -1,4 +1,4 @@
-# Repository cleanup and production transition
+# Repository cleanup and production promotion — completed
 
 11 November 2026. The owner requested cleanup, removal of old event branding and merging
 codex/seva-phase-7 to main, and asked about a .tech domain. This authorises the merge;
@@ -48,3 +48,16 @@ The first remote backend run caught missing protected-record paths after archivi
 The owner confirmed the old Render API Auto-Deploy is off. Preview SESSION_DATABASE_URL
 was found scoped only to Production; the owner corrected Preview scope and redeployed.
 Hosted sign-in still needs confirmation. The .tech domain is not yet redeemed.
+
+## Completed promotion
+
+Owner confirmed the sign-in scope correction worked and Production/Auth0 settings were
+saved. Both full corrected CI runs passed on 05e08af. PR #15 merged at 12:14 UTC as a5ead73.
+Vercel Production succeeded; the clean URL serves the new homepage and secure sign-in.
+A public login-start check returned 307 to the expected Auth0 tenant with the exact
+production callback and audience; anonymous BFF and report-list reads returned 401.
+Fourteen fully merged obsolete remote branches were removed, retaining main and the
+phase-7 branch while preview/API still depend on it. The local checkout is now on main;
+ignored user artifacts and private credentials are preserved. No history rewrite occurred.
+A registered .tech domain can be connected later; the current domain has not been redeemed.
+Reviewer setup, worker/cleanup and production end-to-end rehearsal remain pending.

@@ -7,9 +7,24 @@ approved. No credential value is requested in chat or stored in this record.
 ## Source and current public services
 
 Implementation commit: `2121566` on `codex/seva-phase-7`, preserving base `6f071af`.
-Published application source: `6d95f5db0336c614a9cae4e8d014138472e734cb`.
-The GitHub push succeeded; production main remains `142dfc1`.
-Vercel reported a successful Preview deployment for this head.
+Production merge: `a5ead73ec2dc8bdaf751a20e7ab618dd4fcbd58b`, [PR #15](https://github.com/aadiandrj-prog/airshedos/pull/15).
+Its source head 05e08af passed all checks on both push and merge-preview runs:
+[push checks](https://github.com/aadiandrj-prog/airshedos/actions/runs/43017330931),
+[merge-preview checks](https://github.com/aadiandrj-prog/airshedos/actions/runs/43017342471).
+Vercel reported successful Production deployment for the merge. The clean domain now serves
+the new homepage and configured sign-in; the login redirect has the exact production
+Auth0 callback and API audience. Anonymous BFF/me and pilot report-list reads return 401.
+The owner confirmed successful preview login after correcting SESSION_DATABASE_URL scope.
+Production login completion and full case journeys are not claimed by these public probes.
+
+The old Render service's Auto-Deploy is off (owner confirmed); the separate pilot API stays
+in service. Fourteen obsolete fully merged remote branches were removed, retaining main
+and codex/seva-phase-7 for active preview/API dependencies. Git history was preserved.
+No .tech domain is registered yet; no registrar/DNS or paid-service action occurred.
+
+## Earlier publication and probe history
+
+Published application foundation: `6d95f5db0336c614a9cae4e8d014138472e734cb`.
 Remote [GitHub checks](https://github.com/aadiandrj-prog/airshedos/actions/runs/42993136042) completed successfully:
 backend (including actual PostgreSQL and signed resident/reviewer journeys), legacy browser,
 frontend and secret jobs all passed for `6d95f5d`. Earlier e86abac/5198f0f runs also passed.
