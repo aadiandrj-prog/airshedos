@@ -58,4 +58,3 @@ export async function forwardApi(request: NextRequest, path: string,
     return NextResponse.json({ detail: "Service unavailable. Please retry." }, { status: 503, headers: privateHeaders });
   }
 }
-

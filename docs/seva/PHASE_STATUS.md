@@ -9,9 +9,10 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 - Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
 - Actual HEAD/base: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
 - Local branch: `codex/seva-phase-7`, preserving the prior Phase 0–6 worktree.
-- Phase 0–7 changes remain uncommitted; unrelated presentations/output are preserved.
-- No push, deployment, hosted migration, paid provisioning or external message.
-  These local changes have not updated the deployed prototype.
+- Phase 0–7 implementation committed for GitHub publication; unrelated presentations/output are preserved.
+- The phase reports describe their historical local handoffs. Current publication and
+  hosting checks are tracked in [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md).
+  No hosted migration, paid provisioning or external message has occurred.
 
 ## Phase ledger
 

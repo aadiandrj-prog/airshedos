@@ -3,7 +3,7 @@
   "base_revision": "6f071afd10f0ffed024448ac87d3bfae9ec8abc4",
   "branch": "codex/seva-phase-7",
   "source_state": "UNCOMMITTED; HEAD alone does not represent this release",
-  "source_tree_sha256": "89e0271a172859e2a94d6d591abad05838ed12ac7b2d8da4e320c89ae42d7d9e",
+  "source_tree_sha256": "b207df313362800f6e302e1dac0c8e228b722d686203273409fd54e0194de65c",
   "before": "Actual Phase 6 working-tree captures before UI implementation; baseline dev journeys passed.",
   "after": "Actual final Phase 7 HTTPS production-build pilot with local signed synthetic OIDC, PostgreSQL18 and worker.",
   "records": "Synthetic only; no real users, field cases or readings. PARTIAL resident view is a test-only state intercept.",
@@ -68,7 +68,7 @@
     "apps/web/src/proxy.ts": "14eb64a6964b96d16fc4c9dcddcc3a1c9f98189642501e1fca6f8b1ffaa8fabb",
     "apps/web/src/server/auth-client.ts": "f657a7d8fc8055bdedf6ca270970b88415688da3a7138a2bba89ab090e920cd4",
     "apps/web/src/server/auth.ts": "2303ac94a90e956a03e5a7a770c4e8634dba01b612034e6674bc3087580933d3",
-    "apps/web/src/server/gateway.ts": "3a9458bf5da3faaac566a26332603033e6cb8bf1225b8a860f176b767d78c4b4",
+    "apps/web/src/server/gateway.ts": "559c1eabdbfb20c339d797480fea2d1ffc94b218dbfa1d46ef4cea48858b2726",
     "apps/web/src/server/logout.ts": "88f3fb781bfa008bf7b9140a5aef396e572550d35eac8b2572db565cc73b3a3b",
     "apps/web/src/server/resident-session.ts": "0c9d6d4806a021bcea8982ab72f1a900a78ec244917e28ae249e2f1f1613f2a8",
     "apps/web/src/server/route-shell.tsx": "fc609116fa89ae39c840f59b0fb4344d36f6b399ae838843f8539abc0c1928ac",
@@ -238,5 +238,6 @@
     "screenshots/phase7/before/sign-in-desktop.png": "3ae9248f331f4c69dcaacbc405a19dd66c338882482ba4d44b8fa93c9c42f8df",
     "screenshots/phase7/before/sign-in-mobile.png": "6613667c58a6d8fa049fdcc3067544f8fc0fbfe91f8f794a1e7be8c6a42f1396"
   },
-  "fingerprint_scope": "Listed application source, browser tests, font assets and web package files; no secrets or unrelated user artifacts."
+  "fingerprint_scope": "Listed application source, browser tests, font assets and web package files; no secrets or unrelated user artifacts.",
+  "publication_note": "Removed one extra EOF blank line in gateway.ts before publication; no runtime behavior or screenshots changed."
 }
