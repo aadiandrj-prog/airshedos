@@ -1,4 +1,4 @@
--- Review and apply manually after seva_0005, with psql -v worker_role=... .
+-- Review and apply manually after seva_0006, with psql -v worker_role=... .
 -- Creates no roles/passwords, provisions nothing, never invoked by the application.
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM :"worker_role";
 GRANT USAGE ON SCHEMA public TO :"worker_role";

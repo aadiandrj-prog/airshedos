@@ -2,7 +2,8 @@
 
 Phase 6, 11 November 2026. Prepared for an owner-approved private/staging pilot.
 This document does not authorise spending, public deployment, live collection, messages
-or a production migration. Current code remains local. Use [the environment template](pilot.env.example),
+or a production migration. Code is published on the phase-7 branch; the new hosted pilot is
+not yet configured. See [deployment status](DEPLOYMENT_STATUS.md), [the environment template](pilot.env.example),
 [phase validation](PHASE_6_VALIDATION.md) and the actual [status ledger](PHASE_STATUS.md).
 
 ## Release order and operational meaning
@@ -18,9 +19,11 @@ or a production migration. Current code remains local. Use [the environment temp
    Originals, raw provider payloads and Google-derived saved values are excluded.
 3. Quiesce traffic/workers before migrations. Rehearse `alembic upgrade head` through
    `seva_0006` with separate management credentials on a disposable loopback database.
-   The checked-in migration tool intentionally refuses a hosted target; a hosted migration
-   needs a separately reviewed/authorised workflow. Runtime never runs create_all/migrations.
-   Apply reviewed API/session and worker grant scripts after migration.
+   Ordinary Alembic intentionally refuses hosted targets. After owner approval of the exact
+   hosted target, use the checked offline command described below; never point a test fixture
+   at Neon. Runtime never runs create_all/migrations. Apply reviewed API/session, worker and
+   cleanup grant scripts after migration. Runtime roles must be non-owner logins without
+   elevated flags or extra memberships; Neon owner/default elevated credentials are offline only.
 4. For a genuinely empty install only, generate a fresh recovery UUID outside the database,
    store it as SEVA_RECOVERY_EPOCH in API/worker configuration, and use the offline
    `python -m app.operations initialise-empty --target-database NAME --epoch UUID` command.
@@ -32,7 +35,12 @@ or a production migration. Current code remains local. Use [the environment temp
    server-only session storage and exact HTTPS origins. Keep AUTH_ALLOW_LOCAL_HTTP absent
    in production. Verify actual tenant token/refresh/logout/back-channel behavior separately.
    Operator provisioning binds exact verified issuer/subject; never infer role from email.
-6. Start independent API, continuous worker and scheduled cleanup processes. Worker command:
+6. On an empty installation, complete a real Auth0 sign-in after configuring the session
+   database to create the exact verified issuer/subject identity. The SDK saves this session
+   independently of API workspace readiness; a temporarily unavailable workspace is expected.
+   Use offline operator provisioning to bootstrap that existing identity and approve the unit,
+   initial administrator/reviewer and PILOT_TRIAGE_UNIT_ID. Never bootstrap by email or add
+   an HTTP dev-login route. Then start independent API, continuous worker and scheduled cleanup processes. Worker command:
    `python -m app.processing`. Cleanup: `python -m app.resident.maintenance`, at least each
    minute, with separate deletion credentials. Worker reads use a separately scoped object
    credential where the host supports it. Test the host's worker lifetime/restart and cleanup
@@ -59,6 +67,38 @@ or a production migration. Current code remains local. Use [the environment temp
 Resident source context is requested from saved report detail, using an owned accepted
 report and approved routing. Pre-submit context makes no source call. Do not restore
 the former arbitrary-coordinate account-only context path or bypass quotas during a demo.
+
+## Checked hosted schema upgrade (not yet executed)
+
+First verify the exact direct endpoint, database name and offline operator login in the
+selected Neon branch. Keep its connection string out of chat, command arguments and logs.
+Supply SEVA_MIGRATION_DATABASE_URL privately through the process environment, using
+`postgresql+psycopg`, `sslmode=verify-full` and `sslrootcert=system` (or an approved absolute
+CA file). The installed psycopg/libpq must support that CA option. A pooled endpoint,
+connection query overrides, missing CA/password or a mismatched target is refused.
+
+After reviewing and authorising the concrete target, from apps/api run:
+
+```sh
+python -m app.persistence.migrate \
+  --host EXACT_DIRECT_HOST --database EXACT_DATABASE --operator-role EXACT_LOGIN \
+  --expected-revision empty --acknowledge-target
+```
+
+`empty` refuses any existing user relation, including another schema. For an existing
+installation, inspect its exact revision and substitute that `seva_####` value; never
+substitute `head` for the expected starting state. The command acquires an operator lock,
+checks the connected database/session identity, applies only forward migrations through
+the checked-in head and verifies it before one transaction commits. Failed DDL rolls back;
+safe reason codes omit database exception details and credentials. It does not provision
+roles, release quarantine, create identities or activate services. Initial schema is
+seva_0006 with 30 application tables plus alembic_version; recovery remains QUARANTINED.
+
+Review and apply `scripts/pilot_roles.sql`, `scripts/worker_roles.sql` and
+`scripts/cleanup_roles.sql` through the offline operator connection, binding only the
+dedicated role names. These scripts do not create roles/passwords. The cleanup role can
+purge protected content but cannot read token ciphertext or change access/recovery grants.
+Review backup/retention and external erasure-ledger arrangements before real collection.
 
 ## Bounded failure response
 

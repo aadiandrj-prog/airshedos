@@ -643,3 +643,72 @@ def test_restricted_api_and_session_roles_enforce_column_and_ciphertext_boundari
             for role in roles:
                 connection.execute(text(f"DROP OWNED BY {role}"))
                 connection.execute(text(f"DROP ROLE {role}"))
+
+
+def test_cleanup_role_purges_content_without_token_reads_or_access_grants(access_fixture):
+    from test_persistence import initial_request
+
+    from app.persistence.contracts import FirmsPayload, FragmentInput
+    from app.persistence.retention import RetentionService
+
+    f = access_fixture
+    f["repo"].append_evidence(
+        f["principals"][REVIEWER.subject],
+        f["a"].case_id,
+        request_id=initial_request(f, f["a"].report_id),
+        fragments=[
+            FragmentInput(
+                payload=FirmsPayload(dataset="VIIRS_NOAA20_NRT", detection_count=0),
+                retrieved_at=f["clock"][0],
+            )
+        ],
+    )
+    with f["sessions"].begin() as session:
+        session.add(
+            AuthSessionSecret(
+                session_id=f["session_ids"][RESIDENT.subject],
+                sealed_data=b"synthetic-expired-ciphertext",
+            )
+        )
+    role = "seva_cleanup_test_role"
+    sql = (Path(__file__).resolve().parents[1] / "scripts/cleanup_roles.sql").read_text()
+    sql = sql.replace(':"cleanup_role"', role)
+    with f["engine"].begin() as connection:
+        connection.execute(text(f"CREATE ROLE {role} NOLOGIN NOINHERIT"))
+        connection.exec_driver_sql(sql)
+    engine, sessions = database(f["url"])
+
+    def set_role(dbapi, _record):
+        dbapi.execute(f"SET ROLE {role}")
+        dbapi.commit()
+
+    event.listen(engine, "connect", set_role)
+    repo = DurableRepository(sessions, clock=lambda: f["clock"][0])
+    try:
+        for statement in (
+            "SELECT sealed_data FROM auth_session_secrets",
+            "UPDATE unit_memberships SET state='ACTIVE'",
+            "UPDATE recovery_control SET state='READY'",
+            "UPDATE worker_heartbeats SET succeeded_at=now()",
+            "UPDATE cases SET assigned_unit_id=NULL",
+            "INSERT INTO reports DEFAULT VALUES",
+        ):
+            with pytest.raises(DBAPIError) as error, sessions.begin() as session:
+                session.execute(text(statement))
+            assert error.value.orig.sqlstate == "42501"
+        f["clock"][0] += timedelta(days=91)
+        assert RetentionService(repo, f["store"]).sweep()["reports"] == 2
+        assert f["store"].inventory() == []
+        with f["sessions"]() as session:
+            assert session.get(Report, f["a"].report_id).description is None
+            assert session.scalar(select(func.count()).select_from(AuthSessionSecret)) == 0
+            assert session.scalar(select(func.count()).select_from(Identity)) > 0
+        f["clock"][0] += timedelta(days=181)
+        assert RetentionService(repo, f["store"]).sweep()["tombstones"] == 2
+        with f["sessions"]() as session:
+            assert session.scalar(select(func.count()).select_from(Report)) == 0
+    finally:
+        engine.dispose()
+        with f["engine"].begin() as connection:
+            connection.execute(text(f"DROP OWNED BY {role}"))
+            connection.execute(text(f"DROP ROLE {role}"))

@@ -7,7 +7,8 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 ## Source and scope
 
 - Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
-- Actual HEAD/base: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
+- Audited base: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
+- Published deployment branch before the prerequisite follow-up: `e86abac66ac2efee269e8d45ee0c94942f65db4a`.
 - Local branch: `codex/seva-phase-7`, preserving the prior Phase 0–6 worktree.
 - Phase 0–7 implementation committed for GitHub publication; unrelated presentations/output are preserved.
 - The phase reports describe their historical local handoffs. Current publication and
@@ -235,3 +236,22 @@ local release/private-pilot configuration when authorised, not automatic public 
 Temporary prototype API/web services were stopped. The disposable Phase 7 PostgreSQL
 container and capture-inspection scratch files were removed after the final checks.
 No commit, push, deployment, production data mutation or outreach occurred.
+
+## Deployment preparation — 11 November 2026
+
+The no-publication statement above records the Phase 7 handoff. The user subsequently
+authorised GitHub publication and deployment preparation. Commits 2121566, 5198f0f and
+e86abac are published on codex/seva-phase-7; main remains 142dfc1. GitHub's four jobs passed
+for e86abac. The user confirmed the lowercase-pilot Vercel preview renders the new homepage.
+This does not establish a functioning hosted resident/reviewer journey.
+
+Deployment follow-up adds a checked transactional offline hosted migration command and a
+separate cleanup-role script with actual PostgreSQL privilege/retention coverage. No Neon
+migration or paid service was created. Follow-up backend: **657 passed**, 51.91s; Ruff check/
+format PASS (148 files), secret scan PASS (693 files), diff whitespace PASS. The 15 added
+tests cover checked migration targets/transactions/concurrency and restricted cleanup roles.
+Signed SDK/session/BFF/Python identity: 5 passed, zero skips; generated contracts unchanged.
+User-confirmed configuration: Neon production branch empty; Auth0 app now created, tenant/API
+configuration still pending; no Render worker/cron. The owner selected preview only and no
+paid hosting for now. See DEPLOYMENT_STATUS.md,
+PILOT_RUNBOOK.md and RENDER_PILOT_PLAN.md for exact next dependencies and current evidence.
