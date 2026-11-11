@@ -76,7 +76,7 @@ test("empty history, unavailable report, expired session and loading remain clea
   await page.setViewportSize({width:1200,height:800}); await page.setViewportSize({width:390,height:844});
   expect(paid).toBe(0);
   await page.getByRole("button",{name:"Sign out",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"A clearer way to report local pollution."})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Understand local air. Report what you notice."})).toBeVisible();
   await page.goto("/resident/reports");
   await expect(page.getByRole("heading",{name:"Sign in to AirshedOS"})).toBeVisible();
 });

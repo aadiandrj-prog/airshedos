@@ -5,15 +5,15 @@ export function PublicHome() {
   return <div className="pilot-ui public-site">
     <a className="skip-link" href="#main-content">Skip to content</a>
     <header className="public-header"><Brand /><nav aria-label="Main navigation">
-      <a href="#how-it-works">How it works</a><a href="#evidence">Evidence & limits</a>
+      <Link href="/explore">Explore local air</Link><a href="#how-it-works">How it works</a><a href="#evidence">Evidence & limits</a>
       <Link href="/sign-in?returnTo=%2Fauthority%2Fcases">Authority sign in <span aria-hidden="true">↗</span></Link>
     </nav><Link className="public-sign-in" href="/resident/reports">My reports <span aria-hidden="true">↗</span></Link></header>
     <main id="main-content" className="public-main" tabIndex={-1}>
       <section className="public-hero">
         <div><p className="kicker"><span className="brand-dot" /> A shared place for local concerns</p>
-          <h1>A clearer way to report local pollution.</h1>
-          <div className="hero-actions"><Link className="pilot-button" href="/resident/reports/new">Report a concern <span aria-hidden="true">↗</span></Link><Link className="pilot-button secondary" href="/resident/reports">My reports</Link></div>
-        </div><div className="hero-aside"><p>Describe what you noticed. Understand the available evidence. Follow the review in one place.</p><p className="muted">A resident account keeps your reports private. Approved reviewers work within their own review units.</p></div>
+          <h1>Understand local air. Report what you notice.</h1>
+          <div className="hero-actions"><Link className="pilot-button" href="/explore">Explore local air <span aria-hidden="true">↗</span></Link><Link className="pilot-button secondary" href="/resident/reports/new">Report a concern</Link></div>
+        </div><div className="hero-aside"><p>Check local conditions, describe what you noticed, and follow the review in one place.</p><p className="muted">A resident account keeps your reports private. Approved reviewers work within their own review units.</p></div>
       </section>
       <section className="product-stage" aria-label="Synthetic example of a report timeline">
         <div className="stage-heading"><span className="status-chip">From concern to recorded review</span><span className="example-label">Illustrative journey · synthetic example</span></div>

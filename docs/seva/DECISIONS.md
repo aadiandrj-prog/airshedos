@@ -308,3 +308,15 @@ Prototype mode remains isolated, all API/scientific/visibility rules stay unchan
 Necessary UI fixes cover filter hydration, loading admission controls, map fallback height
 and cold-route sign-in spacing. No backend architecture expansion was needed.
 See [PHASE_7_POLISH.md](PHASE_7_POLISH.md) for actual rendered evidence and limitations.
+
+## Public environmental overview — 11 November 2026
+
+The owner explicitly requested a public fixed-area environmental overview alongside
+private reporting, and authorised a credential check and bounded implementation. The
+new /explore path is a narrow public-purpose exception to case-bound source admission:
+fixed server-owned area IDs, explicit operator flag, shared PostgreSQL request/provider
+budgets and no case/identity fields. It does not relax any private route, restore v1
+access or admit arbitrary coordinates. Provider normalization, native units, forecast
+arithmetic and scientific/model boundaries are reused unchanged. See
+[the implementation/release record](ENVIRONMENT_OVERVIEW.md) for limits, source policy,
+actual original-host live checks and new-host verification status.

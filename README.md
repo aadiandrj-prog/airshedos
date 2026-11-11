@@ -1,11 +1,12 @@
 # AirshedOS
 
-**Report local pollution. Review the evidence. Keep the reporter informed.**
+**Understand local air. Report local pollution. Review the evidence.**
 
 AirshedOS connects a resident reporting experience with a private, unit-scoped reviewer workspace. It is a prototype for controlled demonstrations and pilot preparation; no government partnership or official dispatch is established.
 
 ## The application
 
+- **Explore local air:** manually load AQI, pollutant concentrations, weather, NASA FIRMS detections and separate 6/12/24-hour forecast peaks at fixed Delhi NCR area points. No account or report is required; provider states, source times and expiry remain visible.
 - **Residents:** sign in, submit a text report with an optional approved private image, track their own reports and respond to reviewer questions.
 - **Reviewers:** work on cases assigned to their approved unit, inspect evidence, record internal notes and follow-up, and deliberately publish separate reporter-visible updates.
 - **Durable processing:** PostgreSQL saves a report and its job atomically. A separate worker handles bounded retries and freezes evidence versions without changing human decisions.
@@ -41,6 +42,7 @@ For backend installation, the guarded disposable PostgreSQL target and synthetic
 | Topic | Guide |
 |---|---|
 | Current configuration, limitations and checks | [Deployment status](docs/seva/DEPLOYMENT_STATUS.md) |
+| Bounded public environmental overview and verification | [Overview](docs/seva/ENVIRONMENT_OVERVIEW.md) |
 | Hosting and clean/custom domains | [Hosting guide](docs/HOSTING.md) |
 | Release, recovery and controlled local demonstration | [Pilot runbook](docs/seva/PILOT_RUNBOOK.md) |
 | Architecture | [System architecture](docs/ARCHITECTURE.md) |

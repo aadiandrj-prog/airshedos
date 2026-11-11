@@ -4,6 +4,40 @@
  */
 
 export interface paths {
+    "/api/v2/explore/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Areas */
+        get: operations["areas_api_v2_explore_areas_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/explore/areas/{area_id}/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Overview */
+        post: operations["overview_api_v2_explore_areas__area_id__overview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/environment/sources": {
         parameters: {
             query?: never;
@@ -979,6 +1013,22 @@ export interface components {
          * @enum {string}
          */
         AnalysisStatus: "interpreted" | "not_configured" | "auth_error" | "model_unavailable" | "quota_limited" | "timeout" | "safety_blocked" | "invalid_response" | "error";
+        /** Area */
+        Area: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+            /**
+             * Note
+             * @default Representative area point, not your device or a report location.
+             */
+            note: string;
+        };
         /** AssignmentCommand */
         AssignmentCommand: {
             /** Expected Revision */
@@ -2377,6 +2427,28 @@ export interface components {
             /** Allowed Transitions */
             allowed_transitions: components["schemas"]["ReviewState"][];
         };
+        /** Overview */
+        Overview: {
+            area: components["schemas"]["Area"];
+            context: components["schemas"]["EnvironmentalContext"];
+            forecast: components["schemas"]["AirQualityForecastContext"];
+            /** Returned Fire Count */
+            returned_fire_count: number;
+            /** Fires Truncated */
+            fires_truncated: boolean;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Notice
+             * @default Area context, not a regulatory monitoring station or evidence of a local violation. Forecast is a separate provider outlook. Missing fire detections do not rule out pollution.
+             */
+            notice: string;
+        };
+        /** OverviewRequest */
+        OverviewRequest: Record<string, never>;
         /** PilotCasePacket */
         PilotCasePacket: {
             /**
@@ -3242,6 +3314,61 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    areas_api_v2_explore_areas_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Area"][];
+                };
+            };
+        };
+    };
+    overview_api_v2_explore_areas__area_id__overview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                area_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OverviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Overview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     sources_api_v1_environment_sources_get: {
         parameters: {
             query?: never;

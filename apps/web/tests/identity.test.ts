@@ -258,3 +258,31 @@ test("actual SDK, BFF and Python API share verified PostgreSQL identity and logo
   assert.equal((await fetch(backend + "/api/v2/me", { headers: { Authorization: "Bearer " + accessToken,
     "X-AirshedOS-Session": String(session2.appBinding) } })).status, 401);
 });
+
+test("public overview proxy restricts area, origin and body and never forwards identity", async () => {
+  const { POST } = await import("../src/app/api/explore/[area]/route");
+  const beforeApp = process.env.APP_BASE_URL, beforeBackend = process.env.BACKEND_API_BASE_URL;
+  const originalFetch = globalThis.fetch;
+  process.env.APP_BASE_URL = settings.appBaseUrl; process.env.BACKEND_API_BASE_URL = settings.backend;
+  let calls = 0;
+  globalThis.fetch = (async (input, init) => {
+    calls++; assert.equal(String(input), settings.backend + "/api/v2/explore/areas/delhi/overview");
+    assert.deepEqual(init?.headers, { "Content-Type": "application/json" });
+    assert.equal(init?.body, "{}"); assert.equal(init?.cache, "no-store");
+    return new Response("{}", { status: 200, headers: { "Content-Type": "application/json" } });
+  }) as typeof fetch;
+  const request = (origin = settings.appBaseUrl, body = "{}") => new NextRequest(settings.appBaseUrl + "/api/explore/delhi", { method: "POST", headers: { Origin: origin, "Content-Type": "application/json", Authorization: "synthetic-browser-token", Cookie: "synthetic-private-session" }, body });
+  const params = (area = "delhi") => ({ params: Promise.resolve({ area }) });
+  try {
+    assert.equal((await POST(request("https://other.invalid"), params())).status, 403);
+    assert.equal((await POST(request(), params("world"))).status, 404);
+    assert.equal((await POST(request(settings.appBaseUrl, '{"latitude":1}'), params())).status, 422);
+    assert.equal(calls, 0);
+    const result = await POST(request(), params()); assert.equal(result.status, 200);
+    assert.equal(result.headers.get("Cache-Control"), "private, no-store"); assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (beforeApp === undefined) delete process.env.APP_BASE_URL; else process.env.APP_BASE_URL = beforeApp;
+    if (beforeBackend === undefined) delete process.env.BACKEND_API_BASE_URL; else process.env.BACKEND_API_BASE_URL = beforeBackend;
+  }
+});

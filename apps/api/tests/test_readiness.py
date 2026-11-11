@@ -130,7 +130,12 @@ def test_all_protected_and_legacy_route_surfaces_fail_closed_anonymously(access_
             m.upper() for m in operations if m in {"get", "post", "put", "delete", "patch"}
         ):
             response = f["client"].request(method, path, json={} if method == "POST" else None)
-            assert response.status_code == (404 if path.startswith("/api/v1") else 401), (
+            expected = (
+                (200 if path == "/api/v2/explore/areas" else 404)
+                if path.startswith("/api/v2/explore/")
+                else (404 if path.startswith("/api/v1") else 401)
+            )
+            assert response.status_code == expected, (
                 path,
                 method,
                 response.text,
