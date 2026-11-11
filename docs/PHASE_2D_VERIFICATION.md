@@ -1,5 +1,3 @@
-> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
-
 # Phase 2D verification — MODEL_NOT_ACCEPTED
 
 Local model selection completed on **2026-09-16** (Asia/Kolkata). **None of the predeclared candidates beat the October baseline gates.** The explicit no-go branch of the brief applies: stop model selection, preserve the rejection, and do not open November–December to find a winner. This is a valid negative scientific result, not a trained model ready for integration.
@@ -59,7 +57,7 @@ Station weighting helped relative to the corresponding unweighted candidates but
 
 ## Station, hour, pollution and bias evidence
 
-The tables below describe the strongest **rejected** candidate. Aggregated slices for **every serious candidate**, including each station, local hour, month, target band, clipping count and spike confusion matrix, are committed in [the full metrics evidence](../../evidence/phase2d_validation_metrics.json). All quantities are retrospective and conditional on assumed availability; residual = prediction−actual.
+The tables below describe the strongest **rejected** candidate. Aggregated slices for **every serious candidate**, including each station, local hour, month, target band, clipping count and spike confusion matrix, are committed in [the full metrics evidence](evidence/phase2d_validation_metrics.json). All quantities are retrospective and conditional on assumed availability; residual = prediction−actual.
 
 | Station | n | MAE | RMSE | Bias | Recent-mean MAE |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -111,7 +109,7 @@ Derived spike interpretation uses the unchanged Phase 2C p85 +30% +strict worsen
 
 ## Freeze, no-test audit and deferred downstream gates
 
-`data/models/phase2d_v1/model_selection_decision.json` freezes **NO_MODEL_ACCEPTED** with policy/source hashes, git commit, thresholds, baseline comparison and time. [Committed decision summary](../../evidence/phase2d_decision.json) records the result. `test_access_audit.json` records **zero candidate test evaluations**; no dataset test reservation or test predictions exist. The rejected-decision guard is tested to fail before any Parquet read. A qualifying run would reserve test access atomically, verify immutable artifact hashes and prohibit retuning/repeated access; that branch was not used on this dataset.
+`data/models/phase2d_v1/model_selection_decision.json` freezes **NO_MODEL_ACCEPTED** with policy/source hashes, git commit, thresholds, baseline comparison and time. [Committed decision summary](evidence/phase2d_decision.json) records the result. `test_access_audit.json` records **zero candidate test evaluations**; no dataset test reservation or test predictions exist. The rejected-decision guard is tested to fail before any Parquet read. A qualifying run would reserve test access atomically, verify immutable artifact hashes and prohibit retuning/repeated access; that branch was not used on this dataset.
 
 The explicit no-go instruction takes precedence over downstream acceptance items that presuppose a chosen model. Therefore no final model bundle/input contract, final test metrics, station-8118 fitted holdout, research-enriched ablation, selected-model feature importance, three-seed finalist study or Vertex parity claim is produced. None is marked passed. The code contains guarded local evaluation/diagnostic paths for a genuinely qualifying future experiment; this report does not claim those paths were exercised on real data. Research never replaced the operational candidates.
 

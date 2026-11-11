@@ -1,5 +1,3 @@
-> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
-
 # Phase 2B verification — transparent corroboration
 
 Implementation and local/live verification completed on 13 September 2026. **No Phase 2C work.** The Phase 2A PR (#3) remains an open dependency pending merge authorization; this Phase 2B branch is based on its verified head `0e84cb0a1708323835cab6142801039b78c8617d`. It is not represented as merged main. The focused review targets the Phase 2A branch until that dependency can be merged and the review retargeted to main. Do not merge Phase 2B automatically.
@@ -19,7 +17,7 @@ Implementation and local/live verification completed on 13 September 2026. **No 
 - Ages: AQ <=2h, weather <=1h, FIRMS <=24h (strong/wind <=6h), satellite <=24h for fresh context. Older observations remain explicit as stale; source lookup still uses the original 72h/10km satellite policy. More than 5 minutes future skew is excluded. Submission is a proxy; photo capture time is unknown.
 - Aggregation: explicit visual-field disagreement → CONFLICTING/REVIEW; uncertain/unsupported visual or no applicable fresh environmental data → INSUFFICIENT; high visual + strong FIRMS → STRONG; positive visual + positive AQ/FIRMS → MODERATE; otherwise visual with neutral available context → WEAK. No-visible interpretation suggests no action from current evidence; other insufficient cases suggest review. Recommendations are advisory, with no demo incident mutation.
 
-Full thresholds, exact applicability, configuration, conflict guard and limitations: [CORROBORATION_RULES.md](../../CORROBORATION_RULES.md). That document cites the official Google AQ, Weather, NASA FIRMS and Earth Engine semantics checked during implementation. The operational distance/age/aggregation bands are inspectable heuristics, not validated scientific cutoffs.
+Full thresholds, exact applicability, configuration, conflict guard and limitations: [CORROBORATION_RULES.md](CORROBORATION_RULES.md). That document cites the official Google AQ, Weather, NASA FIRMS and Earth Engine semantics checked during implementation. The operational distance/age/aggregation bands are inspectable heuristics, not validated scientific cutoffs.
 
 ## Automated regression
 
@@ -46,13 +44,13 @@ Generated TypeScript SHA-256: `8d8c827e9277a407c574155e9f0a77b85da3226eb84b6325c
 
 ## Separate authenticated gates
 
-[Gemini-only record](../../verification/phase2b-gemini-live.json): **PASS**, one real Vertex call with the existing synthetic open-burning image; `open_burning`, HIGH ordinal interpretation; 4,760.39ms wall latency. Uses existing backend ADC and `gemini-3.1-flash-lite`, with no new credentials or permissions.
+[Gemini-only record](verification/phase2b-gemini-live.json): **PASS**, one real Vertex call with the existing synthetic open-burning image; `open_burning`, HIGH ordinal interpretation; 4,760.39ms wall latency. Uses existing backend ADC and `gemini-3.1-flash-lite`, with no new credentials or permissions.
 
-[Environmental regression](../../verification/phase2b-environment-live.json): **PASS**, Google AQ, Google Weather, NOAA-20 FIRMS and authenticated Earth Engine all live. Three satellite products had usable observations under unchanged QA. Provider cache reuse, unchanged observation/provenance times and partial-provider failure all passed. Gurugram 28.4595, 77.0266; default satellite 72h lookback, 10km radius. No window or QA changes were used to force values.
+[Environmental regression](verification/phase2b-environment-live.json): **PASS**, Google AQ, Google Weather, NOAA-20 FIRMS and authenticated Earth Engine all live. Three satellite products had usable observations under unchanged QA. Provider cache reuse, unchanged observation/provenance times and partial-provider failure all passed. Gurugram 28.4595, 77.0266; default satellite 72h lookback, 10km radius. No window or QA changes were used to force values.
 
 ## Full real transport gate
 
-[Complete sanitized record](../../verification/phase2b-corroboration-live.json).
+[Complete sanitized record](verification/phase2b-corroboration-live.json).
 
 **Image-location pairing is synthetic; this verifies pipeline behavior, not event truth.** The image was generated for evaluation and was not captured at Gurugram. Neither the category below nor synthetic browser scenarios are scientific validation. No precision/recall/accuracy was calculated.
 

@@ -60,7 +60,7 @@ Attribution follows [Google's Air Quality policies](https://developers.google.co
 
 ## AirshedOS custom model research — evaluated and rejected
 
-**An internal custom operational model was evaluated and rejected because it underperformed the naive baseline.** Phase 2D concluded **MODEL_NOT_ACCEPTED**. Its artifacts, negative result and predeclared model-selection protocol remain intact. No custom model is deployed, no Vertex job/endpoint was created, no retuning or renewed model selection was performed in Phase 2E, and the locked November–December test set remains unopened by candidate evaluation. [Phase 2D verification](archive/prototype/PHASE_2D_VERIFICATION.md) remains the record of that decision.
+**An internal custom operational model was evaluated and rejected because it underperformed the naive baseline.** Phase 2D concluded **MODEL_NOT_ACCEPTED**. Its artifacts, negative result and predeclared model-selection protocol remain intact. No custom model is deployed, no Vertex job/endpoint was created, no retuning or renewed model selection was performed in Phase 2E, and the locked November–December test set remains unopened by candidate evaluation. [Phase 2D verification](PHASE_2D_VERIFICATION.md) remains the record of that decision.
 
 The external Google forecast does not reverse or replace the custom model's failed acceptance decision. It is an independently maintained provider service used operationally with explicit attribution.
 
@@ -72,6 +72,6 @@ Run the manual backend-only gate from the repository root:
 apps/api/.venv/bin/python apps/api/scripts/verify_forecast.py
 ```
 
-It queries the fixed Gurugram point (28.4595, 77.0266), captures current AQ, every hourly forecast, all three summaries, provenance, latency and cache reuse, and exits nonzero if integration gates fail. It reads the ignored root `.env` without printing credentials. **CI never invokes it**; backend transports prohibit external calls and browser forecast routes are intercepted with synthetic fixtures. See [Phase 2E verification](archive/prototype/PHASE_2E_VERIFICATION.md).
+It queries the fixed Gurugram point (28.4595, 77.0266), captures current AQ, every hourly forecast, all three summaries, provenance, latency and cache reuse, and exits nonzero if integration gates fail. It reads the ignored root `.env` without printing credentials. **CI never invokes it**; backend transports prohibit external calls and browser forecast routes are intercepted with synthetic fixtures. See [Phase 2E verification](PHASE_2E_VERIFICATION.md).
 
 One successful query verifies integration only. Forecast accuracy remains unmeasured. Current history responses are not an archive of forecasts issued in the past; they must not be used to manufacture a historical forecast backtest. Prospective, consented logging and later outcome comparison are future work. No persistence, notifications, maps, source attribution, plume modelling, custom model training or Phase 3 work was added.

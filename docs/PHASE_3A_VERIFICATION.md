@@ -1,5 +1,3 @@
-> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
-
 # Phase 3A verification — spatial command center and officer review
 
 Scope: Phase 3A only. No custom model, dispatch, alerts, accounts, database, cross-state federation, plume simulation or Phase 3B work.

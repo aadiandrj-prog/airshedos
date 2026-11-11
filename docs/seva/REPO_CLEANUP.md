@@ -8,9 +8,9 @@ paid hosting/domain purchases remain unauthorised.
 
 - Replaced the obsolete no-accounts/in-memory README with the current resident/reviewer
   platform, deployed schema and honest remaining sign-in/worker/private-media limits.
-- Archived 17 earlier prototype/verification documents and the retired root Render
+- Archived seven superseded prototype/verification documents and the retired root Render
   Blueprint under docs/archive/prototype. Rewrote root hosting guidance and repaired
-  relative Markdown links; retained scientific provenance, rejection records and exports.
+  relative Markdown links. The 11 integrity-protected records remain byte-for-byte at their original paths; scientific provenance, rejection records and exports are retained.
 - Removed the old event-name checkout references from tracked documentation. The local
   workspace directory itself is preserved. No Git history was rewritten.
 - Excluded local presentation/output scratch artifacts narrowly in .gitignore; no user
@@ -41,3 +41,10 @@ The clean airshedos.vercel.app production domain can serve the merged version. A
 .tech domain can be added later through Vercel and exact Auth0 origins, after the owner
 provides its name. No redemption code, purchase or DNS modification is requested here.
 Do not delete the phase branch while preview/API services still depend on it.
+
+The first remote backend run caught missing protected-record paths after archiving. Those
+11 records were restored exactly without changing the manifest or weakening tests. The
+19 finalisation/contract regressions now pass locally; full remote checks are rerun.
+The owner confirmed the old Render API Auto-Deploy is off. Preview SESSION_DATABASE_URL
+was found scoped only to Production; the owner corrected Preview scope and redeployed.
+Hosted sign-in still needs confirmation. The .tech domain is not yet redeemed.

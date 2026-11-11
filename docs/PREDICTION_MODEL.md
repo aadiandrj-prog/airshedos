@@ -1,6 +1,6 @@
 # Offline predictive model selection (Phase 2D)
 
-**Result: MODEL_NOT_ACCEPTED.** No predeclared candidate passed October's baseline gates. The November–December test period remains untouched by candidate evaluation. See [the verification report](archive/prototype/PHASE_2D_VERIFICATION.md), [frozen decision summary](evidence/phase2d_decision.json) and [all candidate metrics](evidence/phase2d_validation_metrics.json). No prediction endpoint, forecast UI or Vertex endpoint was added.
+**Result: MODEL_NOT_ACCEPTED.** No predeclared candidate passed October's baseline gates. The November–December test period remains untouched by candidate evaluation. See [the verification report](PHASE_2D_VERIFICATION.md), [frozen decision summary](evidence/phase2d_decision.json) and [all candidate metrics](evidence/phase2d_validation_metrics.json). No prediction endpoint, forecast UI or Vertex endpoint was added.
 
 ## Task and availability
 

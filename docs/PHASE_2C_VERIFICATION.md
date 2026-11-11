@@ -1,5 +1,3 @@
-> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
-
 # Phase 2C live data acceptance
 
 Real extraction completed on **2026-09-14**; final artifact acceptance verified on **2026-09-16**. **Five real NCR stations, a shared 316-day window and both feature profiles are built and validated.** No Phase 2D training has begun. The operational contract remains conditional on prospective publication-lag and revision validation before serving.

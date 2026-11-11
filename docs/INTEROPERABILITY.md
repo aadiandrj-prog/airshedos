@@ -106,7 +106,7 @@ With local configured Docker services running, the optional developer-only gate 
 node apps/web/scripts/verify-handoff.mjs
 ```
 
-It submits the synthetic image, corroborates with configured providers, begins review, sends HARYANA → DELHI, receives/accepts, verifies unchanged case/payload/audit prefix, confirms no provider reruns, validates exported SHA-256 and checks live map/mobile behavior. It writes sanitized results, canonical export and screenshots under gitignored `data/verification`. It is never run in CI. CI uses sanitized fixtures and mocked Maps/providers only. See [Phase 3B verification](archive/prototype/PHASE_3B_VERIFICATION.md).
+It submits the synthetic image, corroborates with configured providers, begins review, sends HARYANA → DELHI, receives/accepts, verifies unchanged case/payload/audit prefix, confirms no provider reruns, validates exported SHA-256 and checks live map/mobile behavior. It writes sanitized results, canonical export and screenshots under gitignored `data/verification`. It is never run in CI. CI uses sanitized fixtures and mocked Maps/providers only. See [Phase 3B verification](PHASE_3B_VERIFICATION.md).
 
 ## Before any real deployment — requirements only
 

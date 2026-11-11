@@ -1,5 +1,3 @@
-> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
-
 # Phase 2A — citizen evidence and Gemini verification
 
 Verified locally on **13 September 2026 IST** (live artifact timestamps are UTC). Scope stops at citizen intake and independent visual interpretation. No Phase 2B work, environmental fusion, source attribution, operational incident scoring, forecasting, Maps, accounts, notifications or persistent media storage was introduced.
@@ -25,13 +23,13 @@ The frontend's **SUBMIT FIELD EVIDENCE** panel preserves the dark-green visual l
 
 1. API disabled: all five initial requests returned safe `auth_error` responses with no analysis. The provider error was independently inspected, then the API enabled.
 2. Remote schema: minimal/schema-small requests succeeded, while the full schema returned HTTP 400. Isolated calls showed that removing remote array-length bounds resolved this particular complexity rejection; removing nullable alone did not. The final wire schema retains the complete field/enum contract and uses documented `nullable` booleans. Length constraints remain unchanged in Pydantic and a 2,048-token output cap remains. See [Google's schema-complexity guidance](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output).
-3. Pre-release prompt: the first compatible full image run returned four valid results and rejected the indoor image. A sanitized follow-up found `no_visible_pollution`, `high`, `insufficient_evidence=true`: an inconsistent combination. The original rejection rule was retained. The prompt/field description were clarified: insufficient evidence means inability to choose a visual category, not absence of pollution features; a clearly clean indoor scene may use `no_visible_pollution` with that flag false. [The initial 4/5 result is preserved](../../verification/phase2a-gemini-initial.json). No model output was repaired or relabeled server-side.
+3. Pre-release prompt: the first compatible full image run returned four valid results and rejected the indoor image. A sanitized follow-up found `no_visible_pollution`, `high`, `insufficient_evidence=true`: an inconsistent combination. The original rejection rule was retained. The prompt/field description were clarified: insufficient evidence means inability to choose a visual category, not absence of pollution features; a clearly clean indoor scene may use `no_visible_pollution` with that flag false. [The initial 4/5 result is preserved](verification/phase2a-gemini-initial.json). No model output was repaired or relabeled server-side.
 
 These were separate manual diagnostics and a targeted prompt correction. Runtime requests still make **one attempt**, including on schema/safety failures. No scientific QA thresholds or satellite defaults changed.
 
 ## Final genuine Vertex evaluation
 
-[Final structured artifact](../../verification/phase2a-gemini-live.json), generated **2026-09-12 22:58:27 UTC / 13 September 04:28:27 IST**. Five synthetic, locally maintained images; fixed coordinate inputs 28.4595, 77.0266 do not assert image geolocation. Calls went through the actual multipart API in an in-process HTTP test client and then real Vertex; no environmental endpoint was invoked.
+[Final structured artifact](verification/phase2a-gemini-live.json), generated **2026-09-12 22:58:27 UTC / 13 September 04:28:27 IST**. Five synthetic, locally maintained images; fixed coordinate inputs 28.4595, 77.0266 do not assert image geolocation. Calls went through the actual multipart API in an in-process HTTP test client and then real Vertex; no environmental endpoint was invoked.
 
 | Synthetic case | Possible event returned | Ordinal confidence | Inference/service latency | Strict schema |
 | --- | --- | --- | --- | --- |
@@ -59,7 +57,7 @@ Example sanitized interpretation of the misleading fog image:
 }
 ```
 
-An additional real browser → Docker API → Vertex submission of the synthetic fog image is recorded in [the browser artifact](../../verification/phase2a-live-browser.json). Environmental cards were mocked in that UI check to isolate submission. The standalone environmental gate below was fully live. [Desktop](../../screenshots/phase2a-live-desktop.png) and [mobile](../../screenshots/phase2a-live-mobile.png) screenshots show the real Gemini result, not a fake-model response.
+An additional real browser → Docker API → Vertex submission of the synthetic fog image is recorded in [the browser artifact](verification/phase2a-live-browser.json). Environmental cards were mocked in that UI check to isolate submission. The standalone environmental gate below was fully live. [Desktop](screenshots/phase2a-live-desktop.png) and [mobile](screenshots/phase2a-live-mobile.png) screenshots show the real Gemini result, not a fake-model response.
 
 ## Privacy, limits and failures
 
@@ -89,11 +87,11 @@ The final PR's GitHub Checks tab is authoritative for remote CI; the completion 
 
 ## Separate Phase 1 live regression
 
-[Authenticated Gurugram regression artifact](../../verification/phase2a-environment-regression.json): Google AQ, Google Weather, NASA FIRMS and Earth Engine/Sentinel-5P all passed. Ground cache reuse and partial provider failure passed; satellite cache reuse and gate passed. Timings: AQ 1,736.19 ms, Weather 1,413.41 ms, FIRMS 1,361.58 ms, satellite batch 14,061.35 ms; cached satellite 0.82 ms. This remains an independent diagnostic, not image corroboration.
+[Authenticated Gurugram regression artifact](verification/phase2a-environment-regression.json): Google AQ, Google Weather, NASA FIRMS and Earth Engine/Sentinel-5P all passed. Ground cache reuse and partial provider failure passed; satellite cache reuse and gate passed. Timings: AQ 1,736.19 ms, Weather 1,413.41 ms, FIRMS 1,361.58 ms, satellite batch 14,061.35 ms; cached satellite 0.82 ms. This remains an independent diagnostic, not image corroboration.
 
 ## Limits and deviations
 
-- Five maintained synthetic images instead of the aspirational 20–30-image set, using the brief's explicit small-subset allowance. Ten critical category contracts are mocked in CI; live accuracy on traffic haze, night, blur and diverse real street scenes is **not established**. [Fixture provenance and exact generation prompts](../../../apps/api/scripts/citizen-evaluation/README.md) are included; built-in image generation was used, with assets saved in that directory.
+- Five maintained synthetic images instead of the aspirational 20–30-image set, using the brief's explicit small-subset allowance. Ten critical category contracts are mocked in CI; live accuracy on traffic haze, night, blur and diverse real street scenes is **not established**. [Fixture provenance and exact generation prompts](../apps/api/scripts/citizen-evaluation/README.md) are included; built-in image generation was used, with assets saved in that directory.
 - Controlled observation/uncertainty statements replace open-ended model prose to prevent arbitrary attribution/identity/toxicity claims from reaching the product. This is intentionally less expressive. The model can still misclassify visible features; enum constraints do not establish truth.
 - `observed_at` stays null because upload time is not capture time; interpretation/upload times are separately preserved. No calibrated confidence score is fabricated.
 - No WebP, persistent storage, Cloud Storage, reports listing or analysis cache; resubmission creates another model request. Returned model version is only as specific as the provider supplies.
