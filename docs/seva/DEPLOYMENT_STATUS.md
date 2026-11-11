@@ -7,12 +7,12 @@ approved. No credential value is requested in chat or stored in this record.
 ## Source and current public services
 
 Implementation commit: `2121566` on `codex/seva-phase-7`, preserving base `6f071af`.
-Published branch head before the deployment-prerequisite follow-up: `e86abac66ac2efee269e8d45ee0c94942f65db4a`.
+Published application source: `6d95f5db0336c614a9cae4e8d014138472e734cb`.
 The GitHub push succeeded; production main remains `142dfc1`.
 Vercel reported a successful Preview deployment for this head.
-Remote [GitHub checks](https://github.com/aadiandrj-prog/airshedos/actions/runs/42987003154) completed successfully:
+Remote [GitHub checks](https://github.com/aadiandrj-prog/airshedos/actions/runs/42993136042) completed successfully:
 backend (including actual PostgreSQL and signed resident/reviewer journeys), legacy browser,
-frontend and secret jobs all passed for `e86abac`. The earlier `5198f0f` run also passed.
+frontend and secret jobs all passed for `6d95f5d`. Earlier e86abac/5198f0f runs also passed.
 Unrelated decks/build/output artifacts and actual secret files are excluded from the commit.
 The original supplied design files are retained byte-for-byte. Two original reference
 files contain whitespace; narrowly scoped .gitattributes exclusions preserve those originals.
@@ -25,9 +25,9 @@ Read-only HTTPS checks in this session:
 | [Vercel public site](https://airshedos.vercel.app) | HTTP 200, 0.78 seconds; existing prototype |
 | [Render liveness](https://airshedos-api.onrender.com/health) | HTTP 200, 22.45 seconds including startup; status ok |
 | [Render readiness](https://airshedos-api.onrender.com/ready) | HTTP 200, 0.37 seconds; storage=in_memory, data_mode=demo |
-| Neon | User inspected project airshedos, branch production: no tables; no independent database connection made |
+| Neon | Owner-approved initialisation completed: independently verified seva_0006, 31 tables, empty domain records, QUARANTINED |
 
-No paid provider, real report, authentication or private-media call was made by these probes.
+No paid provider, real report, end-user authentication or private-media call was made by these probes.
 A green old-prototype /ready does not verify the new pilot or its database connection.
 
 The preview deployment URL is [airshedos-agrlq8s4u-grease-liquor.vercel.app](https://airshedos-agrlq8s4u-grease-liquor.vercel.app).
@@ -46,11 +46,15 @@ report intake and review have not passed an end-to-end check.
 The user corrected the Neon observation: the database branch is `production`; `primary`
 is an archived compute, not that branch. The production compute says “Compute is suspended
 and automatically activates on client connections”, which is normal auto-suspension.
-No unarchive/restore operation is indicated. The production branch has no tables according
-to the user's Tables inspection. Host, database name, role and backup policy remain to verify.
+No unarchive/restore operation was indicated. The owner then supplied the exact direct
+endpoint, neondb/neondb_owner and a read-only result (PG 18.6, zero user relations).
+They explicitly approved schema initialisation; its actual execution is recorded below.
+Backup/retention capabilities remain to verify before real collection.
 
 The user created the Auth0 regular web application and supplied its public domain/client
-identifier. Callback/API/refresh configuration and live sign-in are still pending. The
+identifier. They confirmed callback URLs, API identifier/RFC9068 profile, access:airshedos
+permission, app user-delegated grant and refresh rotation were saved. These are owner-reported
+dashboard settings; live sign-in/server binding is still pending. The
 stable branch alias is [the phase-7 preview](https://airshedos-git-codex-seva-phase-7-grease-liquor.vercel.app/);
 the individual deployment URL changes on rebuild and is not the chosen callback origin.
 No Render background worker or cron job was found. Render's APP_MODE was previously set
@@ -70,7 +74,8 @@ Publish/review the implementation and remote checks before a production branch c
 Use the [private-pilot runbook](PILOT_RUNBOOK.md) and [environment template](pilot.env.example).
 Do not copy database administrator credentials into both services, expose a database URL
 through NEXT_PUBLIC variables, run local test tools on Neon, or create a fake production login.
-No hosted migration, billable worker or new paid service has been provisioned here.
+The explicitly approved initial Neon migration has now completed. No billable worker or
+new paid service has been provisioned here.
 The [reviewable Render service plan](RENDER_PILOT_PLAN.md) describes roles, commands and
 estimated base charges. The user selected **keep preview only for now**; do not create paid
 services. This leaves continuous hosted worker/cleanup readiness pending, with no bypass.
@@ -82,11 +87,12 @@ host/database/login and expected revision acknowledgement. Hosted targets requir
 connection and verified TLS/CA. The command rejects connection overrides, nonempty initial
 targets, revision mismatch and concurrent migrations; all DDL/checks share a transaction.
 Ordinary Alembic retains its loopback guard. This prepares a reviewable hosted workflow;
-it has not been run on Neon. See the [release runbook](PILOT_RUNBOOK.md).
+it has now been run on the approved Neon target. See the [actual migration record](NEON_SCHEMA_CHANGE.md).
 
 Added a separate restricted cleanup-role grant script. Actual PostgreSQL coverage verifies
 content/media and eventual tombstone purge without token ciphertext reads, membership grants,
-recovery release writes or worker-heartbeat writes. No runtime uses owner credentials.
+recovery release writes or worker-heartbeat writes. Runtime configuration must use restricted
+roles rather than owner credentials; no hosted runtime-role binding is verified yet.
 
 Local follow-up checks: `TEST_DATABASE_URL=<guarded loopback synthetic target>
 SEVA_TEST_PG_CONTAINER=airshedos-deploy-pg .venv/bin/pytest -q`: **657 passed**, 51.91s,
@@ -96,7 +102,14 @@ guards) and restricted cleanup-role purge/denial coverage. Ruff lint/format: PAS
 Signed SDK/session/BFF/Python identity: **5 passed**, zero skips, 2.99s; the deliberately
 injected identity-provider outage failed closed. Generated OpenAPI/receiver contracts are
 unchanged. Secret scan: PASS, zero findings; git diff --check: PASS. No remote DB query or
-paid call was part of these checks. Hosted migration TLS/credentials remain unrehearsed.
+paid call was part of these local checks.
+
+Hosted migration verification (11 November, 15:34 IST): full verified TLS with installed
+Certifi CA bundle after the system-chain lookup failed before DDL; exact target/login,
+empty catalog checked; transaction committed; fresh connection read back seva_0006 and
+all 31 expected tables, zero domain records, recovery QUARANTINED with NULL epoch.
+No release, runtime-role grants or worker activation was performed. Next dependency is
+separate restricted runtime credentials/recovery binding before configuring hosted login.
 
 ## Helium inspection checklist
 

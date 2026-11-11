@@ -68,7 +68,12 @@ Resident source context is requested from saved report detail, using an owned ac
 report and approved routing. Pre-submit context makes no source call. Do not restore
 the former arbitrary-coordinate account-only context path or bypass quotas during a demo.
 
-## Checked hosted schema upgrade (not yet executed)
+## Checked hosted schema upgrade
+
+The exact initial Neon production/neondb upgrade was separately approved and completed on
+11 November 2026. See [execution/verification record](NEON_SCHEMA_CHANGE.md). Do not rerun
+the empty-install command on that now-initialised database. Instructions below describe
+the controlled workflow for a separately approved target, not an automatic next action.
 
 First verify the exact direct endpoint, database name and offline operator login in the
 selected Neon branch. Keep its connection string out of chat, command arguments and logs.

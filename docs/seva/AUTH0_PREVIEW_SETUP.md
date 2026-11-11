@@ -4,6 +4,10 @@
 This prepares managed identity. It does not activate a complete hosted reporting pilot.
 Do not bypass required database, recovery, unit, worker or cleanup readiness checks.
 
+The owner confirmed the callback fields, custom API identifier/RFC9068 profile,
+access:airshedos permission, application user-delegated grant and refresh rotation are
+saved. These are dashboard confirmations; no hosted end-user login has been verified.
+
 ## Application
 
 Use the existing owner-created **AirshedOS Pilot** regular web application. Its domain and

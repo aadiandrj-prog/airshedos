@@ -13,7 +13,8 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 - Phase 0–7 implementation committed for GitHub publication; unrelated presentations/output are preserved.
 - The phase reports describe their historical local handoffs. Current publication and
   hosting checks are tracked in [DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md).
-  No hosted migration, paid provisioning or external message has occurred.
+  The owner-approved initial Neon migration is complete; no paid provisioning or external
+  message has occurred. Hosted pilot access remains quarantined.
 
 ## Phase ledger
 
@@ -246,12 +247,19 @@ for e86abac. The user confirmed the lowercase-pilot Vercel preview renders the n
 This does not establish a functioning hosted resident/reviewer journey.
 
 Deployment follow-up adds a checked transactional offline hosted migration command and a
-separate cleanup-role script with actual PostgreSQL privilege/retention coverage. No Neon
-migration or paid service was created. Follow-up backend: **657 passed**, 51.91s; Ruff check/
+separate cleanup-role script with actual PostgreSQL privilege/retention coverage. Follow-up
+backend: **657 passed**, 51.91s; Ruff check/
 format PASS (148 files), secret scan PASS (693 files), diff whitespace PASS. The 15 added
 tests cover checked migration targets/transactions/concurrency and restricted cleanup roles.
 Signed SDK/session/BFF/Python identity: 5 passed, zero skips; generated contracts unchanged.
-User-confirmed configuration: Neon production branch empty; Auth0 app now created, tenant/API
-configuration still pending; no Render worker/cron. The owner selected preview only and no
+All four remote jobs and Vercel preview deployment passed for 6d95f5d. The owner confirmed
+Auth0 callback/API profile/permission/app grant/refresh rotation configuration; actual login
+and session/server configuration remain pending. They explicitly approved initialisation of
+Neon production/neondb. On 11 November at 15:34 IST, the checked transaction committed and a
+fresh read confirmed PG 18.6, seva_0006, 30 application tables plus the migration ledger, all
+domain tables empty and recovery QUARANTINED/epoch NULL. System-CA lookup initially failed
+before DDL; the installed Certifi bundle enabled full TLS verification. No runtime-role
+grant, recovery release or worker/cleanup was activated. See NEON_SCHEMA_CHANGE.md.
+The owner selected preview only and no
 paid hosting for now. See DEPLOYMENT_STATUS.md,
 PILOT_RUNBOOK.md and RENDER_PILOT_PLAN.md for exact next dependencies and current evidence.
