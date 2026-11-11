@@ -17,7 +17,7 @@
 .pilot-ui :is(button,.pilot-button) { min-height: 44px; border-radius: 8px; background: var(--ink); color: #fff; border: 1px solid var(--ink); padding: 10px 18px; font-weight: 550; font-size: .9375rem; text-decoration: none; line-height: 1.5; }
 .pilot-ui :is(button,.pilot-button):hover:not(:disabled) { background: #253449; color: #fff; }
 .pilot-ui :is(button.secondary,.pilot-button.secondary) { background: #fff; color: var(--ink); border-color: var(--line-strong); }
-.pilot-ui :is(button.secondary,.pilot-button.secondary):hover:not(:disabled) { background: var(--raised); }
+.pilot-ui :is(button.secondary,.pilot-button.secondary):hover:not(:disabled) { background: var(--raised); color: var(--ink); }
 .pilot-ui button:disabled { opacity: .55; cursor: not-allowed; }
 .pilot-ui :is(input,select,textarea) { background: #fff; color: var(--ink); border: 1px solid var(--line-strong); font: inherit; border-radius: 8px; padding: 11px 12px; min-height: 44px; }
 .pilot-ui :is(input,textarea)::placeholder { color: var(--muted); opacity: 1; }

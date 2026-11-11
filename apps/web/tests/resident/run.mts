@@ -26,7 +26,7 @@ const release = process.argv.includes("--release");
 if (release) {
   // Standalone output inlines public settings at build time. Never inherit a real
   // Maps browser credential for this synthetic production rehearsal.
-  const built = spawnSync("npm",["run","build"],{cwd:process.cwd(),stdio:"inherit",env:{...process.env,NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY:"",NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID:"",NEXT_PUBLIC_PILOT_MAPS_APPROVED:"0",NEXT_TELEMETRY_DISABLED:"1"}});
+  const built = spawnSync("npm",["run","build"],{cwd:process.cwd(),stdio:"inherit",env:{...process.env,NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY:"",NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID:"",NEXT_PUBLIC_PILOT_MAPS_APPROVED:"0",NEXT_PUBLIC_EXPLORE_MAPS_ENABLED:"1",NEXT_TELEMETRY_DISABLED:"1"}});
   if (built.status !== 0) throw new Error("Synthetic release build failed");
   const {cp} = await import("node:fs/promises");
   await cp(".next/static",".next/standalone/.next/static",{recursive:true});
@@ -38,8 +38,8 @@ const apiBase = `${release ? "https" : "http"}://127.0.0.1:${apiPort}`;
 const prefix = randomBytes(6).toString("hex");
 const identities = { TEST_REVIEWER_A: `reviewer-a-${prefix}`, TEST_REVIEWER_TWO: `reviewer-two-${prefix}`,
   TEST_ADMIN_A: `admin-a-${prefix}`, TEST_REVIEWER_B: `reviewer-b-${prefix}` };
-const environment = { ...identities, SEVA_CAPTURE_FINAL: process.env.SEVA_CAPTURE_FINAL ?? "0", SEVA_CAPTURE_OVERVIEW: process.env.SEVA_CAPTURE_OVERVIEW ?? "0", SEVA_CAPTURE_STAGE: process.env.SEVA_CAPTURE_STAGE ?? "after", APP_MODE:"pilot", PATH: process.env.PATH, NODE_ENV: release ? "production" : "development", NEXT_TELEMETRY_DISABLED: "1", TEST_DATABASE_URL: db,
-  NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY: "", NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID: "",
+const environment = { ...identities, SEVA_CAPTURE_PLUME: process.env.SEVA_CAPTURE_PLUME ?? "0", SEVA_CAPTURE_FINAL: process.env.SEVA_CAPTURE_FINAL ?? "0", SEVA_CAPTURE_OVERVIEW: process.env.SEVA_CAPTURE_OVERVIEW ?? "0", SEVA_CAPTURE_STAGE: process.env.SEVA_CAPTURE_STAGE ?? "after", APP_MODE:"pilot", PATH: process.env.PATH, NODE_ENV: release ? "production" : "development", NEXT_TELEMETRY_DISABLED: "1", TEST_DATABASE_URL: db,
+  NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY: "", NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID: "", NEXT_PUBLIC_EXPLORE_MAPS_ENABLED: "1",
   SEVA_RECOVERY_EPOCH: randomUUID(), SEVA_TEST_RELEASE: release ? "1" : "0", SEVA_TEST_CONTINUOUS_WORKER:"1",
   TEST_OIDC_ISSUER: issuer, TEST_OIDC_TRANSPORT: transport, TEST_PRIVATE_ROOT: join(root, "private"), SSL_CERT_FILE: join(root, "ca.pem") };
 function start(command: string, args: string[], cwd: string, env: NodeJS.ProcessEnv) {

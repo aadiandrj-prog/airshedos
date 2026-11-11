@@ -355,3 +355,20 @@ chart/clear behaviour, methodology and anonymous private-account 401. No automat
 request; one explicit lookup observed at 5,217ms (N=1, conditions/limits in report). No live
 provider payload/result capture or real location persisted. Public experience is released;
 private pilot reviewer/worker/cleanup/media prerequisites still require their separate setup.
+
+
+## Owner-requested graph, Google Map and Gaussian scenario
+
+Base 42dae3a; codex/plume-explorer. The latest explicit request extends the public explorer
+with a prominent provider graph, an interactive Google basemap and an illustrative Gaussian
+scenario. No actual source/emissions/stability or validated plume forecast is invented.
+The calculation remains browser-only and separate from Google forecast/rules/research.
+A dedicated public-map flag leaves private map approval unchanged. Existing browser key
+successfully loaded real Google tiles on the production origin; new component activation
+requires the two prepared Vercel entries and final verification. Local equation and browser
+checks, limits and release state are recorded in PLUME_MAP.md. No backend/schema change.
+Local map/scenario gates: 5 calculation tests, 8 signed identity/proxy checks and 18
+production HTTPS public/resident/reviewer journeys passed; lint/type/build and secret
+scan passed. No backend contract change. Actual Google tiles loaded in a separate
+production-origin key rehearsal without auth/referrer/billing errors. Two Vercel public
+settings and final deployed-component verification remain pending owner confirmation.

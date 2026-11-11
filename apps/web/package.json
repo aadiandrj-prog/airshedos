@@ -13,7 +13,8 @@
     "test:resident": "tsx tests/resident/run.mts",
     "generate:api": "openapi-typescript ../api/openapi.json -o src/lib/api-schema.d.ts",
     "test:authority": "tsx tests/resident/run.mts --authority",
-    "test:pilot": "tsx tests/resident/run.mts --release --all"
+    "test:pilot": "tsx tests/resident/run.mts --release --all",
+    "test:plume": "tsx --test tests/plume.test.ts"
   },
   "engines": {
     "node": ">=22"
