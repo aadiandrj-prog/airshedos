@@ -263,3 +263,11 @@ grant, recovery release or worker/cleanup was activated. See NEON_SCHEMA_CHANGE.
 The owner selected preview only and no
 paid hosting for now. See DEPLOYMENT_STATUS.md,
 PILOT_RUNBOOK.md and RENDER_PILOT_PLAN.md for exact next dependencies and current evidence.
+
+Subsequent preparation: four restricted hosted runtime database accounts and reviewed
+grants created transactionally. Actual TLS login and permission checks passed for Node
+session storage and Python API/worker/cleanup. Independent session keys and per-service
+credentials are in owner-only Git-ignored local files. No recovery release or hosted login,
+reviewer bootstrap, worker/cleanup start or paid provisioning occurred. The user confirmed
+four public Vercel variables added and the preview redeployed; private bindings and pilot API
+remain pending. DEPLOYMENT_STATUS.md records the precise permissions and connection checks.

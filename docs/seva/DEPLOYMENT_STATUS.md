@@ -111,6 +111,25 @@ all 31 expected tables, zero domain records, recovery QUARANTINED with NULL epoc
 No release, runtime-role grants or worker activation was performed. Next dependency is
 separate restricted runtime credentials/recovery binding before configuring hosted login.
 
+Subsequent runtime preparation: created dedicated airshedos_api, airshedos_session,
+airshedos_worker and airshedos_cleanup LOGIN/NOINHERIT accounts, with no elevated flags or
+role memberships. Applied the reviewed pilot_roles.sql, worker_roles.sql and cleanup_roles.sql
+in one transaction on the exact initialised target. New credentials and independent random
+session keys are stored only in owner-only Git-ignored per-service files. The owner-provided
+Auth0 client secret is included only in the private Vercel settings. The operator URL is
+not a runtime credential. No existing role/password was overwritten.
+
+Verified actual Node pg session-role TLS/login, token-table SELECT and membership-read
+denial (42501). Independently verified actual TLS logins for API/worker/cleanup, permitted
+report reads and denial of token-table SELECT, membership role updates and recovery-state
+updates. Recovery remains QUARANTINED; no user/unit bootstrap, paid service or process was
+started. A local direct-libpq certificate path initially encoded spaces as plus characters;
+passing the trusted CA path as an explicit connection argument resolved it with verify-full
+and channel binding retained. Cloud session URL was verified with Node's own trust roots.
+Vercel private settings, pilot API binding, recovery bootstrap and local demo processes
+remain pending; current BACKEND_API_BASE_URL must be replaced with the selected pilot API
+before activating the full preview. No live Auth0 login has been verified.
+
 ## Helium inspection checklist
 
 1. Vercel → AirshedOS → Settings → Environments → Production → Branch Tracking shows
