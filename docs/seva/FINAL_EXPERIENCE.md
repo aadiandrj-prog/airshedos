@@ -118,3 +118,11 @@ check was removed or treated as passed. Local rewrite checks cover idempotence a
 preserved suite/signature text; replacement remote runs are required before release.
 The installed locked Playwright is 1.63.0; its official CI setup instructions and the
 Geolocation API documentation were consulted. No dependency upgrade was introduced.
+
+The first direct-archive replacement also failed DNS for archive.ubuntu.com. The CI-only
+setup now probes bounded HTTPS release-file requests against the primary archive, Linux
+Kernel Archives Ubuntu mirror and Princeton mirror, requiring both the release/security
+pockets before choosing. Apt still verifies Ubuntu's package signatures with the original
+keyring; a PGP header in the availability probe is not treated as cryptographic verification.
+Missing mirrors fail closed, without skipping browser dependencies or tests. Fallback and
+idempotence were exercised with deterministic subprocess injection. No runtime code changed.
