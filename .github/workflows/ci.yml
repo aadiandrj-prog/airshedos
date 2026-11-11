@@ -46,6 +46,8 @@ jobs:
         working-directory: apps/web
         env:
           SEVA_TEST_PYTHON: python
+      - name: Select reachable signed Ubuntu archive for browser dependencies
+        run: sudo env GITHUB_ACTIONS=true python3 ../../scripts/ci_browser_packages.py
       - run: npx playwright install --with-deps chromium && npm run test:resident && npm run test:authority && npm run test:pilot
         working-directory: apps/web
         env:
@@ -89,6 +91,8 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
         working-directory: apps/web
+      - name: Select reachable signed Ubuntu archive for browser dependencies
+        run: sudo env GITHUB_ACTIONS=true python3 scripts/ci_browser_packages.py
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web
       - run: docker compose up --build -d --wait

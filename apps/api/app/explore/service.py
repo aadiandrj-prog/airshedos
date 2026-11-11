@@ -1,5 +1,6 @@
 """Reuse provider normalization with task-local, shared PostgreSQL admission."""
 
+import math
 from datetime import UTC, datetime, timedelta
 
 from pydantic import AwareDatetime, Field
@@ -31,6 +32,19 @@ AREAS = {
         Area(id="noida", name="Noida", latitude=28.5355, longitude=77.3910),
     )
 }
+
+
+def approximate_area(latitude: float, longitude: float) -> Area:
+    # Match the browser grid, but enforce it again for direct API clients. No raw
+    # device coordinates enter provider caches, source queries or response models.
+    return Area(
+        id="nearby",
+        name="Near you",
+        latitude=math.floor(latitude * 200 + 0.5) / 200,
+        longitude=math.floor(longitude * 200 + 0.5) / 200,
+        note="Approximate 0.005 degree grid (about 550m north-south). "
+        "Device accuracy and provider resolution vary; this is not a local sensor reading.",
+    )
 
 
 class Overview(DomainModel):
@@ -112,8 +126,8 @@ class OverviewService:
                 SourceState.UNAVAILABLE, "Provider admission is temporarily unavailable."
             ) from None
 
-    async def overview(self, area_id):
-        area = AREAS[area_id]
+    async def overview(self, area_id: str | Area):
+        area = AREAS[area_id] if isinstance(area_id, str) else area_id
         await run_in_threadpool(self.admit_view)
         token = request_admission.set(self.admit_network)
         try:

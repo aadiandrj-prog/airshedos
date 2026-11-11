@@ -2,16 +2,18 @@ import os
 from typing import Annotated
 
 from fastapi import APIRouter, Body, HTTPException, Request
+from pydantic import Field
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.explore.service import AREAS, Area, Overview, OverviewService
+from app.explore.service import AREAS, Area, Overview, OverviewService, approximate_area
 from app.persistence.contracts import RateLimited, StrictModel
 
 router = APIRouter(prefix="/api/v2/explore", tags=["Public area overview"])
 
 
 class OverviewRequest(StrictModel):
-    pass
+    latitude: float | None = Field(default=None, ge=-90, le=90, allow_inf_nan=False, strict=True)
+    longitude: float | None = Field(default=None, ge=-180, le=180, allow_inf_nan=False, strict=True)
 
 
 @router.get("/areas", response_model=list[Area])
@@ -23,10 +25,18 @@ def areas(request: Request):
 
 @router.post("/areas/{area_id}/overview", response_model=Overview)
 async def overview(request: Request, area_id: str, body: Annotated[OverviewRequest, Body()]):
-    if area_id not in AREAS:
+    if area_id not in AREAS and area_id != "nearby":
         raise HTTPException(404, "Area not supported")
     if request.query_params:
         raise HTTPException(422, "No query parameters are supported")
+    if area_id == "nearby":
+        if body.latitude is None or body.longitude is None:
+            raise HTTPException(422, "Both location coordinates are required")
+        area = approximate_area(body.latitude, body.longitude)
+    else:
+        if body.model_fields_set:
+            raise HTTPException(422, "Fixed areas accept only an empty JSON object")
+        area = AREAS[area_id]
     if os.getenv("PUBLIC_OVERVIEW_ENABLED") != "1" or request.app.state.mode != "pilot":
         raise HTTPException(503, "Area overview is not enabled yet")
     if request.app.state.access is None:
@@ -48,7 +58,7 @@ async def overview(request: Request, area_id: str, body: Annotated[OverviewReque
             raise HTTPException(503, "Overview configuration unavailable") from None
         request.app.state.public_overview = service
     try:
-        return await service.overview(area_id)
+        return await service.overview(area)
     except RateLimited:
         raise HTTPException(429, "Overview request limit reached. Try later.") from None
     except SQLAlchemyError:
@@ -74,7 +84,7 @@ class PublicOverviewBodyLimit:
 
         async def reject(status):
             return await JSONResponse(
-                {"detail": "Bounded empty JSON object required"},
+                {"detail": "Bounded JSON object required"},
                 status_code=status,
                 headers={"Cache-Control": "private, no-store"},
             )(scope, receive, send)
