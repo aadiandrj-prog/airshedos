@@ -372,3 +372,16 @@ production HTTPS public/resident/reviewer journeys passed; lint/type/build and s
 scan passed. No backend contract change. Actual Google tiles loaded in a separate
 production-origin key rehearsal without auth/referrer/billing errors. Two Vercel public
 settings and final deployed-component verification remain pending owner confirmation.
+Owner confirmed public Maps settings saved. Source 3e1a7d6 merged as bb33da4 via PR #18
+after both exact-head and merge-preview checks passed: backend 684, identity 8, equation
+5, public/resident/reviewer journeys 18 in development and production HTTPS, legacy 62,
+frontend/contracts/Ruff/secrets. Actual production Map/overlay verification follows in
+PLUME_MAP.md; no Render/DB/auth configuration change was required.
+
+Production outcome: Vercel succeeded for bb33da4. A fresh live browser check at ~23:46 IST
+verified real Google tiles, actual scenario GroundOverlay creation/update/calm suppression/
+reset/removal, NASA toggles/recenter, crosswind graph and forecast placement. One explicit
+synthetic-public-location lookup returned all four providers live; scenario controls made
+no additional source calls. Anonymous private account access remained 401. N=1, not a
+capacity/accuracy result; no live imagery/payload or real location persisted. Public
+extension released; private pilot dependencies remain separate. See PLUME_MAP.md.

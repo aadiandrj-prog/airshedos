@@ -6,7 +6,7 @@ AirshedOS connects a resident reporting experience with a private, unit-scoped r
 
 ## The application
 
-- **Explore local air:** manually load AQI, pollutants, weather and NASA FIRMS near an optional approximate device location or fixed Delhi NCR area points. Inspect hourly forecast charts/tables and separate 6/12/24-hour window peaks. No account or report is required; provider states, source times and expiry remain visible.
+- **Explore local air:** manually load AQI, pollutants, weather and NASA FIRMS near an optional approximate device location or fixed Delhi NCR area points. Inspect hourly forecast charts/tables and separate 6/12/24-hour window peaks. Pan an interactive Google Map with NASA detection markers and optionally explore an assumption-driven Gaussian plume scenario with its own controls and crosswind graph. No account or report is required; provider states, source times and expiry remain visible.
 - **Residents:** sign in, submit a text report with an optional approved private image, track their own reports and respond to reviewer questions.
 - **Reviewers:** work on cases assigned to their approved unit, inspect evidence, record internal notes and follow-up, and deliberately publish separate reporter-visible updates.
 - **Durable processing:** PostgreSQL saves a report and its job atomically. A separate worker handles bounded retries and freezes evidence versions without changing human decisions.
@@ -17,7 +17,7 @@ Gemini and environmental sources are advisory and optional. A provider failure d
 ## Deployment and demo status
 
 - Website: [airshedos.vercel.app](https://airshedos.vercel.app) — the new interface and configured sign-in are deployed on the clean production URL.
-- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — the final location/chart/design experience is deployed. One isolated production check with a synthetic location received live Google AQ/weather/forecast and NASA FIRMS responses. See [release evidence and limits](docs/seva/FINAL_EXPERIENCE.md).
+- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — the location, forecast graph, interactive Google Map and illustrative plume controls are deployed. An isolated production browser verified real tiles, changing overlays and live Google AQ/weather/forecast and NASA FIRMS responses at a synthetic public location. The plume is a hypothetical calculation, not a measured event or validated local forecast. See [release evidence and limits](docs/seva/PLUME_MAP.md).
 - Pilot API: [airshedos-pilot-api.onrender.com](https://airshedos-pilot-api.onrender.com/health).
 - Neon: PostgreSQL 18 with the application schema and restricted service accounts.
 - Preview sign-in was confirmed by the owner after correcting the session database variable’s environment scope. Production redirects to the correct Auth0 tenant and callback; a complete production resident/reviewer rehearsal remains pending.
@@ -43,6 +43,7 @@ For backend installation, the guarded disposable PostgreSQL target and synthetic
 | Topic | Guide |
 |---|---|
 | Current configuration, limitations and checks | [Deployment status](docs/seva/DEPLOYMENT_STATUS.md) |
+| Interactive Google Map and illustrative Gaussian scenario | [Map and plume release](docs/seva/PLUME_MAP.md) |
 | Final public experience, location and charts | [Final extension](docs/seva/FINAL_EXPERIENCE.md) |
 | Bounded public environmental overview and verification | [Overview](docs/seva/ENVIRONMENT_OVERVIEW.md) |
 | Hosting and clean/custom domains | [Hosting guide](docs/HOSTING.md) |

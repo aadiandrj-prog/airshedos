@@ -55,6 +55,24 @@ The public experience is at [the clean home](https://airshedos.vercel.app/) and
 [explorer](https://airshedos.vercel.app/explore). Private reviewer/worker/cleanup/media
 readiness is separate. See [full evidence](FINAL_EXPERIENCE.md).
 
+## Live Google Map and illustrative plume release
+
+[PR #18](https://github.com/aadiandrj-prog/airshedos/pull/18) merged source 3e1a7d6 as
+bb33da4 after all exact-head and merge-preview jobs passed: 684 backend, 8 identity/proxy,
+5 calculation tests, 18 public/resident/reviewer journeys in development and production
+HTTPS, 62 legacy browser tests and contracts/lint/type/build/Ruff/secrets. The owner saved
+the dedicated browser key/public-map flag in Vercel Production and Preview; private map
+approval remains separate. Vercel Production succeeded.
+
+A fresh production browser at ~23:46 IST verified real Google tiles and actual calculated
+GroundOverlay add/update/calm suppression/reset/removal, recenter/NASA toggles, forecast
+placement and crosswind graph. One explicit synthetic-public-location request returned
+all four provider branches live; controls made no additional source request. Anonymous
+private access remained 401. No real device location, source payload or Google imagery
+was saved. N=1 is not operating capacity or incident accuracy evidence. The public feature
+is live at [/explore](https://airshedos.vercel.app/explore); no new API/database/auth/paid
+hosting setup was required. See [implementation and release evidence](PLUME_MAP.md).
+
 ## Earlier publication and probe history
 
 Published application foundation: `6d95f5db0336c614a9cae4e8d014138472e734cb`.
