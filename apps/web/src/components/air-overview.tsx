@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { components } from "../lib/api-schema";
 import { FireRadar, ForecastChart } from "./air-visuals";
+import { PlumeWorkbench } from "./plume-workbench";
 
 type Overview = components["schemas"]["Overview"];
 type Measurement = components["schemas"]["Measurement"];
@@ -94,8 +95,12 @@ export function AirOverview({ embedded = false }: { embedded?: boolean }) {
     {!data && !loading && !error && <section className="air-empty"><div className="air-orbit" aria-hidden="true"><span /><span /><span /><i /></div><div><p className="kicker">Your surroundings, brought into focus</p><EmptyHeading>Four sources of context.<br />One place to explore.</EmptyHeading><p>Readings appear after you request them. Source times, missing data and uncertainty stay visible.</p><div className="air-source-pills"><span>Air quality</span><span>Weather</span><span>NASA FIRMS</span><span>Provider forecast</span></div></div></section>}
     {data && <div className="air-results" aria-live="polite">
       <div className="air-result-heading"><div><p className="kicker">Your environmental briefing</p><h2>{data.area.name}</h2><p>{data.area.note}</p></div><p>Checked {time(data.context.generated_at)}<br />Expires {time(data.expires_at)}</p></div>
-      <nav className="air-jump" aria-label="Environmental sections"><a href="#air-conditions">Conditions</a><a href="#air-forecast">Hourly forecast</a><a href="#air-fires">Fire activity</a><a href="#air-sources">Sources & limits</a></nav>
+      <nav className="air-jump" aria-label="Environmental sections"><a href="#air-forecast">Forecast graph</a><a href="#air-map">Google Map & plume</a><a href="#air-conditions">Conditions</a><a href="#air-fires">Fire activity</a><a href="#air-sources">Sources & limits</a></nav>
       <div className="air-grid">
+        <section id="air-forecast" className="air-card air-wide air-forecast"><ForecastChart forecast={data.forecast} /><h3>Next 6, 12 and 24 hours</h3><div className="air-horizons">{([6, 12, 24] as const).map(h => { const s = data.forecast.summaries.find(v => v.horizon_hours === h); return <div key={h}><h4>Next {h} hours</h4><strong>{quantity(s?.max_pm25)}</strong><p>Peak PM2.5 in this window</p><p>Worst CPCB AQI: {s?.max_cpcb_aqi ?? "Not supplied"}</p><p>Coverage: {s?.available_hours ?? 0}/{h} hours · {s?.coverage ?? "none"}</p>{s?.outlook && <p>Compared with current PM2.5: {s.outlook.toLowerCase().replaceAll("_", " ")}</p>}</div>; })}</div>
+          <Status source={data.forecast.provider_status} /><p className="air-help">Window peaks, not readings at the end of each window. Partial coverage can miss a higher peak. Issuance time: {time(data.forecast.issued_at)}.</p><p className="air-help">{data.forecast.independence_note}</p><GoogleCredit />
+        </section>
+        <PlumeWorkbench data={data} />
         <section id="air-conditions" className="air-card air-aqi"><p className="kicker">01 / Air quality</p><h3>{index?.display_name ?? "Current AQI"}</h3><p className="air-reading">{index?.value?.toLocaleString("en-IN") ?? "—"}</p><p className="air-category">{index?.category ?? "No usable index returned"}</p>{index && <p className="air-help">Index: {index.code} · dominant pollutant: {index.dominant_pollutant ?? "Not supplied"}</p>}
           <Status source={data.context.source_statuses.air_quality} /><p className="air-help">Observation: {time(aq?.observed_at)}. Provider estimate, not a new monitoring station.</p><GoogleCredit />
         </section>
@@ -103,9 +108,6 @@ export function AirOverview({ embedded = false }: { embedded?: boolean }) {
           <Status source={data.context.source_statuses.weather} /><p className="air-help">Observation: {time(weather?.observed_at)}</p><GoogleCredit weather />
         </section>
         <section className="air-card air-wide"><p className="kicker">What is in the reading</p><h3>Pollutants, in their source units.</h3><div className="air-pollutants">{aq?.pollutants.length ? aq.pollutants.map(p => <div key={p.code}><strong>{p.name ?? p.code}</strong><span>{quantity(p.concentration)}</span></div>) : <p>Pollutant concentrations are unavailable for this response.</p>}</div><GoogleCredit /></section>
-        <section id="air-forecast" className="air-card air-wide air-forecast"><ForecastChart forecast={data.forecast} /><h3>Next 6, 12 and 24 hours</h3><div className="air-horizons">{([6, 12, 24] as const).map(h => { const s = data.forecast.summaries.find(v => v.horizon_hours === h); return <div key={h}><h4>Next {h} hours</h4><strong>{quantity(s?.max_pm25)}</strong><p>Peak PM2.5 in this window</p><p>Worst CPCB AQI: {s?.max_cpcb_aqi ?? "Not supplied"}</p><p>Coverage: {s?.available_hours ?? 0}/{h} hours · {s?.coverage ?? "none"}</p>{s?.outlook && <p>Compared with current PM2.5: {s.outlook.toLowerCase().replaceAll("_", " ")}</p>}</div>; })}</div>
-          <Status source={data.forecast.provider_status} /><p className="air-help">Window peaks, not readings at the end of each window. Partial coverage can miss a higher peak. Issuance time: {time(data.forecast.issued_at)}.</p><p className="air-help">{data.forecast.independence_note}</p><GoogleCredit />
-        </section>
         <section id="air-fires" className="air-card air-wide"><p className="kicker">03 / NASA FIRMS · {data.context.fire_dataset}</p><div className="air-panel-heading"><div><h3>Nearby active-fire detections</h3><p>Returned within {data.context.fire_search_radius_km} km · {data.context.fire_window_days}-day search window</p></div><p className="air-reading">{fires == null ? "—" : data.returned_fire_count}</p></div>
           <FireRadar context={data.context} /><Status source={data.context.source_statuses.fires} />
           {fires?.length === 0 && <p>No nearby detections returned for this window. This does not rule out pollution.</p>}

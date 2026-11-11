@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 const rootEnv = resolve(process.cwd(), "../../.env");
 const lines = existsSync(rootEnv) ? readFileSync(rootEnv, "utf8").split(/\r?\n/) : [];
 const publicEnv: Record<string, string> = {};
-for (const name of ["NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY", "NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID", "NEXT_PUBLIC_PILOT_MAPS_APPROVED"]) {
+for (const name of ["NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY", "NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID", "NEXT_PUBLIC_PILOT_MAPS_APPROVED", "NEXT_PUBLIC_EXPLORE_MAPS_ENABLED"]) {
   const line = lines.find((entry) => entry.startsWith(`${name}=`));
   publicEnv[name] = process.env[name] ?? line?.slice(name.length + 1).trim().replace(/^['"]|['"]$/g, "") ?? "";
 }

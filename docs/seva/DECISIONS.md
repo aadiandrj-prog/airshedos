@@ -332,3 +332,16 @@ Normal private policies remain. Existing forecasts support charts without a scie
 pipeline fork; NASA-only schematic positions require no new maps service. Visual references
 inform colour/composition only, not unsupported capabilities or achievements. See
 [FINAL_EXPERIENCE.md](FINAL_EXPERIENCE.md) for exact behaviour, verification and release.
+
+
+## Graph and Google plume-map extension
+
+11 November 2026. The owner explicitly requested Gaussian mapping and an interactive
+Google Map during exploration. Permit a browser-only, visibly illustrative Gaussian
+scenario using disclosed hypothetical source/mixing parameters; it must never enter
+case evidence, support rules, official decisions or the accepted forecasting pipeline.
+Keep the Google forecast graph independent and move it to the top. Use a dedicated
+public explorer Maps flag/key; private map approval remains unchanged. Real basemap,
+NASA detection and hypothetical layers have distinct meanings and controls. No actual
+source/rate, predictive validation, arrival time, confidence or safety boundary is claimed.
+See [PLUME_MAP.md](PLUME_MAP.md) for equation, tests, data handling, cost boundary and release.
