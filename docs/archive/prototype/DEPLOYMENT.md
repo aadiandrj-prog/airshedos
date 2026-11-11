@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Earlier Cloud Run deployment proposal
 
 > The current requested hosting target is Vercel + Render, with an empty Neon database. See [HOSTING.md](HOSTING.md) for the current deployment status. The proposal below records the earlier Cloud Run option; it is not the active deployment plan.

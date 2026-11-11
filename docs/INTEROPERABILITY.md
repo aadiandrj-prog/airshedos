@@ -106,7 +106,7 @@ With local configured Docker services running, the optional developer-only gate 
 node apps/web/scripts/verify-handoff.mjs
 ```
 
-It submits the synthetic image, corroborates with configured providers, begins review, sends HARYANA → DELHI, receives/accepts, verifies unchanged case/payload/audit prefix, confirms no provider reruns, validates exported SHA-256 and checks live map/mobile behavior. It writes sanitized results, canonical export and screenshots under gitignored `data/verification`. It is never run in CI. CI uses sanitized fixtures and mocked Maps/providers only. See [Phase 3B verification](PHASE_3B_VERIFICATION.md).
+It submits the synthetic image, corroborates with configured providers, begins review, sends HARYANA → DELHI, receives/accepts, verifies unchanged case/payload/audit prefix, confirms no provider reruns, validates exported SHA-256 and checks live map/mobile behavior. It writes sanitized results, canonical export and screenshots under gitignored `data/verification`. It is never run in CI. CI uses sanitized fixtures and mocked Maps/providers only. See [Phase 3B verification](archive/prototype/PHASE_3B_VERIFICATION.md).
 
 ## Before any real deployment — requirements only
 
@@ -125,4 +125,4 @@ The standalone [JSON Schema](contracts/pollution_event_v1.schema.json) is genera
 
 JSON Schema does not encode every Pydantic cross-field/scientific validator. The example independently checks top-level frozen timestamps, source/report relationships, review state and integer versions; it does not rerun scientific rules, validate the truth of provider claims or establish provenance authenticity. Matching bytes/schema is therefore a receiving-contract check, not permission to act on a real allegation. Do not calculate the expected hash from the received file itself and call that trusted comparison. Export/validation is not an import capability.
 
-See [the practical commands](DEMO_CHECKLIST.md) and [final verification](PHASE_3C_VERIFICATION.md). Optional import and all production identity/durability requirements remain deferred.
+See [the practical commands](archive/prototype/DEMO_CHECKLIST.md) and [final verification](archive/prototype/PHASE_3C_VERIFICATION.md). Optional import and all production identity/durability requirements remain deferred.

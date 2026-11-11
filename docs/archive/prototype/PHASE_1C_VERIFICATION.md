@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 1C verification — final metadata diagnostic passed
 
 Updated 12 September 2026. **Diagnostic verdict B: a technically incorrect metadata predicate was corrected using authenticated Earth Engine scene properties and the official product manual.** Authenticated satellite query, cache and Phase 1B gates now pass. Scientific QA was not weakened to obtain values. Local regression results and final CI are recorded below; merging remains a human decision. The 11 September records are retained as historical evidence, not current blockers.
@@ -18,7 +20,7 @@ Official `earthengine-api` 1.7.43; backend Application Default Credentials resol
 | CO | `COPERNICUS/S5P/NRTI/L3_CO` | `CO_column_number_density` | `mol/m²` |
 | UV Aerosol Index | `COPERNICUS/S5P/NRTI/L3_AER_AI` | `absorbing_aerosol_index` | dimensionless |
 
-QA: preserve catalog-ingested pixel masks (documented thresholds 0.75/0.50/0.80 respectively), require documented nominal product quality spellings and product-specific processing metadata, mask column outliers below −0.001 mol/m², retain other negative columns and negative aerosol index. The L3 API has no original pixel QA band. The catalog's older >50 example commands differ from its stated ingestion thresholds; no per-pixel QA audit is claimed. See [exact rules and official sources](DATA_SOURCES.md#earth-engine--sentinel-5p).
+QA: preserve catalog-ingested pixel masks (documented thresholds 0.75/0.50/0.80 respectively), require documented nominal product quality spellings and product-specific processing metadata, mask column outliers below −0.001 mol/m², retain other negative columns and negative aerosol index. The L3 API has no original pixel QA band. The catalog's older >50 example commands differ from its stated ingestion thresholds; no per-pixel QA audit is claimed. See [exact rules and official sources](../../DATA_SOURCES.md#earth-engine--sentinel-5p).
 
 Query: 10 km buffered point, center rounded to four decimals, default 72-hour window ending at the current UTC hour; explicit `at` uses the exact supplied end. Mean/count reduction at the catalog's 1,113.2 m grid; grid cells are not native footprints. Filter unusable scenes/reductions before choosing the newest by acquisition timestamp. Each product retains its own timestamp, scene/image ID, source product ID, QA, native footprint if supplied, retrieval time, age and provenance. No averaging across scenes or products.
 
@@ -49,11 +51,11 @@ Actual request: **2026-09-11 16:07:35 UTC**. Default satellite window: **2026-09
 
 Local configuration check latency: **0.08 ms**; product latency fields are 0 because no RPC was attempted. **Authenticated Earth Engine latency and Gurugram coverage are unknown.** This is not `no_scene` or a verified empty observation. The script correctly exits **2** for the unmet satellite gate. Project identifiers, ADC configuration/file and Cloud CLI were absent at inspection; no service account or long-lived credential was created.
 
-A final satellite-only rerun at **2026-09-11T16:27:42.605338Z** also returned `not_configured`, with **0 product queries** before/after the cache check and **0.12 ms** local handling. See [final satellite gate output](verification/phase1c-satellite-final.json). It exited 2; no remote Earth Engine request occurred.
+A final satellite-only rerun at **2026-09-11T16:27:42.605338Z** also returned `not_configured`, with **0 product queries** before/after the cache check and **0.12 ms** local handling. See [final satellite gate output](../../verification/phase1c-satellite-final.json). It exited 2; no remote Earth Engine request occurred.
 
 The same full run reverified Phase 1B: AQ **LIVE, 2,706.97 ms**; Weather **LIVE, 1,997.75 ms**; NOAA-20 FIRMS **LIVE, 2,367.39 ms**. All three returned HTTP 200. Cache reuse preserved times/provenance and caused no additional HTTP responses (3 first / 3 final). Disabling Weather in the local verification service preserved cached AQ/FIRMS. Both Phase 1B gates passed. The original adapters were not modified.
 
-Sanitized evidence: [Gurugram result](verification/phase1c-gurugram.json). Browser screenshots are **synthetic test evidence**, not live observations: [desktop](screenshots/phase-1c-synthetic-desktop.png), [mobile](screenshots/phase-1c-synthetic-mobile.png).
+Sanitized evidence: [Gurugram result](../../verification/phase1c-gurugram.json). Browser screenshots are **synthetic test evidence**, not live observations: [desktop](../../screenshots/phase-1c-synthetic-desktop.png), [mobile](../../screenshots/phase-1c-synthetic-mobile.png).
 
 ## Original implementation checks — 11 September 2026
 
@@ -103,7 +105,7 @@ The provider consults **`PRODUCT_QUALITY`** and **`PROCESSING_STATUS`**, with ex
 | CO | 4 | `NOMINAL` | `Nominal` | Product-quality casing only; processing predicate passed |
 | UV Aerosol Index | 3 | `NOMINAL` | `Nominal` | Product-quality casing only; processing predicate passed |
 
-Each inspected image is recorded below. Full IDs, timestamps, exact property values/presence, old expected values, individual rejection reasons and corrected predicate evaluations are in [the sanitized metadata artifact](verification/phase1c-metadata-diagnostic.json). “Pass after” means the scene-level predicate passes, not a claim about every pixel.
+Each inspected image is recorded below. Full IDs, timestamps, exact property values/presence, old expected values, individual rejection reasons and corrected predicate evaluations are in [the sanitized metadata artifact](../../verification/phase1c-metadata-diagnostic.json). “Pass after” means the scene-level predicate passes, not a claim about every pixel.
 
 | Product / full image ID | Acquisition UTC | Old predicate | Corrected predicate |
 | --- | --- | --- | --- |
@@ -152,7 +154,7 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 \
 
 Satellite total latency **10,759.15 ms**, subsequent cached response **0.68 ms**. The NO₂ timing includes lazy ADC/SDK initialization. Product-query calls remain **3 → 3**, with acquisition/retrieval times, values and provenance unchanged on cache reuse. Satellite units are not ground concentrations or AQI.
 
-Phase 1B revalidation: Google AQ **LIVE (1,855.70 ms)**, Weather **LIVE (1,454.13 ms)**, NOAA-20 FIRMS **LIVE (1,633.40 ms)**; all HTTP 200. Cache and controlled Weather-disabled partial response passed, with **3 → 3** outbound HTTP responses. Full sanitized observations, scene IDs, QA, source timestamps and gate results: [authenticated diagnostic gate](verification/phase1c-authenticated-diagnostic-gate.json).
+Phase 1B revalidation: Google AQ **LIVE (1,855.70 ms)**, Weather **LIVE (1,454.13 ms)**, NOAA-20 FIRMS **LIVE (1,633.40 ms)**; all HTTP 200. Cache and controlled Weather-disabled partial response passed, with **3 → 3** outbound HTTP responses. Full sanitized observations, scene IDs, QA, source timestamps and gate results: [authenticated diagnostic gate](../../verification/phase1c-authenticated-diagnostic-gate.json).
 
 ### Final regression and disposition
 

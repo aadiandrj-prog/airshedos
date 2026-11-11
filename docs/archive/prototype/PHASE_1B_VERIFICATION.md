@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 1B delivery and live verification
 
 **Overall gate: PASS. Implementation verified and live providers verified.**
@@ -50,9 +52,9 @@ A separate real browser probe at **2026-09-11T10:02:46.101684Z** returned API HT
 
 The browser probe crossed the hourly AQ update boundary after the manual gate: it displayed Universal AQI **48** and PM2.5 **36.37 µg/m³** at observation time **2026-09-11T10:00:00Z**. This is a later provider observation, not a substituted index or inconsistent normalization.
 
-- [Live context, desktop with source timing expanded](screenshots/phase-1b-live-context.png)
-- [Full command center, live desktop](screenshots/phase-1b-live-desktop.png)
-- [Full command center, cached mobile refresh](screenshots/phase-1b-live-mobile.png)
+- [Live context, desktop with source timing expanded](../../screenshots/phase-1b-live-context.png)
+- [Full command center, live desktop](../../screenshots/phase-1b-live-desktop.png)
+- [Full command center, cached mobile refresh](../../screenshots/phase-1b-live-mobile.png)
 
 These new captures contain real timestamped observations. Earlier `mocked` screenshots remain explicitly synthetic, and earlier unconfigured screenshots remain historical. Regression screenshots now go to ignored `apps/web/test-results` so automated tests do not overwrite curated evidence.
 

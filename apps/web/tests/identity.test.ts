@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { SessionData } from "@auth0/nextjs-auth0/types";
 import { managedClient } from "../src/server/auth-client";
 import { PostgresSessionStore } from "../src/server/session-store";
-import { identitySettings, safeReturnTo, type IdentitySettings } from "../src/server/settings";
+import { identitySettings, missingIdentityVariables, requiredIdentityVariables, safeReturnTo, type IdentitySettings } from "../src/server/settings";
 import { boundedBody, needsAccessToken, permittedUpstream, validMutation } from "../src/server/security";
 import { forwardApi } from "../src/server/gateway";
 import { logoutSession } from "../src/server/logout";
@@ -32,6 +32,17 @@ const data = (subject = "session-test-" + randomBytes(8).toString("hex")): Sessi
   user: { sub: subject }, tokenSet: { accessToken: "synthetic-access-token-" + randomBytes(8).toString("hex"),
     refreshToken: "synthetic-refresh-token", expiresAt: Math.floor(Date.now()/1000) + 600 },
   internal: { sid: randomBytes(16).toString("hex"), createdAt: Math.floor(Date.now()/1000) },
+});
+
+test("missing identity diagnostics contain names only and require the API audience", () => {
+  const privateValue = "synthetic-private-value-never-diagnosed";
+  const env = Object.fromEntries(requiredIdentityVariables.map((name) => [name, privateValue]));
+  delete env.AUTH0_AUDIENCE;
+  delete env.SESSION_DATABASE_URL;
+  const missing = missingIdentityVariables(env);
+  assert.deepEqual(missing, ["SESSION_DATABASE_URL", "AUTH0_AUDIENCE"]);
+  assert(!JSON.stringify(missing).includes(privateValue));
+  assert.equal(identitySettings(env), null);
 });
 after(async () => { await Promise.all(stores.map((store) => store.pool.end())); });
 

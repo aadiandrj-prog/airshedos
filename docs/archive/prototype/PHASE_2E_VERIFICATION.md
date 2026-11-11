@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 2E verification — Google operational forecast
 
 Date: 16 September 2026. Scope: official provider forecast only. Phase 2D remains **MODEL_NOT_ACCEPTED**; no custom model is deployed. Its selection code, negative result and locked November–December test artifacts were not modified or reopened. No Phase 3 work began.
@@ -6,7 +8,7 @@ Date: 16 September 2026. Scope: official provider forecast only. Phase 2D remain
 
 A backend Google forecast adapter shares existing secure key handling, HTTP failure conventions and bounded cache infrastructure. The new `/api/v1/environment/forecast` endpoint serves 6/12/24-hour summaries from a canonical 24-hour batch. `CorroborationAssessment.forecast_outlook` is optional and attached after assessment; rules, source votes, support level and next-step advice do not consume forecast data. The existing current-context endpoint is unchanged. A shared frontend Forecast Outlook appears independently in the coordinate probe and after the citizen assessment. OpenAPI remains the source of frontend types.
 
-[FORECASTING.md](FORECASTING.md) documents the precise API, native units, UTC times, thresholds, coverage/current-age requirements, provider attribution, 900-second cache and limitations. No new dependencies, database, trained prediction route, Vertex resource or model selection was introduced. The optional recorder/operational-priority concepts were intentionally omitted.
+[FORECASTING.md](../../FORECASTING.md) documents the precise API, native units, UTC times, thresholds, coverage/current-age requirements, provider attribution, 900-second cache and limitations. No new dependencies, database, trained prediction route, Vertex resource or model selection was introduced. The optional recorder/operational-priority concepts were intentionally omitted.
 
 ## Genuine Gurugram gate
 

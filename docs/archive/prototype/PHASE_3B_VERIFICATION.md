@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 3B verification — simulated jurisdiction handoff
 
 ## Scope and baseline
@@ -16,7 +18,7 @@ Phase 2D remains **MODEL_NOT_ACCEPTED**. No model deployment, renewed model sear
 - Existing command center gains a composer, prototype inbox, review panel and JSON export. Incoming selection maps the frozen report coordinate; keyboard/mobile/text fallback remain available.
 - Focused create/list/detail/transition/export API. All pre-existing OpenAPI paths and component schemas were compared structurally and are unchanged. The regenerated contract remains the frontend type source.
 
-Full field semantics, routes, versioning/canonicalization, boundary source limitations, expiry and deferred production requirements are in [INTEROPERABILITY.md](INTEROPERABILITY.md).
+Full field semantics, routes, versioning/canonicalization, boundary source limitations, expiry and deferred production requirements are in [INTEROPERABILITY.md](../../INTEROPERABILITY.md).
 
 ## Automated verification
 

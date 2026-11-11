@@ -1,6 +1,6 @@
 # Phase 2C historical prediction data contract
 
-Phase 2C provides an offline, reproducible data pipeline. Real acceptance results and acceptance checks are recorded in [PHASE_2C_VERIFICATION.md](PHASE_2C_VERIFICATION.md). No model is trained, no Vertex job is submitted, and no runtime environmental, citizen-evidence, corroboration or forecast UI behavior is changed.
+Phase 2C provides an offline, reproducible data pipeline. Real acceptance results and acceptance checks are recorded in [PHASE_2C_VERIFICATION.md](archive/prototype/PHASE_2C_VERIFICATION.md). No model is trained, no Vertex job is submitted, and no runtime environmental, citizen-evidence, corroboration or forecast UI behavior is changed.
 
 ## Two explicit feature profiles
 

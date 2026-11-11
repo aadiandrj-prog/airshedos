@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Phase 1A verification
 
 Verified locally on 10 September 2026. Phase 1B was not started.
@@ -49,8 +51,8 @@ Browser verification starts against a fresh API for the final acceptance run, so
 
 ## UI artifacts
 
-- [Desktop command center](screenshots/command-center-desktop.png)
-- [Mobile command center](screenshots/command-center-mobile.png)
+- [Desktop command center](../../screenshots/command-center-desktop.png)
+- [Mobile command center](../../screenshots/command-center-mobile.png)
 
 The page has a dark operations header, clear demo notice, compact incident summary, geographic schematic, priority incident details and actions, six-hour risk card, expandable evidence/provenance rows, and a session action record.
 

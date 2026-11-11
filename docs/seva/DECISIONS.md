@@ -67,7 +67,7 @@ explicitly ordered report then case, followed by rechecking membership under loc
 
 ## ADR-001 — One selected checkout and a local phase branch
 
-Use `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+Use `<authorised AirshedOS checkout>`.
 Baseline HEAD is `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`, with no tracked
 modifications at entry. It includes remote main `142dfc1`; remote main was read
 again this session. Its additional commit records provider recovery. No source

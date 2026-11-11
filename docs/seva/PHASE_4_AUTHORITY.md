@@ -5,7 +5,7 @@ Status: **COMPLETE_LOCALLY_VERIFIED; external/live gates pending**. This is loca
 
 ## Source and scope
 
-Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+Selected checkout: `<authorised AirshedOS checkout>`.
 Actual HEAD remains `6f071afd10f0ffed024448ac87d3bfae9ec8abc4` on
 `codex/seva-phase-4`. All Phase 0–4 work remains uncommitted, preserving unrelated
 presentation/output artifacts. The requested pause was honored and implementation

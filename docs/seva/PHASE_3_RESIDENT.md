@@ -6,7 +6,7 @@ Implementation is local; no claim that this code is deployed.
 
 ## Checkout and boundary
 
-Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+Selected checkout: `<authorised AirshedOS checkout>`.
 Actual HEAD remains `6f071afd10f0ffed024448ac87d3bfae9ec8abc4` on
 `codex/seva-phase-3`. The branch preserves the uncommitted Phase 0–2 implementation
 and unrelated untracked presentation/output artifacts. No checkout was reset,

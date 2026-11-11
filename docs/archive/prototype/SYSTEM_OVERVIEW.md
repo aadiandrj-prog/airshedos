@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # AirshedOS — final prototype overview
 
 AirshedOS helps an environmental control-room officer review a reported event, inspect supporting context and share a structured case packet with a **simulated** neighbouring jurisdiction.
@@ -16,4 +18,4 @@ AirshedOS helps an environmental control-room officer review a reported event, i
 
 The Next.js/TypeScript browser uses OpenAPI-generated types from FastAPI. Server credentials stay backend-only; Google Maps uses a separate browser-restricted key. The current verified deployment is local Docker. Public deployment is prepared but unprovisioned and requires separate authorization and risk review.
 
-[Diagram source](architecture.mmd) · [Demo checklist](DEMO_CHECKLIST.md) · [Receiver contract](INTEROPERABILITY.md) · [Deployment readiness](DEPLOYMENT.md) · [Final verification](PHASE_3C_VERIFICATION.md)
+[Diagram source](../../architecture.mmd) · [Demo checklist](DEMO_CHECKLIST.md) · [Receiver contract](../../INTEROPERABILITY.md) · [Deployment readiness](DEPLOYMENT.md) · [Final verification](PHASE_3C_VERIFICATION.md)

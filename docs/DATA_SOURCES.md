@@ -22,7 +22,7 @@ now requires an owned accepted report in an approved unit; pre-submit lookup mak
 provider call. Pilot maps require explicit
 build-time third-party location-processing approval, even if a public Maps key exists.
 
-Current implementations use backend-only HTTP requests and the official Earth Engine Python SDK. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
+Current implementations use backend-only HTTP requests and the official Earth Engine Python SDK. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](archive/prototype/PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
 
 ## Configuration
 
@@ -83,13 +83,13 @@ python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266
 python scripts/verify_environment_sources.py --lat 28.4595 --lng 77.0266 --gate --json
 ```
 
-The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. The optional `--gate` makes a second identical request, verifies no additional outbound responses and unchanged observation/provenance data, then disables Weather only in that local service instance to check partial success. It prints a PASS/FAIL result (nonzero exit on gate failure) without altering `.env` or provider services. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](PHASE_1B_VERIFICATION.md) for the actual delivery result.
+The concise output reports actual request time, provider states, latency and representative values when available. JSON includes full normalized observations and provenance. The optional `--gate` makes a second identical request, verifies no additional outbound responses and unchanged observation/provenance data, then disables Weather only in that local service instance to check partial success. It prints a PASS/FAIL result (nonzero exit on gate failure) without altering `.env` or provider services. No secrets are printed. This command is excluded from CI; automated tests clear credentials and reject real HTTP transport. See [Phase 1B verification](archive/prototype/PHASE_1B_VERIFICATION.md) for the actual delivery result.
 
 Vertex AI prediction, historical storage, custom AQI conversion, Google Maps, jurisdiction interoperability and pollution-source attribution remain future work. Gemini visual interpretation is implemented; Phase 2B joins it through deterministic corroboration, with no probability scoring.
 
 ## Earth Engine / Sentinel-5P
 
-Satellite atmospheric evidence is implemented in Phase 1C. Authentication and live coverage results are tracked in [Phase 1C verification](PHASE_1C_VERIFICATION.md); Phase 1B’s live success is not evidence that Earth Engine works.
+Satellite atmospheric evidence is implemented in Phase 1C. Authentication and live coverage results are tracked in [Phase 1C verification](archive/prototype/PHASE_1C_VERIFICATION.md); Phase 1B’s live success is not evidence that Earth Engine works.
 
 ### Backend authentication
 
@@ -173,7 +173,7 @@ This reports query/configuration status, each product's native value/unit, acqui
 
 The [authenticated scene inspection](verification/phase1c-metadata-diagnostic.json) found uppercase `NOMINAL` for all 11 Gurugram NRTI candidates. NO₂ processing metadata was `NRTI-processing product`; CO/Aerosol Index processing metadata was `Nominal`. No consulted property was missing. The catalog's generic title-case Nominal/Degraded descriptions do not enumerate those actual source strings correctly.
 
-The [official NO₂ Product User Manual v4.5.0](https://sentiwiki.copernicus.eu/__attachments/1673595/S5P-KNMI-L2-0021-MA%20-%20Sentinel-5P%20Level%202%20Product%20User%20Manual%20Nitrogendioxide%202025-4.5.0.pdf?inst-v=48f4e5b4-21dc-4a3c-b262-15dde094f6bd), pp. 37 and 143, defines the NRTI processing label as a production mode and the uppercase nominal quality enum. The predicate therefore accepts these exact source strings, retaining the catalog-described Nominal forms for compatibility. It does not treat arbitrary processing strings as usable or admit the NO₂ processing mode for other products. Pixel masks, QA thresholds, outlier cutoff, geometry, time window and reducer are unchanged. See [the final diagnostic](PHASE_1C_VERIFICATION.md#final-metadata-diagnostic--12-september-2026).
+The [official NO₂ Product User Manual v4.5.0](https://sentiwiki.copernicus.eu/__attachments/1673595/S5P-KNMI-L2-0021-MA%20-%20Sentinel-5P%20Level%202%20Product%20User%20Manual%20Nitrogendioxide%202025-4.5.0.pdf?inst-v=48f4e5b4-21dc-4a3c-b262-15dde094f6bd), pp. 37 and 143, defines the NRTI processing label as a production mode and the uppercase nominal quality enum. The predicate therefore accepts these exact source strings, retaining the catalog-described Nominal forms for compatibility. It does not treat arbitrary processing strings as usable or admit the NO₂ processing mode for other products. Pixel masks, QA thresholds, outlier cutoff, geometry, time window and reducer are unchanged. See [the final diagnostic](archive/prototype/PHASE_1C_VERIFICATION.md#final-metadata-diagnostic--12-september-2026).
 
 
 ## Vertex Gemini — citizen visual interpretation (Phase 2A)
@@ -188,7 +188,7 @@ Native evidence is an image plus optional citizen text and user-supplied coordin
 
 Input: one JPEG/PNG, up to 5 MiB and 16 MP; no animated images. Inference uses at most 2048-pixel edges, 2,048 output tokens and one bounded request. The Gemini call performs no fusion and uses no explicit prompt cache or automatic retry. A separate Phase 2B operation uses temporary structured metadata for deterministic corroboration. Temporary multipart spools close during the request; image bytes are not retained by AirshedOS after processing. Google-side processing is governed by the project's cloud policies, not an application promise of zero cloud retention.
 
-[Evaluation images and prompts](../apps/api/scripts/citizen-evaluation/README.md) are synthetic, not reports about real places. The [Phase 2A verification record](PHASE_2A_VERIFICATION.md) separates actual Vertex calls from mock-based CI and records limitations honestly.
+[Evaluation images and prompts](../apps/api/scripts/citizen-evaluation/README.md) are synthetic, not reports about real places. The [Phase 2A verification record](archive/prototype/PHASE_2A_VERIFICATION.md) separates actual Vertex calls from mock-based CI and records limitations honestly.
 
 ## Phase 2B evidence joining
 

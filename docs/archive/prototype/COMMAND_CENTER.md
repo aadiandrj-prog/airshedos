@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # Spatial command center and simulated handoff
 
 AirshedOS helps an officer locate a reported event, inspect evidence, read Google's operational forecast, and record a manual review state. It does not establish source causality or dispatch an authority. No custom prediction model is deployed; Phase 2D remains `MODEL_NOT_ACCEPTED`.
@@ -95,7 +97,7 @@ In **Hand off case**, explicitly choose source control room, a different destina
 
 Incoming selection shows the frozen report coordinate on the existing map and in text. Keyboard controls, stacked mobile layout and map-failure fallback all apply. No boundary overlay, route animation or automatic destination selection is added. Expand frozen evidence/provenance, audit history or JSON preview; **Export PollutionEvent JSON** downloads the exact SHA-256-verified bytes.
 
-Handoff is independent from case review: ACCEPTED does not acknowledge the case, change support or refresh providers. The store holds 128 packets for one hour independently of source-case TTL and is lost on restart/eviction. Each audit is bounded to 128 entries; its actors are generic labels, not authenticated officers. All views explicitly say simulated/prototype. See [the complete contract and limitations](INTEROPERABILITY.md) and [verification](PHASE_3B_VERIFICATION.md). Import, authoritative boundaries and real authority integration are deferred; no Phase 3C work is included.
+Handoff is independent from case review: ACCEPTED does not acknowledge the case, change support or refresh providers. The store holds 128 packets for one hour independently of source-case TTL and is lost on restart/eviction. Each audit is bounded to 128 entries; its actors are generic labels, not authenticated officers. All views explicitly say simulated/prototype. See [the complete contract and limitations](../../INTEROPERABILITY.md) and [verification](PHASE_3B_VERIFICATION.md). Import, authoritative boundaries and real authority integration are deferred; no Phase 3C work is included.
 
 
 ## Finalization navigation and preparation (Phase 3C)

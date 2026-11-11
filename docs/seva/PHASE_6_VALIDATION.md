@@ -1,7 +1,7 @@
 # Phase 6 — evaluation and pilot readiness
 
 11 November 2026 (Asia/Calcutta). Local/private rehearsal; no hosted pilot rollout.
-Working checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+Working checkout: `<authorised AirshedOS checkout>`.
 Actual base/HEAD: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
 Branch: `codex/seva-phase-6`. Existing Phase 0–5 source work and unrelated presentation/output
 files were preserved. The initial inherited browser run regenerated its Phase 3

@@ -1,11 +1,11 @@
 # AirshedOS architecture
 
-## Local resident pilot — implementation phases 1–6
+## Resident and reviewer platform
 
-The current working tree also contains an explicit `APP_MODE=pilot` over the same
+The current application uses explicit `APP_MODE=pilot` over shared
 Next.js/FastAPI apps. Its implementation and live limits are recorded in
 [phase status](seva/PHASE_STATUS.md) and [resident implementation](seva/PHASE_3_RESIDENT.md).
-These local changes have not updated the deployed prototype.
+A separate hosted pilot API and database are configured; current sign-in and operating limits are tracked there.
 
 Managed Auth0 login uses Next.js server sessions sealed in PostgreSQL; the browser
 holds an opaque HttpOnly cookie. The same-origin allowlisted BFF applies CSRF checks,
@@ -63,7 +63,7 @@ The app factory creates fresh process-local repositories for each application in
 
 The repository provides list, detail, acknowledgment, and share operations. Acknowledgment is idempotent. Simulated sharing is idempotent per incident/target pair. Each successful mutation appends a structured action and updates the incident timestamp. Acknowledgment means an officer has seen the incident; it is not field verification, confirmation of a source, or resolution. No actions invoke third parties.
 
-`OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](COMMAND_CENTER.md).
+`OfficerCommandCenter` owns selected-workflow presentation. `SpatialMap` renders only a report/demo/probe and returned FIRMS detections through Google Maps JavaScript Advanced Markers. The SDK is loaded once; marker selection changes local detail state without source requests. A dedicated browser-restricted key is the only Maps credential exposed to the frontend. Text alternatives and review remain available after map failure. See [COMMAND_CENTER.md](archive/prototype/COMMAND_CENTER.md).
 
 ## Legacy fictional incident domain
 
@@ -187,7 +187,7 @@ The generated OpenAPI contract owns frontend types. The keyed CorroborationCard 
 
 The selection path is source/contract hash verification → filtered training/October snapshots → three purged training-only CV folds → twelve serious validation candidates → immutable go/no-go decision. October macro-station MAE is primary; preprocessing and station weights use fitting rows only. A distinct guarded evaluator can reserve one final test access only after a qualifying decision and matching artifact hashes. Research inputs are prohibited in the primary feature allowlist.
 
-The actual Phase 2D outcome is **MODEL_NOT_ACCEPTED**. The pipeline stopped after all candidates failed October baseline gates. No candidate test evaluation, final model bundle, Vertex training job, online endpoint or forecast UI change followed. Read-only cloud preflight confirmed Vertex access but found no GCS bucket and a disabled Artifact Registry API; it created no resources. The runtime diagram and its existing demo forecast remain unchanged. See [PREDICTION_MODEL.md](PREDICTION_MODEL.md) for the conditional availability contract and [PHASE_2D_VERIFICATION.md](PHASE_2D_VERIFICATION.md) for negative results and deferred downstream gates.
+The actual Phase 2D outcome is **MODEL_NOT_ACCEPTED**. The pipeline stopped after all candidates failed October baseline gates. No candidate test evaluation, final model bundle, Vertex training job, online endpoint or forecast UI change followed. Read-only cloud preflight confirmed Vertex access but found no GCS bucket and a disabled Artifact Registry API; it created no resources. The runtime diagram and its existing demo forecast remain unchanged. See [PREDICTION_MODEL.md](PREDICTION_MODEL.md) for the conditional availability contract and [PHASE_2D_VERIFICATION.md](archive/prototype/PHASE_2D_VERIFICATION.md) for negative results and deferred downstream gates.
 
 
 ## Google operational outlook (Phase 2E)
@@ -256,4 +256,4 @@ The product and `pollution_event_v1` wire contract are unchanged. Targeted UI co
 
 `demo_preflight.py` reports health/configuration and optionally performs genuine provider queries. It never changes credentials or seeds provider results. The existing browser verifier's `--final` mode runs the same synthetic journey, records timings, invokes the isolated receiver, and measures a separately identified cached-corroboration diagnostic. There is no public reset endpoint; a documented local API restart deliberately resets ephemeral state/caches before preparation.
 
-Protected prior verification/model files are checksum-pinned in `contracts/protected-records.json` and tested for unchanged contents. Historical records describe their original phase; later merge status belongs to the later verification record. [Final diagram source](architecture.mmd), [judge-friendly overview](SYSTEM_OVERVIEW.md), [demo checklist](DEMO_CHECKLIST.md) and [deployment readiness](DEPLOYMENT.md) describe the current system. No public deployment or new capability is implied.
+Protected prior verification/model files are checksum-pinned in `contracts/protected-records.json` and tested for unchanged contents. Historical records describe their original phase; later merge status belongs to the later verification record. [Final diagram source](architecture.mmd), [judge-friendly overview](archive/prototype/SYSTEM_OVERVIEW.md), [demo checklist](archive/prototype/DEMO_CHECKLIST.md) and [deployment readiness](archive/prototype/DEPLOYMENT.md) describe the current system. No public deployment or new capability is implied.

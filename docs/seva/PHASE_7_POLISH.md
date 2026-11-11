@@ -1,7 +1,7 @@
 # Phase 7 — UI design and polish
 
 11 November 2026, Asia/Kolkata. Local implementation, no live deployment.
-Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+Selected checkout: `<authorised AirshedOS checkout>`.
 Base/HEAD: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`. Branch `codex/seva-phase-7`.
 Prior uncommitted Phase 0–6 changes and unrelated presentation/output files are preserved.
 No commit, push, paid provisioning, production migration, real-data collection or outreach.

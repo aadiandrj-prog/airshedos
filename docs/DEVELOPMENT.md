@@ -1,6 +1,6 @@
 # Developer setup
 
-For a plain-language introduction, start with the [README](../README.md). This guide covers local development; [HOSTING.md](HOSTING.md) covers the requested public hosting setup.
+For a plain-language introduction, start with the [README](../README.md). This guide covers local development; [HOSTING.md](archive/prototype/HOSTING.md) covers the requested public hosting setup.
 
 ## Prerequisites
 
@@ -60,7 +60,7 @@ For live providers, copy root `.env.example` to root `.env` and populate the nee
 | `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` | Separate browser-restricted Maps JavaScript API key |
 | `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Optional map ID |
 
-Gemini and Earth Engine also require backend Google Application Default Credentials (ADC); the Maps key does not authenticate them. Use `gcloud auth application-default login` for local development. See [provider setup](DATA_SOURCES.md) and [citizen evidence verification](PHASE_2A_VERIFICATION.md). Do not upload a personal ADC token cache to a hosting service.
+Gemini and Earth Engine also require backend Google Application Default Credentials (ADC); the Maps key does not authenticate them. Use `gcloud auth application-default login` for local development. See [provider setup](DATA_SOURCES.md) and [citizen evidence verification](archive/prototype/PHASE_2A_VERIFICATION.md). Do not upload a personal ADC token cache to a hosting service.
 
 `OPENAQ_API_KEY` and the dataset/model dependency locks are for separate offline research. They are not needed to run the app. The [dataset](PREDICTION_DATASET.md) and [model](PREDICTION_MODEL.md) records preserve the rejected research result.
 
@@ -119,7 +119,7 @@ From the repository root:
 python3 scripts/scan_secrets.py --include-build
 ```
 
-Manual live checks use the existing scripts in `apps/api/scripts` and `apps/web/scripts`. Follow [DEMO_CHECKLIST.md](DEMO_CHECKLIST.md) for preflight and the real synthetic-input rehearsal. These calls use actual provider quota; historical verification is not continuous monitoring.
+Manual live checks use the existing scripts in `apps/api/scripts` and `apps/web/scripts`. Follow [DEMO_CHECKLIST.md](archive/prototype/DEMO_CHECKLIST.md) for preflight and the real synthetic-input rehearsal. These calls use actual provider quota; historical verification is not continuous monitoring.
 
 ## Code and contracts
 

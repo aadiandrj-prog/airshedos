@@ -6,7 +6,7 @@ Decisions: [DECISIONS.md](DECISIONS.md).
 
 ## Source and scope
 
-- Selected checkout: `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+- Selected checkout: `<authorised AirshedOS checkout>`.
 - Audited base: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`.
 - Published deployment branch before the prerequisite follow-up: `e86abac66ac2efee269e8d45ee0c94942f65db4a`.
 - Local branch: `codex/seva-phase-7`, preserving the prior Phase 0–6 worktree.

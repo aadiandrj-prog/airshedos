@@ -1,3 +1,5 @@
+> Historical prototype record. Current setup: [project README](../../../README.md), [deployment status](../../seva/DEPLOYMENT_STATUS.md).
+
 # One repeatable demo journey
 
 Use the synthetic boundary-area journey below. It demonstrates live services around fictional input and a simulated workflow. Do not switch silently to fixture outputs when services fail. The legacy Phase 1A incident is preserved as a clearly labelled reference, not a second live journey.

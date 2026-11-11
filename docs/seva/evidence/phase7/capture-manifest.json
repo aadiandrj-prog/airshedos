@@ -239,5 +239,6 @@
     "screenshots/phase7/before/sign-in-mobile.png": "6613667c58a6d8fa049fdcc3067544f8fc0fbfe91f8f794a1e7be8c6a42f1396"
   },
   "fingerprint_scope": "Listed application source, browser tests, font assets and web package files; no secrets or unrelated user artifacts.",
-  "publication_note": "Removed one extra EOF blank line in gateway.ts before publication; no runtime behavior or screenshots changed."
+  "publication_note": "Removed one extra EOF blank line in gateway.ts before publication; no runtime behavior or screenshots changed.",
+  "later_operational_changes": "Repository cleanup and server-only identity configuration diagnostics were added after this visual capture. Recorded source hashes remain the historical capture inputs; no new screenshot run is claimed."
 }

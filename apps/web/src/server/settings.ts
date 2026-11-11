@@ -5,10 +5,16 @@ export type IdentitySettings = {
   secure: boolean;
 };
 
+export const requiredIdentityVariables = ["APP_BASE_URL", "BACKEND_API_BASE_URL", "AUTH0_DOMAIN",
+  "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET", "AUTH0_SECRET", "SESSION_ENCRYPTION_KEY",
+  "SESSION_DATABASE_URL", "AUTH0_AUDIENCE"] as const;
+
+export function missingIdentityVariables(env: Readonly<Record<string, string | undefined>> = process.env) {
+  return requiredIdentityVariables.filter((key) => !env[key]);
+}
+
 export function identitySettings(env: Readonly<Record<string, string | undefined>> = process.env): IdentitySettings | null {
-  const required = ["APP_BASE_URL", "BACKEND_API_BASE_URL", "AUTH0_DOMAIN", "AUTH0_CLIENT_ID",
-    "AUTH0_CLIENT_SECRET", "AUTH0_SECRET", "SESSION_ENCRYPTION_KEY", "SESSION_DATABASE_URL"];
-  if (required.some((key) => !env[key])) return null;
+  if (missingIdentityVariables(env).length) return null;
   const app = new URL(env.APP_BASE_URL!);
   const backend = new URL(env.BACKEND_API_BASE_URL!);
   const domain = new URL(env.AUTH0_DOMAIN!.startsWith("https://")

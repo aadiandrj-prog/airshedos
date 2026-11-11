@@ -6,7 +6,7 @@ separate from the October audit and September milestone records.
 ## Checkout and permitted change
 
 - Selected working checkout:
-  `/Users/aadityajain/Technical Assessments/Onboarding/Google Build Week`.
+  `<authorised AirshedOS checkout>`.
 - Source revision: `6f071afd10f0ffed024448ac87d3bfae9ec8abc4`, dated 26 September.
 - Entry branch: `codex/hosting-provider-verification`; tracked tree clean.
 - Phase branch: `codex/seva-phase-0`, created locally at that same revision.
@@ -29,7 +29,7 @@ these documents; it must not imply any new runtime feature is deployed.
 ## Inspected implementation
 
 Read current [architecture](../ARCHITECTURE.md), [data sources](../DATA_SOURCES.md),
-[development](../DEVELOPMENT.md), [hosting](../HOSTING.md), the API models/routers,
+[development](../DEVELOPMENT.md), [hosting](../archive/prototype/HOSTING.md), the API models/routers,
 repositories, provider service/forecast boundary, browser API client, CI, hosting
 configuration and generated contracts. Principal implementation facts:
 
