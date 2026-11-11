@@ -1,5 +1,7 @@
 # Vercel, Render and Neon
 
+**11 November 2026 update:** the September observations below describe the existing public prototype. The completed resident/reviewer implementation is now published on a separate branch; production has not been switched. Current checks, dashboard steps and pilot dependencies are recorded in [DEPLOYMENT_STATUS.md](seva/DEPLOYMENT_STATUS.md). Historical provider availability and the historical empty Neon schema are not assumed current.
+
 Requested hosting arrangement:
 
 | Service | Role | Current status |

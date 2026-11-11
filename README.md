@@ -27,6 +27,8 @@ The demonstration includes a clearly labeled fictional case and a synthetic samp
 
 For the complete walkthrough and backup plan, see the [demo checklist](docs/DEMO_CHECKLIST.md).
 
+> **Implementation update (11 November 2026):** resident reporting, unit-scoped review, durable processing and the Phase 7 interface are implemented and locally verified on `codex/seva-phase-7`. The public production site below still runs the older prototype. See [current publication/deployment status](docs/seva/DEPLOYMENT_STATUS.md) and [pilot release requirements](docs/seva/PILOT_RUNBOOK.md) before changing hosts or connecting Neon.
+
 **[Open the public demo](https://airshedos.vercel.app).** The website runs on Vercel and its backend runs on Render. The free demo server may take about a minute to wake. Some live sources can be unavailable; see the [hosting status and setup guide](docs/HOSTING.md) for current limitations. Neon is reserved for future use and does not store cases. [Local setup](docs/DEVELOPMENT.md) is also available.
 
 ## How to read the labels

@@ -3,8 +3,8 @@
   "base_revision": "6f071afd10f0ffed024448ac87d3bfae9ec8abc4",
   "branch": "codex/seva-phase-7",
   "implementation": "LOCALLY_VERIFIED",
-  "changes_committed": false,
-  "pushed": false,
+  "changes_committed": true,
+  "pushed": true,
   "deployed": false,
   "public_release_authorised": false,
   "real_data_collection_authorised": false,
@@ -72,5 +72,8 @@
     }
   ],
   "next_phase": "No further phase started; owner-reviewed private-pilot gates remain",
-  "phase7": "COMPLETE_LOCALLY_VERIFIED"
+  "phase7": "COMPLETE_LOCALLY_VERIFIED",
+  "published_branch": "codex/seva-phase-7",
+  "published_source_revision": "5198f0f185b4d67baf19295a83b126939f52d466",
+  "deployment_note": "Vercel branch preview built; production pilot remains unconfigured and main unchanged."
 }
