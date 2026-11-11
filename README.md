@@ -6,7 +6,7 @@ AirshedOS connects a resident reporting experience with a private, unit-scoped r
 
 ## The application
 
-- **Explore local air:** manually load AQI, pollutant concentrations, weather, NASA FIRMS detections and separate 6/12/24-hour forecast peaks at fixed Delhi NCR area points. No account or report is required; provider states, source times and expiry remain visible.
+- **Explore local air:** manually load AQI, pollutants, weather and NASA FIRMS near an optional approximate device location or fixed Delhi NCR area points. Inspect hourly forecast charts/tables and separate 6/12/24-hour window peaks. No account or report is required; provider states, source times and expiry remain visible.
 - **Residents:** sign in, submit a text report with an optional approved private image, track their own reports and respond to reviewer questions.
 - **Reviewers:** work on cases assigned to their approved unit, inspect evidence, record internal notes and follow-up, and deliberately publish separate reporter-visible updates.
 - **Durable processing:** PostgreSQL saves a report and its job atomically. A separate worker handles bounded retries and freezes evidence versions without changing human decisions.
@@ -17,7 +17,7 @@ Gemini and environmental sources are advisory and optional. A provider failure d
 ## Deployment and demo status
 
 - Website: [airshedos.vercel.app](https://airshedos.vercel.app) — the new interface and configured sign-in are deployed on the clean production URL.
-- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — interface published; activating source readings on the separate pilot API awaits its Render settings update after owner-reported dashboard maintenance. Existing original-host Google/NASA checks succeeded.
+- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — original bounded version published; owner confirmed Render settings completed and readings working. Independent configuration shows Google/FIRMS connected. The final location/chart/visual extension is tracked in [its release record](docs/seva/FINAL_EXPERIENCE.md).
 - Pilot API: [airshedos-pilot-api.onrender.com](https://airshedos-pilot-api.onrender.com/health).
 - Neon: PostgreSQL 18 with the application schema and restricted service accounts.
 - Preview sign-in was confirmed by the owner after correcting the session database variable’s environment scope. Production redirects to the correct Auth0 tenant and callback; a complete production resident/reviewer rehearsal remains pending.
@@ -43,6 +43,7 @@ For backend installation, the guarded disposable PostgreSQL target and synthetic
 | Topic | Guide |
 |---|---|
 | Current configuration, limitations and checks | [Deployment status](docs/seva/DEPLOYMENT_STATUS.md) |
+| Final public experience, location and charts | [Final extension](docs/seva/FINAL_EXPERIENCE.md) |
 | Bounded public environmental overview and verification | [Overview](docs/seva/ENVIRONMENT_OVERVIEW.md) |
 | Hosting and clean/custom domains | [Hosting guide](docs/HOSTING.md) |
 | Release, recovery and controlled local demonstration | [Pilot runbook](docs/seva/PILOT_RUNBOOK.md) |

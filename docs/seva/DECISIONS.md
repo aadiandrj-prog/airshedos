@@ -320,3 +320,15 @@ access or admit arbitrary coordinates. Provider normalization, native units, for
 arithmetic and scientific/model boundaries are reused unchanged. See
 [the implementation/release record](ENVIRONMENT_OVERVIEW.md) for limits, source policy,
 actual original-host live checks and new-host verification status.
+
+
+## Final experience extension — voluntary approximate location
+
+11 November 2026. The owner's follow-up request extends the fixed-area public-purpose
+exception to voluntary approximate location, with the same provider/admission/retention
+boundary. Strict nearby coordinates are coarsened to 0.005 degrees in browser, proxy and
+backend; they grant no identity/unit/case authority and create no report/profile/history.
+Normal private policies remain. Existing forecasts support charts without a scientific
+pipeline fork; NASA-only schematic positions require no new maps service. Visual references
+inform colour/composition only, not unsupported capabilities or achievements. See
+[FINAL_EXPERIENCE.md](FINAL_EXPERIENCE.md) for exact behaviour, verification and release.

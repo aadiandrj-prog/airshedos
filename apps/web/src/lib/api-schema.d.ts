@@ -2448,7 +2448,12 @@ export interface components {
             notice: string;
         };
         /** OverviewRequest */
-        OverviewRequest: Record<string, never>;
+        OverviewRequest: {
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+        };
         /** PilotCasePacket */
         PilotCasePacket: {
             /**

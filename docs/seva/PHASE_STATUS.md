@@ -319,3 +319,20 @@ private account 401/no-store were independently checked. The public proxy's expe
 404/no-store confirms the unchanged pilot API is not presenting invented source data.
 Published interface: https://airshedos.vercel.app/explore. Source activation/live new-host
 verification remains pending Render; no new paid-provider request was made there.
+
+
+## Final requested experience pass
+
+Base 9f9293f, codex/final-experience. Owner confirmed previous Render settings and a working
+website; independent readiness shows public overview enabled and Google/FIRMS configured,
+while private reviewer/worker/cleanup readiness remains pending. The new requested scope
+adds voluntary approximate location, a shared home/explore data experience, hourly forecast
+chart/table, NASA schematic/list, source transparency/methodology and expressive gradient
+styling inspired by the supplied images. No reference-image sensor/dispatch/accuracy claim
+was imported. No schema, auth, provider-normalisation or research change. Actual checks and
+publication outcome are recorded in FINAL_EXPERIENCE.md; code presence alone is not live.
+Local evidence: full backend 681 passed plus final 40-test overview/readiness subset
+including three subsequently added non-finite cases; signed identity/proxies 8 passed;
+production HTTPS browser public/resident/reviewer 16 passed; lint/type/build, generated
+contracts, Ruff, protected-record hashes and build-inclusive secret scan passed. New
+screens inspected. Remote checks and hosted release remain to verify in FINAL_EXPERIENCE.md.

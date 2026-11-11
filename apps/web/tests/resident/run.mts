@@ -38,7 +38,7 @@ const apiBase = `${release ? "https" : "http"}://127.0.0.1:${apiPort}`;
 const prefix = randomBytes(6).toString("hex");
 const identities = { TEST_REVIEWER_A: `reviewer-a-${prefix}`, TEST_REVIEWER_TWO: `reviewer-two-${prefix}`,
   TEST_ADMIN_A: `admin-a-${prefix}`, TEST_REVIEWER_B: `reviewer-b-${prefix}` };
-const environment = { ...identities, SEVA_CAPTURE_OVERVIEW: process.env.SEVA_CAPTURE_OVERVIEW ?? "0", SEVA_CAPTURE_STAGE: process.env.SEVA_CAPTURE_STAGE ?? "after", APP_MODE:"pilot", PATH: process.env.PATH, NODE_ENV: release ? "production" : "development", NEXT_TELEMETRY_DISABLED: "1", TEST_DATABASE_URL: db,
+const environment = { ...identities, SEVA_CAPTURE_FINAL: process.env.SEVA_CAPTURE_FINAL ?? "0", SEVA_CAPTURE_OVERVIEW: process.env.SEVA_CAPTURE_OVERVIEW ?? "0", SEVA_CAPTURE_STAGE: process.env.SEVA_CAPTURE_STAGE ?? "after", APP_MODE:"pilot", PATH: process.env.PATH, NODE_ENV: release ? "production" : "development", NEXT_TELEMETRY_DISABLED: "1", TEST_DATABASE_URL: db,
   NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY: "", NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID: "",
   SEVA_RECOVERY_EPOCH: randomUUID(), SEVA_TEST_RELEASE: release ? "1" : "0", SEVA_TEST_CONTINUOUS_WORKER:"1",
   TEST_OIDC_ISSUER: issuer, TEST_OIDC_TRANSPORT: transport, TEST_PRIVATE_ROOT: join(root, "private"), SSL_CERT_FILE: join(root, "ca.pem") };

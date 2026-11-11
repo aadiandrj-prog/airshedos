@@ -189,3 +189,96 @@ async def test_retry_attempts_are_metered_before_http(public):
         request_admission.reset(token)
         await client.aclose()
     assert calls == [1]
+
+
+def test_nearby_rounds_before_sources_cache_and_response_without_creating_records(public):
+    from sqlalchemy import func, select
+
+    from app.persistence.models import Identity, Report
+
+    f = public
+
+    def counts():
+        with f["repo"].sessions() as session:
+            return tuple(
+                session.scalar(select(func.count()).select_from(t)) for t in (Report, Identity)
+            )
+
+    before = counts()
+    response = f["public"].post(
+        "/api/v2/explore/areas/nearby/overview",
+        json={"latitude": 28.459493, "longitude": 77.026638},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["area"]["id"] == "nearby"
+    assert data["area"]["latitude"] == 28.46 and data["area"]["longitude"] == 77.025
+    assert data["context"]["latitude"] == 28.46 and data["forecast"]["longitude"] == 77.025
+    assert "28.459493" not in response.text and "77.026638" not in response.text
+    for request in f["calls"]:
+        assert b"28.459493" not in request.content and "77.026638" not in str(request.url)
+        if request.url.host == "airquality.googleapis.com":
+            assert json.loads(request.content)["location"] == {
+                "latitude": 28.46,
+                "longitude": 77.025,
+            }
+    n = len(f["calls"])
+    again = f["public"].post(
+        "/api/v2/explore/areas/nearby/overview",
+        json={"latitude": 28.4596, "longitude": 77.0267},
+    )
+    assert again.status_code == 200 and len(f["calls"]) == n
+    assert again.json()["expires_at"] == data["expires_at"]
+    assert counts() == before
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {},
+        {"latitude": 1},
+        {"latitude": True, "longitude": 1},
+        {"latitude": "28.6", "longitude": 77},
+        {"latitude": 91, "longitude": 77},
+        {"latitude": 28, "longitude": -181},
+        {"latitude": None, "longitude": 77},
+        {"latitude": 28, "longitude": 77, "role": "reviewer"},
+        {"latitude": 28, "longitude": 77, "user_id": "spoof"},
+    ],
+)
+def test_nearby_rejects_invalid_or_spoofed_body_before_network(public, body):
+    response = public["public"].post("/api/v2/explore/areas/nearby/overview", json=body)
+    assert response.status_code == 422 and public["calls"] == []
+
+
+def test_fixed_areas_reject_even_valid_coordinate_overrides(public):
+    response = public["public"].post(
+        "/api/v2/explore/areas/delhi/overview", json={"latitude": 28.46, "longitude": 77.025}
+    )
+    assert response.status_code == 422 and public["calls"] == []
+
+
+def test_nearby_shares_paid_admission_and_does_not_bypass_disabled_flag(public, monkeypatch):
+    body = {"latitude": 28.46, "longitude": 77.025}
+    monkeypatch.setenv("PUBLIC_OVERVIEW_ENABLED", "0")
+    assert (
+        public["public"].post("/api/v2/explore/areas/nearby/overview", json=body).status_code == 503
+    )
+    assert public["calls"] == []
+    monkeypatch.setenv("PUBLIC_OVERVIEW_ENABLED", "1")
+    monkeypatch.setenv("PUBLIC_OVERVIEW_HTTP_PER_DAY", "0")
+    response = public["public"].post("/api/v2/explore/areas/nearby/overview", json=body)
+    assert response.status_code == 200 and public["calls"] == []
+    assert "budget reached" in response.text
+
+
+@pytest.mark.parametrize("number", ["NaN", "Infinity", "-Infinity"])
+def test_nearby_nonfinite_input_returns_static_error_without_echo_or_network(public, number):
+    response = public["public"].post(
+        "/api/v2/explore/areas/nearby/overview",
+        content='{"latitude":' + number + ',"longitude":77}',
+        headers={"Content-Type": "application/json"},
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Invalid request"}
+    assert public["calls"] == []

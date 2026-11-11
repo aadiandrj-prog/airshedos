@@ -286,3 +286,33 @@ test("public overview proxy restricts area, origin and body and never forwards i
     if (beforeBackend === undefined) delete process.env.BACKEND_API_BASE_URL; else process.env.BACKEND_API_BASE_URL = beforeBackend;
   }
 });
+
+
+test("nearby public proxy validates and coarsens location without forwarding identity", async () => {
+  const { POST } = await import("../src/app/api/explore/[area]/route");
+  const previous = { app: process.env.APP_BASE_URL, backend: process.env.BACKEND_API_BASE_URL, fetch: globalThis.fetch };
+  process.env.APP_BASE_URL = settings.appBaseUrl; process.env.BACKEND_API_BASE_URL = settings.backend;
+  let calls = 0;
+  globalThis.fetch = (async (input, init) => {
+    calls++; assert.equal(String(input), settings.backend + "/api/v2/explore/areas/nearby/overview");
+    assert.deepEqual(JSON.parse(String(init?.body)), { latitude: 28.46, longitude: 77.025 });
+    assert.deepEqual(init?.headers, { "Content-Type": "application/json" });
+    assert.equal(init?.cache, "no-store");
+    return new Response("{}", { headers: { "Content-Type": "application/json" } });
+  }) as typeof fetch;
+  const request = (body: unknown, origin = settings.appBaseUrl) => new NextRequest(settings.appBaseUrl + "/api/explore/nearby", { method: "POST", headers: { Origin: origin, "Content-Type": "application/json", Cookie: "private-test-session", Authorization: "private-test-token" }, body: JSON.stringify(body) });
+  const params = { params: Promise.resolve({ area: "nearby" }) };
+  try {
+    for (const body of [{}, {latitude: 1}, {latitude: true, longitude: 1}, {latitude: "28", longitude: 77}, {latitude: 91, longitude: 77}, {latitude: 28, longitude: 181}, {latitude: 28, longitude: 77, unit_id: "spoof"}, []])
+      assert.equal((await POST(request(body), params)).status, 422);
+    assert.equal((await POST(request({latitude: 28,longitude: 77}, "https://other.invalid"), params)).status, 403);
+    assert.equal(calls, 0);
+    const result = await POST(request({ latitude: 28.459493, longitude: 77.026638 }), params);
+    assert.equal(result.status, 200); assert.equal(calls, 1);
+    assert.equal(result.headers.get("Cache-Control"), "private, no-store");
+  } finally {
+    globalThis.fetch = previous.fetch;
+    if (previous.app === undefined) delete process.env.APP_BASE_URL; else process.env.APP_BASE_URL = previous.app;
+    if (previous.backend === undefined) delete process.env.BACKEND_API_BASE_URL; else process.env.BACKEND_API_BASE_URL = previous.backend;
+  }
+});

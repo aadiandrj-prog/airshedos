@@ -145,3 +145,10 @@ a static detail field and private,no-store, confirming that missing API deployme
 not misrepresented as live source data. No new-host paid provider call was made.
 The page is published at https://airshedos.vercel.app/explore; source activation remains
 pending the owner-operated Render settings step and subsequent live verification.
+
+
+Later owner update: Render setup was completed and the owner reported the website
+working. A configuration-only probe confirms the explicit overview flag and Google/FIRMS
+credentials configured. The subsequent authorised location/chart/visual extension is
+recorded in [FINAL_EXPERIENCE.md](FINAL_EXPERIENCE.md), superseding only this document's
+initial fixed-area restriction while preserving private scope and provider budgets.
