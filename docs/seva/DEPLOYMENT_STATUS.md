@@ -37,6 +37,24 @@ returned 200 with expected content. Anonymous private account access remained 40
 The public same-origin proxy returns the old pilot API's honest 404/no-store until its
 new code/settings are deployed. The published interface is distinct from activated sources.
 
+## Final location and design release
+
+[PR #17](https://github.com/aadiandrj-prog/airshedos/pull/17) merged as 99c6ed3 after all
+exact-head and merge-preview jobs passed: 684 backend, 8 identity/proxy, 16 public/resident/
+reviewer browser journeys in development and production HTTPS, 62 legacy browser tests,
+frontend/contracts/Ruff/secrets. CI package-mirror DNS failures were repaired without
+removing checks; signed Ubuntu packages now use bounded reachable-mirror selection.
+
+Vercel Production succeeded; Render serves the new optional location contract. An isolated
+production browser run verified zero automatic source calls, one explicit synthetic-device
+Gurugram lookup rounded before transmission, live Google AQ/weather/forecast and NASA FIRMS,
+chart/clear behaviour, methodology and private-account 401. The measured lookup was 5,217ms,
+N=1; no capacity or accuracy inference. No real device location, live provider payload or
+live-result screenshot was persisted. No new service/setting/migration/auth setup required.
+The public experience is at [the clean home](https://airshedos.vercel.app/) and
+[explorer](https://airshedos.vercel.app/explore). Private reviewer/worker/cleanup/media
+readiness is separate. See [full evidence](FINAL_EXPERIENCE.md).
+
 ## Earlier publication and probe history
 
 Published application foundation: `6d95f5db0336c614a9cae4e8d014138472e734cb`.

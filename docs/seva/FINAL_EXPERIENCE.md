@@ -126,3 +126,50 @@ pockets before choosing. Apt still verifies Ubuntu's package signatures with the
 keyring; a PGP header in the availability probe is not treated as cryptographic verification.
 Missing mirrors fail closed, without skipping browser dependencies or tests. Fallback and
 idempotence were exercised with deterministic subprocess injection. No runtime code changed.
+
+
+## Release verification
+
+Application source 4f30e7c plus CI-only prerequisites f9487f1/d991df5 merged through
+[PR #17](https://github.com/aadiandrj-prog/airshedos/pull/17) as
+99c6ed33969d266cab7a52b3d64081b8925aa2d0 at 21:44:37 IST on 11 November 2026.
+Final exact-head [push run](https://github.com/aadiandrj-prog/airshedos/actions/runs/43054971388)
+and [merge-preview run](https://github.com/aadiandrj-prog/airshedos/actions/runs/43054981461)
+passed all four jobs. The latter recorded 684 backend tests (70.60s), 8 signed
+identity/proxy checks, 14 public/resident + 2 reviewer browser tests in development and
+again in production HTTPS (41.3s + 37.6s), all 62 legacy browser tests (1.5m), generated
+contracts, lint/type/build, Ruff and secrets. The CI installer selected the Linux Kernel
+Archives mirror; Ubuntu package signature checks remained enabled. Earlier failed setup
+runs were superseded by complete successful runs; no substantive check was removed.
+
+A separate local browser probe loaded both / and /explore with synthetic source responses
+at a 320px viewport: both document widths were 320px with no overflowing explorer elements.
+No real location/provider call was used for that check. The owned preview and disposable
+PostgreSQL container were stopped. Hosted deployment and one bounded provider lookup are
+recorded below after the normal existing-service release completes.
+
+
+Vercel reported successful Production deployment of 99c6ed3. The pilot API's live OpenAPI
+independently showed the new latitude/longitude request contract. A separate isolated
+Chromium run then verified the actual public website: new home styling and location
+control, zero automatic overview requests on home/explore, optional synthetic device
+permission, one real same-origin nearby lookup, returned coarsened point, chart interaction,
+clear-location, methodology and anonymous private-account 401 denial. The lookup used a
+synthetic public Gurugram point, not the owner's/device's real location. All four source
+states were live: Google AQ, Google weather, NASA FIRMS and Google AQ forecast.
+
+Observed browser lookup latency: 5,217ms, N=1, with the API recently contacted for a
+release-contract check. Frontend/function cold/warm state was not separately measured.
+This is an observation under those conditions, not capacity, reliability, accuracy,
+savings or cost evidence. One browser request was made; multiple underlying provider
+attempts remain metered by the existing shared counters. Exactly-once provider billing
+is not promised. No actual provider payload, numeric reading, live-result screenshot or
+real location was persisted. Only the empty published homepage was captured temporarily
+for visual inspection; source-result evidence here is limited to availability/status.
+
+Published pages: https://airshedos.vercel.app/ , /explore and /methodology.
+No new settings/service/migration/Auth0 setup or paid hosting was required. Private pilot
+reviewer/worker/cleanup/media prerequisites remain separate from this public experience.
+Official browser reference: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition
+CI prerequisite references: https://playwright.dev/docs/ci-intro ,
+https://ubuntu.com/project/docs/release-team/mirrors/ and https://mirrors.edge.kernel.org/ .

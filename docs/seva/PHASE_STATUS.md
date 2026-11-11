@@ -340,3 +340,18 @@ Initial GitHub browser setup failed on the runner's Ubuntu mirror DNS before tes
 A CI-only direct-official-archive prerequisite preserves signed packages and all browser
 suites; replacement remote checks are required. This is recorded as a setup failure,
 not a passed regression run or application defect.
+
+Final release source d991df5 (application 4f30e7c) merged as 99c6ed3 via PR #17 after
+both exact-head and merge-preview checks passed all four jobs. Fresh complete remote
+backend: 684 passed; signed identity/proxies: 8; public/resident/reviewer browser: 16 in
+each of development and production HTTPS; legacy browser: 62. The runner mirror DNS
+failure was resolved using bounded reachable-mirror selection with Ubuntu signatures
+preserved, without dropping tests. Hosted outcome is appended in FINAL_EXPERIENCE.md.
+
+Hosted final pass: Vercel Production succeeded for 99c6ed3 and Render serves the nearby
+request contract. Isolated production browser verification passed the new home/explore,
+synthetic-device location -> rounded BFF/API -> live Google AQ/weather/forecast + FIRMS,
+chart/clear behaviour, methodology and anonymous private-account 401. No automatic source
+request; one explicit lookup observed at 5,217ms (N=1, conditions/limits in report). No live
+provider payload/result capture or real location persisted. Public experience is released;
+private pilot reviewer/worker/cleanup/media prerequisites still require their separate setup.

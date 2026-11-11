@@ -17,7 +17,7 @@ Gemini and environmental sources are advisory and optional. A provider failure d
 ## Deployment and demo status
 
 - Website: [airshedos.vercel.app](https://airshedos.vercel.app) — the new interface and configured sign-in are deployed on the clean production URL.
-- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — original bounded version published; owner confirmed Render settings completed and readings working. Independent configuration shows Google/FIRMS connected. The final location/chart/visual extension is tracked in [its release record](docs/seva/FINAL_EXPERIENCE.md).
+- Public overview: [Explore local air](https://airshedos.vercel.app/explore) — the final location/chart/design experience is deployed. One isolated production check with a synthetic location received live Google AQ/weather/forecast and NASA FIRMS responses. See [release evidence and limits](docs/seva/FINAL_EXPERIENCE.md).
 - Pilot API: [airshedos-pilot-api.onrender.com](https://airshedos-pilot-api.onrender.com/health).
 - Neon: PostgreSQL 18 with the application schema and restricted service accounts.
 - Preview sign-in was confirmed by the owner after correcting the session database variable’s environment scope. Production redirects to the correct Auth0 tenant and callback; a complete production resident/reviewer rehearsal remains pending.
