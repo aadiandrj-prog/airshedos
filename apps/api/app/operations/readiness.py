@@ -1,5 +1,6 @@
 """Required local prerequisites, not provider availability or scientific validation."""
 
+import os
 from datetime import timedelta
 
 from sqlalchemy import func, select, text
@@ -126,6 +127,9 @@ def pilot_readiness(access, environment, analyzer, *, media_required=True):
         and (media or not media_required)
     )
     capabilities = dict(
+        public_overview="enabled_not_live_verified"
+        if os.getenv("PUBLIC_OVERVIEW_ENABLED") == "1"
+        else "disabled",
         private_images="configured_not_live_verified" if media else "unavailable_text_only",
         gemini="configured_not_live_verified" if analyzer.settings.project else "unavailable",
         firms="configured_not_live_verified"

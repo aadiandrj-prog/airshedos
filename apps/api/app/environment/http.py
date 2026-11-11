@@ -2,10 +2,16 @@
 
 import asyncio
 import logging
+from collections.abc import Awaitable, Callable
+from contextvars import ContextVar
 
 import httpx
 
 from app.environment.models import SourceState
+
+request_admission: ContextVar[Callable[[str], Awaitable[None]] | None] = ContextVar(
+    "environment_request_admission", default=None
+)
 
 
 class ProviderFailure(Exception):
@@ -38,6 +44,9 @@ class ProviderHTTP:
                 return httpx.Response(response.status_code, content=bytes(content))
 
         for attempt in range(2):
+            admission = request_admission.get()
+            if admission is not None:
+                await admission(url)
             try:
                 response = await asyncio.wait_for(bounded_read(), timeout=self.timeout_seconds)
             except (httpx.TransportError, TimeoutError):

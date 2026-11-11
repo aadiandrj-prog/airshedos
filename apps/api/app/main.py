@@ -34,6 +34,8 @@ from app.environment.providers import (
 from app.environment.router import router as environment_router
 from app.environment.service import EnvironmentService
 from app.environment.settings import EnvironmentSettings
+from app.explore.router import PublicOverviewBodyLimit
+from app.explore.router import router as explore_router
 from app.handoff.repository import HandoffRepository
 from app.handoff.router import router as handoff_router
 from app.models import PollutionIncident, ShareRequest, ShareResponse
@@ -166,6 +168,7 @@ def create_app(
         description="Authenticated resident pilot intake and unit-scoped access. "
         "Legacy prototype handoffs remain simulated. No causal attribution or government delivery.",
     )
+    api.include_router(explore_router)
     api.include_router(environment_router)
     api.include_router(citizen_router)
     api.include_router(corroboration_router)
@@ -174,6 +177,7 @@ def create_app(
     api.include_router(access_router)
     api.include_router(resident_router)
     api.include_router(authority_router)
+    api.add_middleware(PublicOverviewBodyLimit)
     api.add_middleware(ResidentUploadLimit)
     api.add_middleware(CitizenUploadLimit)
 

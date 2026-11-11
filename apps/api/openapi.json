@@ -6,6 +6,83 @@
     "version": "0.11.0"
   },
   "paths": {
+    "/api/v2/explore/areas": {
+      "get": {
+        "tags": [
+          "Public area overview"
+        ],
+        "summary": "Areas",
+        "operationId": "areas_api_v2_explore_areas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Area"
+                  },
+                  "type": "array",
+                  "title": "Response Areas Api V2 Explore Areas Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/explore/areas/{area_id}/overview": {
+      "post": {
+        "tags": [
+          "Public area overview"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_api_v2_explore_areas__area_id__overview_post",
+        "parameters": [
+          {
+            "name": "area_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Area Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Overview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/environment/sources": {
       "get": {
         "tags": [
@@ -3786,6 +3863,41 @@
           "error"
         ],
         "title": "AnalysisStatus"
+      },
+      "Area": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "default": "Representative area point, not your device or a report location."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "latitude",
+          "longitude",
+          "note"
+        ],
+        "title": "Area"
       },
       "AssignmentCommand": {
         "properties": {
@@ -7578,6 +7690,56 @@
           "allowed_transitions"
         ],
         "title": "OfficerReview"
+      },
+      "Overview": {
+        "properties": {
+          "area": {
+            "$ref": "#/components/schemas/Area"
+          },
+          "context": {
+            "$ref": "#/components/schemas/EnvironmentalContext"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/AirQualityForecastContext"
+          },
+          "returned_fire_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Returned Fire Count"
+          },
+          "fires_truncated": {
+            "type": "boolean",
+            "title": "Fires Truncated"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "notice": {
+            "type": "string",
+            "title": "Notice",
+            "default": "Area context, not a regulatory monitoring station or evidence of a local violation. Forecast is a separate provider outlook. Missing fire detections do not rule out pollution."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "area",
+          "context",
+          "forecast",
+          "returned_fire_count",
+          "fires_truncated",
+          "expires_at",
+          "notice"
+        ],
+        "title": "Overview"
+      },
+      "OverviewRequest": {
+        "properties": {},
+        "additionalProperties": false,
+        "type": "object",
+        "title": "OverviewRequest"
       },
       "PilotCasePacket": {
         "properties": {

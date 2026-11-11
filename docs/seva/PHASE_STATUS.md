@@ -292,3 +292,17 @@ configured sign-in, correct Auth0 production callback/audience redirect, and ano
 API 401 denial. Fourteen fully merged obsolete remote branches were removed; their commits
 remain in main history. Production login completion, reviewer setup and laptop worker/cleanup
 rehearsal remain separate pending checks. No .tech domain has been registered/changed.
+
+## Public area overview — owner-requested follow-up
+
+Base main 4ad7de9; isolated codex/environment-overview branch. /explore adds independent
+public area context alongside the current resident/reviewer interface. Explicitly enabled
+fixed-area endpoints use PostgreSQL admission before every provider HTTP attempt, no
+report/identity data, bounded volatile caches and no-store expiry. Earlier case-bound
+permissions remain unchanged; the public-purpose exception is documented in DECISIONS.
+Actual original-host AQ/weather/FIRMS/forecast checks succeeded; new-host wiring remains
+pending. Full backend 669 passed; signed identity/public proxy 7 passed; lint/type/build
+passed. HTTPS production browser: 12 passed; final readiness/overview subset: 25 passed;
+Ruff and build-inclusive secret scan pass (3,461 files, zero findings).
+Remote checks and deployment outcome are recorded in ENVIRONMENT_OVERVIEW.md.
+No model research, paid-service provisioning, schema migration or reviewer bootstrap.
