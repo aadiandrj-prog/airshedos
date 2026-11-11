@@ -133,6 +133,7 @@ for (const status of ["not_configured", "timeout", "safety_blocked"] as const) {
         json: {
           ...fixture,
           status,
+          retryable: status === "timeout",
           analysis: null,
           evidence: null,
           message: "No interpretation is available.",

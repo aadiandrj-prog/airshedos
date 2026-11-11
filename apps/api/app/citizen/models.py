@@ -144,6 +144,7 @@ class AnalysisStatus(StrEnum):
 
 
 class CitizenAnalysisResponse(DomainModel):
+    retryable: bool = False
     request_id: str
     status: AnalysisStatus
     report: CitizenReport

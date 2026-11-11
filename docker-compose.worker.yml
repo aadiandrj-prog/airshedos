@@ -1,0 +1,12 @@
+# Opt-in local/operator-managed pilot worker. No web-request background tasks.
+# Use an explicitly reviewed env file; never commit that file or real credentials.
+services:
+  worker:
+    build: ./apps/api
+    command: ["python", "-m", "app.processing"]
+    restart: unless-stopped
+    init: true
+    env_file: ${SEVA_WORKER_ENV_FILE:?Select a reviewed private worker env file}
+    environment:
+      APP_MODE: pilot
+    stop_grace_period: 115s

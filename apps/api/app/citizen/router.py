@@ -85,6 +85,7 @@ def validated_image(data: bytes, mime_type: str) -> tuple[bytes, str]:
     except (
         UnidentifiedImageError,
         OSError,
+        SyntaxError,
         Image.DecompressionBombError,
         Image.DecompressionBombWarning,
     ) as exc:

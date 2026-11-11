@@ -1,6 +1,7 @@
 """Public Maps credentials are allowed only in compiled frontend artifacts."""
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -44,3 +45,14 @@ def test_only_exact_public_maps_key_in_compiled_bundle(
     with pytest.raises(SystemExit) as result:
         scanner.main()
     assert result.value.code == expected
+
+
+@pytest.mark.parametrize("newline", ["\n", "\\n", "\\\\n"])
+def test_private_key_material_detected_in_plain_js_and_json(newline):
+    header = "-----BEGIN " + "PRIVATE KEY-----"
+    material = header + newline + "A" * 64
+    assert re.search(scanner.RULES["Private key"], material.encode())
+    assert not re.search(
+        scanner.RULES["Private key"],
+        ('if (!pem.startsWith("' + header + '")) throw new Error();').encode(),
+    )

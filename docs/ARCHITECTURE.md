@@ -1,6 +1,44 @@
 # AirshedOS architecture
 
-## Current: Phase 3C finalization
+## Local resident pilot — implementation phases 1–6
+
+The current working tree also contains an explicit `APP_MODE=pilot` over the same
+Next.js/FastAPI apps. Its implementation and live limits are recorded in
+[phase status](seva/PHASE_STATUS.md) and [resident implementation](seva/PHASE_3_RESIDENT.md).
+These local changes have not updated the deployed prototype.
+
+Managed Auth0 login uses Next.js server sessions sealed in PostgreSQL; the browser
+holds an opaque HttpOnly cookie. The same-origin allowlisted BFF applies CSRF checks,
+and FastAPI independently verifies access tokens, session binding and current
+ownership/unit membership. Pilot mode denies legacy v1 endpoints.
+
+Authenticated resident reports commit to PostgreSQL before a receipt is returned,
+with one case, an idempotency record and transactional pending processing jobs.
+Optional cleaned images use an approved private R2 adapter; all media reads pass
+through authorization and retention checks. Published updates/information requests
+and append-only resident supplements are distinct from internal notes and frozen
+evidence. Local AQ/weather is optional volatile context. A separate PostgreSQL worker
+claims leased jobs, performs bounded retries and fences immutable publication; the
+resident interface shows the latest logical run independently of human review.
+The Phase 4 unit-scoped authority workspace adds reasoned review, assignment, private
+notes, field follow-up, explicit reporter publication and scoped metadata export.
+Reviewer enrichment now queues durable refreshes; provider IO runs outside database
+locks and never changes human review automatically. See [processing reliability](seva/PHASE_5_PROCESSING.md) and
+[the authority report](seva/PHASE_4_AUTHORITY.md). No hosted pilot deployment,
+storage, scheduler or real government delivery is claimed.
+
+Phase 6 adds a quarantined recovery UUID binding, separate worker/cleanup readiness
+signals, approved triage checks, expiry clearing in resident/queue views, withdrawn-media
+denial and opt-in pilot maps. A restored target replays current erasure manifests and
+physically purges before release; sessions, leases and authority grants are invalidated.
+The local production-build HTTPS rehearsal uses synthetic signed identity and separate
+API/worker processes. It is not a hosted production validation. See
+[validation](seva/PHASE_6_VALIDATION.md) and [private pilot runbook](seva/PILOT_RUNBOOK.md).
+
+## Prototype — historical Phase 3C finalization
+
+The following sections describe the default `APP_MODE=prototype` path. Its
+process-local storage and absence of app authentication do not describe pilot v2.
 
 ```mermaid
 flowchart LR

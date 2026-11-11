@@ -85,8 +85,10 @@ async def interpret(analyzer: CitizenEvidenceAnalyzer, image, mime_type, latitud
         result.status = AnalysisStatus.INTERPRETED
     except AnalysisFailure as exc:
         result.status = exc.status
+        result.retryable = exc.retryable
     except TimeoutError:
         result.status = AnalysisStatus.TIMEOUT
+        result.retryable = True
     except Exception:
         result.status = AnalysisStatus.ERROR
     if result.status != AnalysisStatus.INTERPRETED:

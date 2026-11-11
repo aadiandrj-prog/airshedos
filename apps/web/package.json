@@ -9,13 +9,20 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
-    "generate:api": "openapi-typescript ../api/openapi.json -o src/lib/api-schema.d.ts"
+    "test:identity": "tsx --test tests/identity.test.ts",
+    "test:resident": "tsx tests/resident/run.mts",
+    "generate:api": "openapi-typescript ../api/openapi.json -o src/lib/api-schema.d.ts",
+    "test:authority": "tsx tests/resident/run.mts --authority",
+    "test:pilot": "tsx tests/resident/run.mts --release --all"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
-    "next": "^16.0.0",
+    "@auth0/nextjs-auth0": "4.33.0",
+    "jose": "6.2.17",
+    "next": "16.4.6",
+    "pg": "8.23.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
@@ -23,11 +30,14 @@
     "@playwright/test": "^1.58.0",
     "@types/google.maps": "3.66.3",
     "@types/node": "^22.0.0",
+    "@types/pg": "8.23.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "axe-core": "4.13.0",
     "eslint": "^9.0.0",
-    "eslint-config-next": "^16.0.0",
+    "eslint-config-next": "16.4.6",
     "openapi-typescript": "^7.0.0",
+    "tsx": "4.23.15",
     "typescript": "^5.9.0"
   }
 }

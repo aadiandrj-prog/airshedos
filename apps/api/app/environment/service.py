@@ -81,6 +81,58 @@ class EnvironmentService:
         if handle is not None:
             handle.cancel()
 
+    async def resident_source(self, name, latitude, longitude):
+        if name not in {"air_quality", "weather"}:
+            raise ValueError("Only secondary AQ/weather context is supported")
+        return await self._bounded_result(name, latitude, longitude)
+
+    async def retained_context(self, latitude, longitude, at, *, source_call=None):
+        """Saved assessment inputs: never request Google AQ/weather/forecast here."""
+
+        async def fires_call():
+            return await self._bounded_result("fires", latitude, longitude)
+
+        async def satellite_call():
+            return await self.satellite_context(latitude, longitude, at)
+
+        fires, satellite = await asyncio.gather(
+            source_call("NASA_FIRMS", fires_call, 2 * int(self.providers["fires"].configured))
+            if source_call
+            else fires_call(),
+            source_call("SENTINEL_5P", satellite_call, 6 * int(self.satellite.configured))
+            if source_call
+            else satellite_call(),
+        )
+
+        def absent(name):
+            return EnvironmentalSourceStatus(
+                provider=name,
+                configured=False,
+                status=SourceState.UNAVAILABLE,
+                message="Excluded from saved assessment by pilot retention policy.",
+                latency_ms=0,
+            )
+
+        return EnvironmentalContext(
+            latitude=latitude,
+            longitude=longitude,
+            requested_at=datetime.now(UTC),
+            generated_at=datetime.now(UTC),
+            requested_reference_time=at,
+            satellite=satellite,
+            air_quality=None,
+            weather=None,
+            fires=fires.data[:500] if fires.data is not None else None,
+            fire_search_radius_km=self.settings.firms_radius_km,
+            fire_window_days=2,
+            fire_dataset=self.settings.firms_dataset,
+            source_statuses=EnvironmentalSourceStatuses(
+                air_quality=absent("google_air_quality"),
+                weather=absent("google_weather"),
+                fires=fires.source,
+            ),
+        )
+
     async def _bounded_result(self, name: str, lat: float, lng: float) -> ProviderResult:
         started = time.perf_counter()
         try:
@@ -93,6 +145,7 @@ class EnvironmentService:
                 configured=self.providers[name].configured,
                 status=SourceState.UNAVAILABLE,
                 message="Provider request deadline exceeded. Try again later.",
+                retryable=True,
                 latency_ms=round((time.perf_counter() - started) * 1000, 2),
             )
             logger.info(
@@ -186,6 +239,7 @@ class EnvironmentService:
                                 self._store(key, result, ttl)
                     except ProviderFailure as exc:
                         result.source.status, result.source.message = exc.status, exc.message
+                        result.source.retryable = exc.status == SourceState.UNAVAILABLE
                     except Exception:
                         # Never log exception strings, payloads, headers, or credential URLs.
                         result.source.status = SourceState.ERROR

@@ -254,6 +254,518 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Me */
+        get: operations["me_api_v2_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reports */
+        get: operations["reports_api_v2_resident_reports_get"];
+        put?: never;
+        /** Accept */
+        post: operations["accept_api_v2_resident_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/reports/{report_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Report */
+        get: operations["report_api_v2_resident_reports__report_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cases */
+        get: operations["cases_api_v2_authority_units__unit_id__cases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/map": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Points */
+        get: operations["points_api_v2_authority_units__unit_id__map_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Case */
+        get: operations["case_api_v2_authority_units__unit_id__cases__case_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/review-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review */
+        post: operations["review_api_v2_authority_units__unit_id__cases__case_id__review_events_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Packet */
+        get: operations["packet_api_v2_authority_units__unit_id__cases__case_id__export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/media/{media_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Own Media */
+        get: operations["own_media_api_v2_resident_media__media_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/media/{media_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Case Media */
+        get: operations["case_media_api_v2_authority_units__unit_id__cases__case_id__media__media_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/memberships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Memberships */
+        get: operations["memberships_api_v2_authority_units__unit_id__memberships_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/membership-proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Proposals */
+        get: operations["proposals_api_v2_authority_units__unit_id__membership_proposals_get"];
+        put?: never;
+        /** Propose */
+        post: operations["propose_api_v2_authority_units__unit_id__membership_proposals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/memberships/{membership_id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend */
+        post: operations["suspend_api_v2_authority_units__unit_id__memberships__membership_id__suspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/submissions/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Submission */
+        get: operations["submission_api_v2_resident_submissions__key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/reports/{report_id}/information-requests/{request_id}/replies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reply */
+        post: operations["reply_api_v2_resident_reports__report_id__information_requests__request_id__replies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stage */
+        post: operations["stage_api_v2_resident_media_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/resident/context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Local Context */
+        post: operations["local_context_api_v2_resident_context_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Assign */
+        post: operations["assign_api_v2_authority_units__unit_id__cases__case_id__assignments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/internal-notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Note */
+        post: operations["note_api_v2_authority_units__unit_id__cases__case_id__internal_notes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/field-follow-ups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Field */
+        post: operations["request_field_api_v2_authority_units__unit_id__cases__case_id__field_follow_ups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/field-follow-ups/{task_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Field Event */
+        post: operations["field_event_api_v2_authority_units__unit_id__cases__case_id__field_follow_ups__task_id__events_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/reporter-updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish */
+        post: operations["publish_api_v2_authority_units__unit_id__cases__case_id__reporter_updates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/information-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Information */
+        post: operations["information_api_v2_authority_units__unit_id__cases__case_id__information_requests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/external-references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reference */
+        post: operations["reference_api_v2_authority_units__unit_id__cases__case_id__external_references_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** History */
+        get: operations["history_api_v2_authority_units__unit_id__cases__case_id__history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/evidence/{version_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evidence */
+        get: operations["evidence_api_v2_authority_units__unit_id__cases__case_id__evidence__version_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/export-v2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Packet */
+        get: operations["packet_api_v2_authority_units__unit_id__cases__case_id__export_v2_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/reviewers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reviewers */
+        get: operations["reviewers_api_v2_authority_units__unit_id__reviewers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/enrichments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enrich */
+        post: operations["enrich_api_v2_authority_units__unit_id__cases__case_id__enrichments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/authority/units/{unit_id}/cases/{case_id}/live-context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Live Context */
+        post: operations["live_context_api_v2_authority_units__unit_id__cases__case_id__live_context_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -467,6 +979,198 @@ export interface components {
          * @enum {string}
          */
         AnalysisStatus: "interpreted" | "not_configured" | "auth_error" | "model_unavailable" | "quota_limited" | "timeout" | "safety_blocked" | "invalid_response" | "error";
+        /** AssignmentCommand */
+        AssignmentCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Membership Id */
+            membership_id?: string | null;
+            /**
+             * Claim Self
+             * @default false
+             */
+            claim_self: boolean;
+        };
+        /** AttemptRead */
+        AttemptRead: {
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+            /** Stage */
+            stage: string;
+            /** State */
+            state: string;
+            /** Safe Reason */
+            safe_reason: string | null;
+            /** Started At */
+            started_at: string | null;
+            /** Ended At */
+            ended_at: string | null;
+            /**
+             * Request Created At
+             * Format: date-time
+             */
+            request_created_at: string;
+        };
+        /** AuthorityList */
+        AuthorityList: {
+            /** Total */
+            total: number;
+            /** Items */
+            items: components["schemas"]["AuthoritySummary"][];
+            /** State Counts */
+            state_counts: {
+                [key: string]: number;
+            };
+        };
+        /** AuthorityPacket */
+        AuthorityPacket: {
+            /**
+             * Schema Version
+             * @default pilot_case_packet_v2
+             * @constant
+             */
+            schema_version: "pilot_case_packet_v2";
+            /**
+             * Delivery Mode
+             * @default MANUAL_EXPORT
+             * @constant
+             */
+            delivery_mode: "MANUAL_EXPORT";
+            /**
+             * Visibility
+             * @default UNIT_REVIEW_METADATA
+             * @constant
+             */
+            visibility: "UNIT_REVIEW_METADATA";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Packet */
+            packet: {
+                [key: string]: unknown;
+            };
+            /** Sha256 */
+            sha256: string;
+            /**
+             * Notice
+             * @default Manual copy; no government delivery or receipt. No identity, note bodies, exact location, media or provider payloads.
+             */
+            notice: string;
+        };
+        /** AuthoritySummary */
+        AuthoritySummary: {
+            /**
+             * Content Expires At
+             * Format: date-time
+             */
+            content_expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Review State */
+            review_state: string;
+            /** Revision */
+            revision: number;
+            /** Reported Place */
+            reported_place?: string | null;
+            /** Declared Category */
+            declared_category?: string | null;
+            /** Latitude */
+            latitude?: number | null;
+            /** Longitude */
+            longitude?: number | null;
+            /** Assigned Member Id */
+            assigned_member_id?: string | null;
+        };
+        /** AuthorityWorkspace */
+        AuthorityWorkspace: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Report Id
+             * Format: uuid
+             */
+            report_id: string;
+            /**
+             * Assigned Unit Id
+             * Format: uuid
+             */
+            assigned_unit_id: string;
+            /** Review State */
+            review_state: string;
+            /** Revision */
+            revision: number;
+            /** Latest Evidence Version Id */
+            latest_evidence_version_id: string | null;
+            /** Description */
+            description: string;
+            reported_location: components["schemas"]["Location"];
+            /** Declared Capture At */
+            declared_capture_at: string | null;
+            /** Capture Time Basis */
+            capture_time_basis: string;
+            /** Internal Notes */
+            internal_notes: string[];
+            /** History */
+            history: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Receipt Id
+             * Format: uuid
+             */
+            receipt_id: string;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            /**
+             * Content Expires At
+             * Format: date-time
+             */
+            content_expires_at: string;
+            /** Reported Place */
+            reported_place: string | null;
+            /** Declared Category */
+            declared_category: string;
+            /** Withdrawn At */
+            withdrawn_at: string | null;
+            /** Assigned Member Id */
+            assigned_member_id: string | null;
+            /** Permitted Review States */
+            permitted_review_states: string[];
+            media: components["schemas"]["MediaRead"] | null;
+            /** Processing Attempts */
+            processing_attempts: components["schemas"]["AttemptRead"][];
+            /** Evidence Versions */
+            evidence_versions: components["schemas"]["VersionRead"][];
+            /** Field Follow Ups */
+            field_follow_ups: components["schemas"]["FieldRead"][];
+            /** Published Updates */
+            published_updates: components["schemas"]["PublishedUpdate"][];
+            /** Information Requests */
+            information_requests: components["schemas"]["InformationRequestRead"][];
+            /** Supplements */
+            supplements: components["schemas"]["SupplementRead"][];
+            /** External Reference */
+            external_reference: string | null;
+        };
         /** Body_analyze_api_v1_citizen_reports_analyze_post */
         Body_analyze_api_v1_citizen_reports_analyze_post: {
             /**
@@ -488,6 +1192,16 @@ export interface components {
              * @default false
              */
             is_synthetic: boolean;
+        };
+        /** Body_stage_api_v2_resident_media_post */
+        Body_stage_api_v2_resident_media_post: {
+            /** Image */
+            image: string;
+            /**
+             * Retention Consent
+             * @constant
+             */
+            retention_consent: "true";
         };
         /** CaseSnapshot */
         CaseSnapshot: {
@@ -527,6 +1241,11 @@ export interface components {
         };
         /** CitizenAnalysisResponse */
         CitizenAnalysisResponse: {
+            /**
+             * Retryable
+             * @default false
+             */
+            retryable: boolean;
             /** Request Id */
             request_id: string;
             status: components["schemas"]["AnalysisStatus"];
@@ -688,6 +1407,25 @@ export interface components {
             /** Expected Case Revision */
             expected_case_revision: number;
         };
+        /** EmptyCommand */
+        EmptyCommand: Record<string, never>;
+        /** EnrichmentRead */
+        EnrichmentRead: {
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+            /** Version Id */
+            version_id: string | null;
+            /** State */
+            state: string;
+            /**
+             * Notice
+             * @default Durably queued; processing is independent of human review. No review decision or resident update was made.
+             */
+            notice: string;
+        };
         /** EnvironmentalContext */
         EnvironmentalContext: {
             /** Latitude */
@@ -755,6 +1493,11 @@ export interface components {
         };
         /** EnvironmentalSourceStatus */
         EnvironmentalSourceStatus: {
+            /**
+             * Retryable
+             * @default false
+             */
+            retryable: boolean;
             /** Provider */
             provider: string;
             /** Configured */
@@ -946,6 +1689,45 @@ export interface components {
          * @enum {string}
          */
         EvidenceStatus: "interpreted" | "supported" | "partial" | "unavailable" | "conflicting";
+        /** FieldCommand */
+        FieldCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Reason */
+            reason: string;
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "CLAIM" | "ASSIGN" | "COMPLETE" | "CANCEL";
+            /** Membership Id */
+            membership_id?: string | null;
+        };
+        /** FieldRead */
+        FieldRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** State */
+            state: string;
+            /** Assigned Member Id */
+            assigned_member_id: string | null;
+            /** Instructions */
+            instructions: string | null;
+            /** Outcome */
+            outcome: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Completed At */
+            completed_at: string | null;
+            /** Revision */
+            revision: number;
+        };
         /** FireObservation */
         FireObservation: {
             /** Latitude */
@@ -1316,6 +2098,35 @@ export interface components {
          * @enum {string}
          */
         IncidentStatus: "open" | "acknowledged";
+        /** InformationCommand */
+        InformationCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Prompt */
+            prompt: string;
+        };
+        /** InformationRequestRead */
+        InformationRequestRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Prompt */
+            prompt: string | null;
+            /** State */
+            state: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+        };
         JsonValue: unknown;
         /** Jurisdiction */
         Jurisdiction: {
@@ -1355,12 +2166,83 @@ export interface components {
              */
             note: string;
         };
+        /** LocalContext */
+        LocalContext: {
+            air_quality: components["schemas"]["AirQualityObservation"] | null;
+            weather: components["schemas"]["MeteorologicalObservation"] | null;
+            /** Sources */
+            sources: {
+                [key: string]: components["schemas"]["EnvironmentalSourceStatus"];
+            };
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+        };
+        /** LocalContextRequest */
+        LocalContextRequest: {
+            /**
+             * Report Id
+             * Format: uuid
+             */
+            report_id: string;
+        };
+        /** Location */
+        Location: {
+            /** Latitude */
+            latitude: number;
+            /** Longitude */
+            longitude: number;
+        };
+        /** MeRead */
+        MeRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Units */
+            units: components["schemas"]["UnitRead"][];
+        };
         /** Measurement */
         Measurement: {
             /** Value */
             value: number;
             /** Unit */
             unit: string;
+        };
+        /** MediaRead */
+        MediaRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** State */
+            state: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+        };
+        /** MemberRead */
+        MemberRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Role */
+            role: string;
+            /** State */
+            state: string;
         };
         /** MeteorologicalObservation */
         MeteorologicalObservation: {
@@ -1451,6 +2333,13 @@ export interface components {
          * @enum {string}
          */
         NextStep: "FIELD_VERIFICATION" | "MONITOR" | "REVIEW" | "NO_ACTION_FROM_CURRENT_EVIDENCE";
+        /** NoteCommand */
+        NoteCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Body */
+            body: string;
+        };
         /** OfficerCase */
         OfficerCase: {
             /** Id */
@@ -1487,6 +2376,45 @@ export interface components {
             action_at: string | null;
             /** Allowed Transitions */
             allowed_transitions: components["schemas"]["ReviewState"][];
+        };
+        /** PilotCasePacket */
+        PilotCasePacket: {
+            /**
+             * Schema Version
+             * @default pilot_case_packet_v1
+             * @constant
+             */
+            schema_version: "pilot_case_packet_v1";
+            /**
+             * Delivery Mode
+             * @default MANUAL_EXPORT
+             * @constant
+             */
+            delivery_mode: "MANUAL_EXPORT";
+            /**
+             * Case Id
+             * Format: uuid
+             */
+            case_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Review State */
+            review_state: string;
+            /** Revision */
+            revision: number;
+            /** Evidence Versions */
+            evidence_versions: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Notice
+             * @default Metadata only. No government delivery or receipt.
+             * @constant
+             */
+            notice: "Metadata only. No government delivery or receipt.";
         };
         /** PollutantMeasurement */
         PollutantMeasurement: {
@@ -1614,6 +2542,42 @@ export interface components {
             field_verification_required: boolean;
             provenance: components["schemas"]["Provenance"];
         };
+        /** ProcessingRead */
+        ProcessingRead: {
+            /** State */
+            state: string;
+            /** Safe Reason */
+            safe_reason: string | null;
+            /**
+             * Visual State
+             * @default PENDING
+             */
+            visual_state: string;
+        };
+        /** ProposalCommand */
+        ProposalCommand: {
+            /** Target Subject */
+            target_subject: string;
+            /**
+             * Role
+             * @default REVIEWER
+             * @constant
+             */
+            role: "REVIEWER";
+        };
+        /** ProposalRead */
+        ProposalRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "PENDING" | "APPROVED" | "REJECTED";
+        };
         /** Provenance */
         Provenance: {
             /** Source Id */
@@ -1637,6 +2601,73 @@ export interface components {
              */
             configuration_state: "configured" | "not_configured";
         };
+        /** PublicationCommand */
+        PublicationCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "IN_REVIEW" | "FOLLOW_UP_PLANNED" | "UPDATE_AVAILABLE" | "CLOSED";
+            /** Message */
+            message: string;
+        };
+        /** PublishedUpdate */
+        PublishedUpdate: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Status */
+            status: string;
+            /** Message */
+            message: string | null;
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
+            /** Timeline Order */
+            timeline_order?: number | null;
+        };
+        /** ReadinessRead */
+        ReadinessRead: {
+            /** Status */
+            status: string;
+            /** Storage */
+            storage: string;
+            /** Data Mode */
+            data_mode: string;
+            /** Checks */
+            checks: {
+                [key: string]: string;
+            };
+            /** Capabilities */
+            capabilities: {
+                [key: string]: string;
+            };
+            /**
+             * Notice
+             * @default Configuration is not live-provider, privacy approval or scientific validation.
+             */
+            notice: string;
+        };
+        /** ReasonCommand */
+        ReasonCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Reason */
+            reason: string;
+        };
+        /** ReferenceCommand */
+        ReferenceCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Reference */
+            reference: string;
+        };
         /** ReportUnavailable */
         ReportUnavailable: {
             /**
@@ -1644,6 +2675,157 @@ export interface components {
              * @default Report expired or unavailable. Analyze the image again to corroborate it.
              */
             detail: string;
+        };
+        /** ResidentList */
+        ResidentList: {
+            /** Total */
+            total: number;
+            /** Items */
+            items: components["schemas"]["ResidentSummary"][];
+        };
+        /** ResidentReceipt */
+        ResidentReceipt: {
+            /**
+             * Report Id
+             * Format: uuid
+             */
+            report_id: string;
+            /**
+             * Receipt Id
+             * Format: uuid
+             */
+            receipt_id: string;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            /**
+             * Status
+             * @default RECEIVED
+             * @constant
+             */
+            status: "RECEIVED";
+            /**
+             * Processing
+             * @default PENDING
+             * @constant
+             */
+            processing: "PENDING";
+            /**
+             * Replayed
+             * @default false
+             */
+            replayed: boolean;
+        };
+        /** ResidentReportDetail */
+        ResidentReportDetail: {
+            /**
+             * Content Expires At
+             * Format: date-time
+             */
+            content_expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Receipt Id
+             * Format: uuid
+             */
+            receipt_id: string;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            /** Description */
+            description: string;
+            /** Reported Place */
+            reported_place?: string | null;
+            /** Declared Category */
+            declared_category: string;
+            reported_location: components["schemas"]["Location"];
+            /** Declared Capture At */
+            declared_capture_at: string | null;
+            /** Capture Time Basis */
+            capture_time_basis: string;
+            media: components["schemas"]["MediaRead"] | null;
+            /** Reporter Status */
+            reporter_status: string;
+            /** Published Updates */
+            published_updates: components["schemas"]["PublishedUpdate"][];
+            processing: components["schemas"]["ProcessingRead"];
+            /** Withdrawn At */
+            withdrawn_at: string | null;
+            /** Deletion State */
+            deletion_state: string;
+            /** Information Requests */
+            information_requests?: components["schemas"]["InformationRequestRead"][];
+            /** Supplements */
+            supplements?: components["schemas"]["SupplementRead"][];
+        };
+        /** ResidentSubmission */
+        ResidentSubmission: {
+            /** Description */
+            description: string;
+            /**
+             * Declared Category
+             * @enum {string}
+             */
+            declared_category: "SMOKE_OR_BURNING" | "DUST" | "ODOUR" | "OTHER" | "UNSURE";
+            /** Reported Latitude */
+            reported_latitude: number;
+            /** Reported Longitude */
+            reported_longitude: number;
+            /** Declared Capture At */
+            declared_capture_at?: string | null;
+            /** Media Id */
+            media_id?: string | null;
+            /** Reported Place */
+            reported_place: string;
+        };
+        /** ResidentSummary */
+        ResidentSummary: {
+            /**
+             * Content Expires At
+             * Format: date-time
+             */
+            content_expires_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Receipt Id
+             * Format: uuid
+             */
+            receipt_id: string;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            /**
+             * Processing
+             * @default PENDING
+             * @enum {string}
+             */
+            processing: "PENDING" | "RUNNING" | "SUCCEEDED" | "PARTIAL" | "FAILED" | "CANCELLED";
+        };
+        /** ReviewCommand */
+        ReviewCommand: {
+            /** Expected Revision */
+            expected_revision: number;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "UNDER_REVIEW" | "ACKNOWLEDGED" | "MONITORING" | "CLOSED_NO_ACTION" | "REOPEN";
+            /** Reason */
+            reason?: string | null;
         };
         /** ReviewRequest */
         ReviewRequest: {
@@ -1656,6 +2838,11 @@ export interface components {
          * @enum {string}
          */
         ReviewState: "NEW" | "UNDER_REVIEW" | "ACKNOWLEDGED" | "MONITORING" | "CLOSED_NO_ACTION";
+        /** RevisionRead */
+        RevisionRead: {
+            /** Revision */
+            revision: number;
+        };
         /**
          * RiskLevel
          * @enum {string}
@@ -1907,6 +3094,64 @@ export interface components {
             analysis: components["schemas"]["GeminiEvidenceAnalysis"];
             evidence: components["schemas"]["CitizenVisualSignal"];
         };
+        /** SupplementRead */
+        SupplementRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+            /** Body */
+            body: string | null;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            media: components["schemas"]["MediaRead"] | null;
+            /** Timeline Order */
+            timeline_order?: number | null;
+        };
+        /** SupplementReceipt */
+        SupplementReceipt: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Report Id
+             * Format: uuid
+             */
+            report_id: string;
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+            /**
+             * Accepted At
+             * Format: date-time
+             */
+            accepted_at: string;
+            /**
+             * Replayed
+             * @default false
+             */
+            replayed: boolean;
+        };
+        /** SupplementSubmission */
+        SupplementSubmission: {
+            /** Body */
+            body: string;
+            /** Media Id */
+            media_id?: string | null;
+        };
         /**
          * SupportLevel
          * @enum {string}
@@ -1917,6 +3162,21 @@ export interface components {
             state: components["schemas"]["HandoffState"];
             /** Expected Revision */
             expected_revision: number;
+        };
+        /** UnitRead */
+        UnitRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "REVIEWER" | "UNIT_ADMIN";
         };
         /** ValidationError */
         ValidationError: {
@@ -1936,6 +3196,28 @@ export interface components {
          * @enum {string}
          */
         Verdict: "SUPPORTS" | "WEAKLY_SUPPORTS" | "NEUTRAL" | "CONTRADICTS" | "UNAVAILABLE" | "STALE" | "NOT_APPLICABLE";
+        /** VersionRead */
+        VersionRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version */
+            version: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Input Policy */
+            input_policy: string;
+        };
         /**
          * VisualConfidence
          * @enum {string}
@@ -2416,6 +3698,1148 @@ export interface operations {
             };
         };
     };
+    me_api_v2_me_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reports_api_v2_resident_reports_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResidentList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_api_v2_resident_reports_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "Idempotency-Key-Created-At": string;
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResidentSubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResidentReceipt"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    report_api_v2_resident_reports__report_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResidentReportDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cases_api_v2_authority_units__unit_id__cases_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                state?: string | null;
+                q?: string | null;
+                assignment?: string | null;
+            };
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthorityList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    points_api_v2_authority_units__unit_id__map_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    case_api_v2_authority_units__unit_id__cases__case_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthorityWorkspace"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_api_v2_authority_units__unit_id__cases__case_id__review_events_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    packet_api_v2_authority_units__unit_id__cases__case_id__export_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotCasePacket"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    own_media_api_v2_resident_media__media_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    case_media_api_v2_authority_units__unit_id__cases__case_id__media__media_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    memberships_api_v2_authority_units__unit_id__memberships_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    proposals_api_v2_authority_units__unit_id__membership_proposals_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    propose_api_v2_authority_units__unit_id__membership_proposals_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposalCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suspend_api_v2_authority_units__unit_id__memberships__membership_id__suspend_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                membership_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submission_api_v2_resident_submissions__key__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResidentReceipt"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reply_api_v2_resident_reports__report_id__information_requests__request_id__replies_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "Idempotency-Key-Created-At": string;
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                report_id: string;
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplementSubmission"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplementReceipt"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stage_api_v2_resident_media_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_stage_api_v2_resident_media_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    local_context_api_v2_resident_context_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocalContextRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocalContext"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assign_api_v2_authority_units__unit_id__cases__case_id__assignments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignmentCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    note_api_v2_authority_units__unit_id__cases__case_id__internal_notes_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_field_api_v2_authority_units__unit_id__cases__case_id__field_follow_ups_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    field_event_api_v2_authority_units__unit_id__cases__case_id__field_follow_ups__task_id__events_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FieldCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_api_v2_authority_units__unit_id__cases__case_id__reporter_updates_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicationCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    information_api_v2_authority_units__unit_id__cases__case_id__information_requests_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InformationCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reference_api_v2_authority_units__unit_id__cases__case_id__external_references_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    history_api_v2_authority_units__unit_id__cases__case_id__history_get: {
+        parameters: {
+            query?: {
+                before_revision?: number | null;
+            };
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evidence_api_v2_authority_units__unit_id__cases__case_id__evidence__version_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+                version_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    packet_api_v2_authority_units__unit_id__cases__case_id__export_v2_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthorityPacket"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reviewers_api_v2_authority_units__unit_id__reviewers_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    enrich_api_v2_authority_units__unit_id__cases__case_id__enrichments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrichmentRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    live_context_api_v2_authority_units__unit_id__cases__case_id__live_context_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-AirshedOS-Session"?: string | null;
+            };
+            path: {
+                unit_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmptyCommand"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_health_get: {
         parameters: {
             query?: never;
@@ -2453,7 +4877,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
+                    "application/json": components["schemas"]["ReadinessRead"] | {
                         [key: string]: string;
                     };
                 };

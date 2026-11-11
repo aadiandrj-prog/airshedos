@@ -1,0 +1,15 @@
+{
+  "source": "User-provided design-references.zip and PHASE_7_DESIGN_DIRECTION.md",
+  "archive_sha256": "f75930ecba8c94261a073aab0161a2ad3d5457c98a14ca0d6d69394d47160bb7",
+  "runtime_imports": false,
+  "files": {
+    "DESIGN_supplied.md": "88ce308dc4395fe4ecad27097e672cbb2c7124de627050b84ab17c41b9d8bedb",
+    "PHASE_7_DESIGN_DIRECTION_supplied.md": "b13811373318b123525bc34c58296d8fcbfe0f1736e8bd666f6cf4a8d2beedb9",
+    "auralis-user-reference.png": "3175228b6cdcfd394ed07021b56f91fde655c6b535b18c1573a6a3a60da142e4",
+    "stitch-01/code.html": "b197296db69b6c24672644a11ae8c55f69f0255e017bf60aa4ba1358060b130c",
+    "stitch-01/screen.png": "c33ad7fad333e483f170afd1e38912c0cef26d7fc4d5509c6b3ba101281e9cb7",
+    "stitch-02/DESIGN.md": "0f5366e5bf4b5184dc60fbe0b4cebd420f091aae677d2d48443265e289fd10e2",
+    "stitch-02/code.html": "7a5f5081ec1f0e67c0fe7f6544faa3adb63203337765207844b15545d0c14f5a",
+    "stitch-02/screen.png": "10e46e12534dbfe497c0e2c59a0717aefb2a3d7ddf496690d3220936bf9697cc"
+  }
+}

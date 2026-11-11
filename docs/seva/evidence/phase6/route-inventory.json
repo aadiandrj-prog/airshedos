@@ -1,0 +1,257 @@
+{
+  "mode": "pilot",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/api/v1/environment/sources",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/environment/context",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/environment/satellite",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/environment/forecast",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/citizen-reports/analyze",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/citizen-reports/{report_id}/corroborate",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/review/cases",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/review/cases/{case_id}",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/review/cases/{case_id}/review",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/review/cases/{case_id}/handoffs",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/handoffs",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/handoffs/{handoff_id}",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/handoffs/{handoff_id}/transition",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/handoffs/{handoff_id}/export",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/me",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/resident/reports",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/resident/reports",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/resident/reports/{report_id}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/map",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/review-events",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/export",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/resident/media/{media_id}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/media/{media_id}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/memberships",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/membership-proposals",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/membership-proposals",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/memberships/{membership_id}/suspend",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/resident/submissions/{key}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/resident/reports/{report_id}/information-requests/{request_id}/replies",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/resident/media",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/resident/context",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/assignments",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/internal-notes",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/field-follow-ups",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/field-follow-ups/{task_id}/events",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/reporter-updates",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/information-requests",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/external-references",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/history",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/evidence/{version_id}",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/export-v2",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/authority/units/{unit_id}/reviewers",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/enrichments",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/authority/units/{unit_id}/cases/{case_id}/live-context",
+      "release_policy": "VERIFIED_SESSION_AND_OBJECT_SCOPE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/incidents",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/incidents/{incident_id}",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/incidents/{incident_id}/acknowledge",
+      "release_policy": "BLOCKED_404"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/incidents/{incident_id}/share",
+      "release_policy": "BLOCKED_404"
+    }
+  ],
+  "operation_count": 50,
+  "audit_scope": "Anonymous denial plus signed owner/unit/object/export/media/CSRF suites; synthetic records only"
+}

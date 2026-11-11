@@ -23,8 +23,12 @@ class AnalyzerResult:
 
 
 class AnalysisFailure(Exception):
-    def __init__(self, status: AnalysisStatus):
+    def __init__(self, status: AnalysisStatus, *, retryable=False):
         self.status = status
+        self.retryable = retryable or status in (
+            AnalysisStatus.TIMEOUT,
+            AnalysisStatus.QUOTA_LIMITED,
+        )
         super().__init__(status.value)
 
 
@@ -131,7 +135,7 @@ class GeminiCitizenEvidenceAnalyzer:
                 429: AnalysisStatus.QUOTA_LIMITED,
             }.get(exc.code, AnalysisStatus.ERROR)
             # Provider error text can contain user input; never expose it or chain it.
-            raise AnalysisFailure(status) from None
+            raise AnalysisFailure(status, retryable=exc.code in (500, 502, 503, 504)) from None
         except (ValidationError, ValueError, TypeError, AttributeError):
             raise AnalysisFailure(AnalysisStatus.INVALID_RESPONSE) from None
         except Exception:

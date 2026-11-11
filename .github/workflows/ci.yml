@@ -5,6 +5,20 @@ permissions:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: seva_test
+          POSTGRES_PASSWORD: synthetic_local_only
+          POSTGRES_DB: seva_phase1_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U seva_test -d seva_phase1_test"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://seva_test:synthetic_local_only@127.0.0.1:5432/seva_phase1_test
     defaults:
       run:
         working-directory: apps/api
@@ -21,6 +35,21 @@ jobs:
       - run: pip install -r requirements-dev.lock -r requirements-model.lock
       - run: ruff check . && ruff format --check .
       - run: pytest -q
+        env:
+          SEVA_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci && npm run test:identity
+        working-directory: apps/web
+        env:
+          SEVA_TEST_PYTHON: python
+      - run: npx playwright install --with-deps chromium && npm run test:resident && npm run test:authority && npm run test:pilot
+        working-directory: apps/web
+        env:
+          SEVA_TEST_PYTHON: python
       - run: python scripts/export_openapi.py && git diff --exit-code -- openapi.json ../../docs/contracts/pollution_event_v1.schema.json
   frontend:
     runs-on: ubuntu-latest

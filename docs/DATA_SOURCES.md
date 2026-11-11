@@ -1,5 +1,27 @@
 # Evidence sources — Phase 2B
 
+Resident/reviewer pilot note (10 November 2026): local Phase 3 adds a separately requested,
+authenticated AQ/weather view with a 15-minute cache/display ceiling and source/time
+attribution. It never blocks acceptance or persists Google values in a case,
+evidence/job payload or hash. The prototype adapters below remain shared; their
+historical verification is not a fresh live check. See
+[resident implementation and pending gates](seva/PHASE_3_RESIDENT.md).
+Phase 4 adds separately requested volatile Google forecast/context and a saved
+retained-source assessment excluding Google Maps values. Provider retention defaults
+off and requires explicit approval plus fresh cleanup health. See
+[authority evidence/retention limits](seva/PHASE_4_AUTHORITY.md).
+
+Phase 5 executes the same retained-source pipeline in a separate leased PostgreSQL
+worker. Bounded transient retries and source admission metrics contain no raw payloads;
+partial evidence is frozen and later refreshes create new versions. Google remains
+volatile and separate. See [processing policy and local evidence](seva/PHASE_5_PROCESSING.md).
+
+Phase 6 adds readiness/degradation labels and a local synthetic restore/rehearsal. It
+does not refresh historical live-provider verification. Optional resident source lookup
+now requires an owned accepted report in an approved unit; pre-submit lookup makes no
+provider call. Pilot maps require explicit
+build-time third-party location-processing approval, even if a public Maps key exists.
+
 Current implementations use backend-only HTTP requests and the official Earth Engine Python SDK. Test fixtures are synthetic and never imported into production. **Live verification passed on 11 September 2026** for Google Air Quality, Google Weather and NOAA-20 FIRMS at the fixed NCR probe; see [the timestamped gate report](PHASE_1B_VERIFICATION.md). Missing credentials return `not_configured`, never a substitute reading. Configuration alone does not prove enabled APIs, billing, quota, coverage or successful access.
 
 ## Configuration

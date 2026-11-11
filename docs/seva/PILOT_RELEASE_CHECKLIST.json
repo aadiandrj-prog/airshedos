@@ -1,0 +1,76 @@
+{
+  "schema_version": "seva_private_release_checklist_v1",
+  "base_revision": "6f071afd10f0ffed024448ac87d3bfae9ec8abc4",
+  "branch": "codex/seva-phase-7",
+  "implementation": "LOCALLY_VERIFIED",
+  "changes_committed": false,
+  "pushed": false,
+  "deployed": false,
+  "public_release_authorised": false,
+  "real_data_collection_authorised": false,
+  "local_evidence": {
+    "backend_tests": 642,
+    "identity_tests": 5,
+    "development_browser_journeys": 9,
+    "https_production_browser_journeys": 9,
+    "legacy_browser_tests": 62,
+    "postgres_major": 18,
+    "schema": "seva_0006",
+    "cross_user_unit_matrix": "NO_EXPOSURE_FOUND_IN_SYNTHETIC_SCOPE",
+    "runtime_advisories": 0,
+    "development_advisory": "One minimatch advisory, seven moderate dependency nodes",
+    "rendered_accessibility_views": 32,
+    "accessibility_violations": 0,
+    "accessibility_incomplete": 0,
+    "before_screenshots": 18,
+    "after_screenshots": 30,
+    "python_audit_reference": "evidence/phase6/python-audit.json; requirements unchanged in Phase 7",
+    "frontend_audit_reference": "evidence/phase7/frontend-audit.json"
+  },
+  "evaluation": {
+    "synthetic_cases": 12,
+    "development": 8,
+    "reserved_unused": 4,
+    "field_cases": 0,
+    "real_participants": 0,
+    "proxy_participants": 0,
+    "human_time_savings": "NOT_MEASURED",
+    "incident_accuracy": "NOT_ESTABLISHED"
+  },
+  "external_gates": [
+    {
+      "id": "LIVE_IDENTITY_AND_SESSION_REHEARSAL",
+      "status": "PENDING"
+    },
+    {
+      "id": "HOSTED_PRIVATE_STORAGE_REGIONS_AND_DELETION",
+      "status": "PENDING"
+    },
+    {
+      "id": "INDEPENDENT_COMPLETE_ERASURE_JOURNAL_AND_BACKUP_EXPIRY",
+      "status": "PENDING"
+    },
+    {
+      "id": "HOSTED_WORKER_CLEANUP_AND_RESTORE_REHEARSAL",
+      "status": "PENDING"
+    },
+    {
+      "id": "PURPOSE_TERMS_NOTICES_UNIT_ROSTER_AND_BUDGETS",
+      "status": "PENDING"
+    },
+    {
+      "id": "DEVELOPMENT_TOOLING_ADVISORY_REVIEW",
+      "status": "PENDING"
+    },
+    {
+      "id": "DOMAIN_REVIEW_FIELD_SOURCING_AND_RECRUITMENT",
+      "status": "PENDING"
+    },
+    {
+      "id": "SEPARATE_PRIVATE_OR_PUBLIC_DEPLOYMENT_AUTHORISATION",
+      "status": "PENDING"
+    }
+  ],
+  "next_phase": "No further phase started; owner-reviewed private-pilot gates remain",
+  "phase7": "COMPLETE_LOCALLY_VERIFIED"
+}

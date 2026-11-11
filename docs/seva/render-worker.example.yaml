@@ -1,0 +1,42 @@
+# REVIEW-ONLY EXAMPLE. Not linked from render.yaml; applying provisions a separate
+# billable worker and requires separate user authorisation and a configured pilot DB.
+services:
+  - type: worker
+    name: airshedos-pilot-processing
+    runtime: docker
+    plan: starter
+    region: singapore
+    rootDir: apps/api
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: python -m app.processing
+    autoDeployTrigger: off
+    envVars:
+      - key: APP_MODE
+        value: pilot
+      - key: SEVA_WORKER_DATABASE_URL
+        sync: false
+      - key: SEVA_RECOVERY_EPOCH
+        sync: false
+      - key: RETAINED_PROVIDER_CONTENT_APPROVED
+        sync: false
+      - key: SEVA_PROVIDER_CALLS_PER_DAY
+        value: '100'
+      - key: GOOGLE_CLOUD_PROJECT
+        sync: false
+      - key: EARTH_ENGINE_PROJECT
+        sync: false
+      - key: NASA_FIRMS_MAP_KEY
+        sync: false
+      - key: PRIVATE_MEDIA_APPROVED
+        sync: false
+      - key: MEDIA_BACKEND
+        value: s3
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false

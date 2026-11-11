@@ -8,7 +8,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RULES = {
     "Google API key": rb"AIza[0-9A-Za-z_-]{35}",
-    "Private key": rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+    # Require encoded key material, not a parser's quoted PEM header literal. Also
+    # detect escaped newlines in JS/JSON so bundling cannot hide a real private key.
+    "Private key": rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"
+    rb"(?:\s|\\r|\\n|\\\\r|\\\\n)+[A-Za-z0-9+/=]{16,}",
     "Google access token": rb"ya29\.[0-9A-Za-z_-]{20,}",
     "ADC refresh token": rb'"refresh_token"\s*:\s*"[^"\s]{12,}"',
     "GitHub token": rb"(?:gh[pousr]_[0-9A-Za-z]{30,}|github_pat_[0-9A-Za-z_]{30,})",
